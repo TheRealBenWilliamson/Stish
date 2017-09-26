@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26730.16
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StishBoard", "StishBoard\StishBoard.csproj", "{0ABF6EB7-0989-45B9-882D-B19AB403DDDB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0ABF6EB7-0989-45B9-882D-B19AB403DDDB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0ABF6EB7-0989-45B9-882D-B19AB403DDDB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0ABF6EB7-0989-45B9-882D-B19AB403DDDB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0ABF6EB7-0989-45B9-882D-B19AB403DDDB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C3637D98-B301-42CD-A455-1F617EE4917F}
+	EndGlobalSection
+EndGlobal
