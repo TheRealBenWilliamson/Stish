@@ -10,7 +10,11 @@ namespace StishBoard
     {
         static void Main(string[] args)
         {
-            //Turn and face the strange!
+            StishBoard board = new StishBoard();
+            Square s = board.getSquare(1, 1);
+            Console.WriteLine("contains: " + s.Con);
+            s.Con = "barracks";
+            Console.WriteLine("contains: " + s.Con);
         }
     }
 }
