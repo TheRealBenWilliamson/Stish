@@ -8,23 +8,31 @@ namespace StishBoard
 {
     class Square
     {
+        private Deployment dep;
         
         public Square()
         {
-            con = "empty";
+            dep = null;
         }
         
-        private string con;
 
-        public string Con
+        public string DepType
         {
             get
             {
-                return con;
+                return dep.DepType;
+            }
+        }
+
+        public Deployment Dep
+        {
+            get
+            {
+                return dep;
             }
             set
             {
-                con = value;
+                dep = value;
             }
         }
     }

@@ -9,9 +9,11 @@ namespace StishBoard
 {
     class StishBoard
     {
+        private static StishBoard instance;
+
         Square[,] array = new Square[11,11];
 
-        public StishBoard()
+        private StishBoard()
         {
             for (int row = 0; row < 11; row ++)
             {
@@ -19,6 +21,17 @@ namespace StishBoard
                 {
                     array[row, col] = new Square();
                 }
+            }
+        }
+        public static StishBoard Instance
+        {
+            get
+            {
+                if (instance == null)
+                {
+                    instance = new StishBoard();
+                }
+                return instance;
             }
         }
 
