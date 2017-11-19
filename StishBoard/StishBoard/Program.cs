@@ -10,8 +10,10 @@ namespace StishBoard
     {
         static void Main(string[] args)
         {
+ 
             StishBoard board = StishBoard.Instance;
 
+            /*
             Square s1 = board.getSquare(1, 1);
             s1.Dep = new Barracks();            
             Console.WriteLine("contains: " + s1.DepType);
@@ -22,6 +24,10 @@ namespace StishBoard
 
             Square s3 = board.getSquare(3, 3);
             Console.WriteLine("contains: " + s3.DepType);
+            */
+
+            instance.Render(0, 0);
+
         }
     }
 }

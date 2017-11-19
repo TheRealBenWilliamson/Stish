@@ -35,5 +35,13 @@ namespace StishBoard
                 dep = value;
             }
         }
+
+        public void Render(int x, int y)
+        {
+            StishWrite(x, y, "[");
+            Deployment.Render(x, y);
+            StishWrite(x, y, "] ");
+            return;
+        }
     }
 }

@@ -11,6 +11,7 @@ namespace StishBoard
         public Unit()
         {
             depType = "Unit";
+            Icon = "U";
         }
     }
 }

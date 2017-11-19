@@ -11,6 +11,8 @@ namespace StishBoard
         public Barracks ()
         {
             depType = "Barracks";
+            Icon = "B";
         }
+
     }
 }

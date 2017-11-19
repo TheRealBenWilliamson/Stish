@@ -40,5 +40,25 @@ namespace StishBoard
             return array[row, col];
             
         }
+
+        public void Render(int x, int y)
+        {
+            for (y = 0; y < y; y++)
+            {
+                for (x = 0; x < 11; x++)
+                {
+                    Square[x, y].Render(x, y);
+                }
+            }
+        }
+
+        public void StishWrite(int x , int y , string C)
+        {
+            Console.SetCursorPosition(x, y);
+            Console.WriteLine(C);
+            return;
+        }
+
+
     }
 }

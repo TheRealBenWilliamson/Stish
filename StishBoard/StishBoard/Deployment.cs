@@ -9,9 +9,13 @@ namespace StishBoard
     public abstract class Deployment
     {
         protected string depType;
+
+        public string Icon;
+
         protected Deployment()
         {
             depType = "empty";
+            Icon = " ";
         }
 
         public string DepType
@@ -21,6 +25,12 @@ namespace StishBoard
                 return depType;
             }
 
+        }
+
+        public void Render(int x, int y)
+        {
+            StishWrite(x, y, Icon);
+            return;
         }
     }
 }
