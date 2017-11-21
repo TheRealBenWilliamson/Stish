@@ -12,7 +12,7 @@ namespace StishBoard
         
         public Square()
         {
-            dep = null;
+            dep = new Empty();
         }
         
 
@@ -38,9 +38,10 @@ namespace StishBoard
 
         public void Render(int x, int y)
         {
-            StishWrite(x, y, "[");
-            Deployment.Render(x, y);
-            StishWrite(x, y, "] ");
+            x = x * 4;
+            Helper.StishWrite(x, y, "[");
+            dep.Render(x+1, y);
+            Helper.StishWrite(x+2, y, "] ");
             return;
         }
     }

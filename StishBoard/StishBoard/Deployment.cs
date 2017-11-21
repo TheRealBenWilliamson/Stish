@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using StishBoard;
 
 namespace StishBoard
 {
@@ -29,7 +30,7 @@ namespace StishBoard
 
         public void Render(int x, int y)
         {
-            StishWrite(x, y, Icon);
+            Helper.StishWrite(x, y, Icon);
             return;
         }
     }

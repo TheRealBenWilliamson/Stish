@@ -43,21 +43,16 @@ namespace StishBoard
 
         public void Render(int x, int y)
         {
-            for (y = 0; y < y; y++)
+            for (y = 0; y < 11; y++)
             {
                 for (x = 0; x < 11; x++)
                 {
-                    Square[x, y].Render(x, y);
+                    array[x, y].Render(x, y);
                 }
             }
         }
 
-        public void StishWrite(int x , int y , string C)
-        {
-            Console.SetCursorPosition(x, y);
-            Console.WriteLine(C);
-            return;
-        }
+
 
 
     }
