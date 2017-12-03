@@ -8,6 +8,7 @@ namespace StishBoard
 {
     public class Empty : Deployment
     {
+        //constructor: gives the new object it's variable values to represent that it contains nothing
         public Empty()
         {
             depType = "Empty";

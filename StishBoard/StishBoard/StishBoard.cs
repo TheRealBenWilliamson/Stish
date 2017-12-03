@@ -9,10 +9,13 @@ namespace StishBoard
 {
     class StishBoard
     {
+        //creates a reference to the single instance of this singleton object of type StishBoard called "instance".
         private static StishBoard instance;
 
-        Square[,] array = new Square[11,11];
+        //creates an array called "array" capable of holding square objects in the orientation of 11 by 11. the square objects have not been created.
+        public Square[,] array = new Square[11,11];
 
+        //default constructor: creates the square objects in "array", assigning each to a position in the 11 by 11 grid.
         private StishBoard()
         {
             for (int row = 0; row < 11; row ++)
@@ -23,6 +26,8 @@ namespace StishBoard
                 }
             }
         }
+
+        //creates a public function called "Instance" which ensures there is an existing StishBoard object called "instance" and then returns a reference to the single instance. this is done so that nothing external can interfere with the values of "instance".
         public static StishBoard Instance
         {
             get
@@ -35,12 +40,14 @@ namespace StishBoard
             }
         }
 
+        //creates a public function called "getSquare", it will return the reference to the square object that sits in the position in "array" that is asked for in the arguments.
         public Square getSquare(int row, int col)
         {
-            return array[row, col];
-            
-        }
+            //TO DO: add error handling of arguments that are out of range of the array.
+            return array[row, col];           
+        } 
 
+        //creates a public render method called "Render" to render each of the squares to the console. it calls a Render method on each of the square objects held within 'array'.
         public void Render(int x, int y)
         {
             for (y = 0; y < 11; y++)
