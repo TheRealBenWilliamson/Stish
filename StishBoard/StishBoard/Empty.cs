@@ -13,6 +13,7 @@ namespace StishBoard
         {
             depType = "Empty";
             Icon = " ";
+            ownedBy = "null";
         }
     }
 }

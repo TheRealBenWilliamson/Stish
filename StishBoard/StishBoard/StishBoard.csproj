@@ -43,9 +43,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Barracks.cs" />
+    <Compile Include="Computer.cs" />
     <Compile Include="Deployment.cs" />
     <Compile Include="Empty.cs" />
     <Compile Include="Helper.cs" />
+    <Compile Include="Human.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

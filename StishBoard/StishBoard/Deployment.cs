@@ -13,13 +13,17 @@ namespace StishBoard
         protected string depType;
 
         //creates a variable called "Icon" which contains the symbol that corrosponds to what is contained by a square.
-        public string Icon;
+        protected string Icon;
 
-        //default constructor: makes any square assume it is empty. this can be overwritten by telling the square that it contains something.
+        //a variable designed to show which player owns a particular as territory
+        protected string ownedBy;
+
+        //default constructor: makes any square assume it is empty and owned by no-one. this can be overwritten by telling the square that it contains something.
         protected Deployment()
         {
             depType = "empty";
             Icon = " ";
+            ownedBy = "player1";
         }
 
         //an accessor so that a client can find what type of deployment this particular object is.
@@ -28,6 +32,18 @@ namespace StishBoard
             get
             {
                 return depType;
+            }
+        }
+
+        public string OwnedBy
+        {
+            get
+            {
+                return ownedBy;
+            }
+            set
+            {
+                ownedBy = value;
             }
         }
 

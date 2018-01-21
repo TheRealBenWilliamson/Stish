@@ -13,6 +13,7 @@ namespace StishBoard
         {
             depType = "Unit";
             Icon = "U";
+            ownedBy = "null";
         }
     }
 }
