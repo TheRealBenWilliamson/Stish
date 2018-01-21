@@ -8,9 +8,15 @@ namespace StishBoard
 {
     public class Human : Player
     {
-        public Human(PlayerNumber PN)
+        public Human(PlayerNumber PN) :  base(PN)
+        {
+            
+        }
+
+        public override void MakeMove()
         {
 
         }
+
     }
 }

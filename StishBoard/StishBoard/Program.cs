@@ -28,6 +28,10 @@ namespace StishBoard
 
             Player P1;
             P1 = Player.PlayerFactory(Player.PlayerNumber.Player1, Player.PlayerType.Human);
+            P1.MakeMove();
+
+            Player P2;
+            P2 = Player.PlayerFactory(Player.PlayerNumber.Player2, Player.PlayerType.Human);
 
             //calls the Render function on the object "board". the Render function is called from the StishBoard class because "board" belongs to that class. this renders the board onto the console for the screen.
             board.Render(0, 0);

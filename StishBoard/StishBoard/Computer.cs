@@ -8,9 +8,15 @@ namespace StishBoard
 {
     public class Computer : Player
     {
-        public Computer(PlayerNumber PN)
+        public Computer(PlayerNumber PN) : base(PN)
         {
 
         }
+
+        public override void MakeMove()
+        {
+
+        }
+
     }
 }
