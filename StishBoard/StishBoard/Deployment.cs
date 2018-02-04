@@ -16,14 +16,18 @@ namespace StishBoard
         protected string Icon;
 
         //a variable designed to show which player owns a particular as territory
-        protected string ownedBy;
+        protected Player ownedBy;
+
+        //ownedby Enums would be better than using strings to identify which player owns a square
+        //public enum Owner { Null, Player1, Player2 };
+        //protected Owner ownedby;
 
         //default constructor: makes any square assume it is empty and owned by no-one. this can be overwritten by telling the square that it contains something.
         protected Deployment()
         {
             depType = "empty";
             Icon = " ";
-            ownedBy = "player1";
+            ownedBy = null;
         }
 
         //an accessor so that a client can find what type of deployment this particular object is.
@@ -35,7 +39,7 @@ namespace StishBoard
             }
         }
 
-        public string OwnedBy
+        public Player OwnedBy
         {
             get
             {
@@ -50,7 +54,14 @@ namespace StishBoard
         //creates a render method called "Render" which draws the icon of this deployment type to the console.
         public void Render(int x, int y)
         {
+            //decides what colour to draw the board based on which player owns each square
+            if (ownedBy != null)
+            {
+                System.Console.ForegroundColor = ownedBy.GetRenderColour();
+            }            
+
             Helper.StishWrite(x, y, Icon);
+            Console.ResetColor();
             return;
         }
     }

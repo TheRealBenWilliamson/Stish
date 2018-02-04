@@ -45,14 +45,15 @@ namespace StishBoard
         {
             //TO DO: add error handling of arguments that are out of range of the array.
             return array[row, col];           
-        } 
+        }
 
         //creates a public render method called "Render" to render each of the squares to the console. it calls a Render method on each of the square objects held within 'array'.
-        public void Render(int x, int y)
+        //not sure if this change is right (stolen from the arguments of Render() ) ...   int x, int y    
+        public void Render()
         {
-            for (y = 0; y < 11; y++)
+            for (int y = 0; y < 11; y++)
             {
-                for (x = 0; x < 11; x++)
+                for (int x = 0; x < 11; x++)
                 {
                     array[x, y].Render(x, y);
                 }
