@@ -12,6 +12,33 @@ namespace StishBoard
         //creates a reference to the single instance of this singleton object of type StishBoard called "instance".
         private static StishBoard instance;
 
+        private Player player1;
+        private Player player2;
+
+        public Player Player1
+        {
+            get
+            {
+                return player1;
+            }
+            set
+            {
+                player1 = value;
+            }
+        }
+
+        public Player Player2
+        {
+            get
+            {
+                return player2;
+            }
+            set
+            {
+                player2 = value;
+            }
+        }
+
         //creates an array called "array" capable of holding square objects in the orientation of 11 by 11. the square objects have not been created.
         public Square[,] array = new Square[11,11];
 
@@ -51,6 +78,9 @@ namespace StishBoard
         //not sure if this change is right (stolen from the arguments of Render() ) ...   int x, int y    
         public void Render()
         {
+           
+            Console.WriteLine("Player1 has: {0}" , player1.Balance);
+            Console.WriteLine("Player2 has: {0}" , player2.Balance);
             for (int y = 0; y < 11; y++)
             {
                 for (int x = 0; x < 11; x++)

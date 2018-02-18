@@ -10,8 +10,8 @@ namespace StishBoard
     {
         //creates a function that allows the console to write into specific positions
         public static void StishWrite(int x, int y, string C)
-        {
-            Console.SetCursorPosition(x , y);
+        {            
+            Console.SetCursorPosition(x , y+2);
             Console.WriteLine(C);
             return;
         }

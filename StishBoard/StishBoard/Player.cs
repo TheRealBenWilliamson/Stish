@@ -25,10 +25,24 @@ namespace StishBoard
         protected PlayerNumber playerNumber;
         protected uint balance;
 
+        protected Base homeBase;
+
         protected Player(PlayerNumber PN)
         {
             playerNumber = PN;
             balance = 0;
+
+            homeBase = new Base();
+            if (playerNumber == PlayerNumber.Player1)
+            {
+                board.getSquare(5, 9).Dep = homeBase;
+                homeBase.OwnedBy = this;
+            }
+            else
+            {
+                board.getSquare(5, 1).Dep = homeBase;
+                homeBase.OwnedBy = this;
+            }
         }
 
         public string GetPlayerNum
@@ -38,6 +52,7 @@ namespace StishBoard
                 return playerNumber.ToString();
             }
         }
+
 
         public ConsoleColor GetRenderColour()
         {
@@ -92,6 +107,20 @@ namespace StishBoard
         public virtual void MakeMove()
         {
 
+        }
+
+        protected void UpdateBalance()
+        {
+            for (int y = 0; y < 11; y++)
+            {
+                for (int x = 0; x < 11; x++)
+                {
+                    if((board.getSquare(x, y).Dep.DepType == "Barracks" || board.getSquare(x, y).Dep.DepType == "Base") && board.getSquare(x, y).Dep.OwnedBy == this)
+                    {
+                        balance ++ ;
+                    }           
+                }
+            }
         }
 
 

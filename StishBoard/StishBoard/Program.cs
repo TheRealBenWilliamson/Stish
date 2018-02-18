@@ -16,9 +16,11 @@ namespace StishBoard
             Player P1;
             P1 = Player.PlayerFactory(Player.PlayerNumber.Player1, Player.PlayerType.Human);
             
-
             Player P2;
             P2 = Player.PlayerFactory(Player.PlayerNumber.Player2, Player.PlayerType.Human);
+
+            board.Player1 = P1;
+            board.Player2 = P2;
 
             //creates a 'Square' object called "s1" and assigns it to position (1,1) on the board. it then tells s1 that it contains a barracks.
             Square s1 = board.getSquare(1, 1);

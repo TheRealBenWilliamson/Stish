@@ -51,6 +51,7 @@ namespace StishBoard
             }
         }
 
+
         //creates a render method called "Render" which draws the icon of this deployment type to the console.
         public void Render(int x, int y)
         {

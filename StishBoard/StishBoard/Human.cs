@@ -123,7 +123,7 @@ namespace StishBoard
             //things to do in a turn: move a unit, buy a unit (and place it), buy a barracks (and place it), end their turn.
             bool EndTurn = false;
 
-            while (EndTurn == false)
+            while (!EndTurn)
             {
                 //console is cleared so a render can take place
                 Console.Clear();
@@ -161,6 +161,8 @@ namespace StishBoard
                             Console.ReadLine();
                             break;
                     }
+
+                    UpdateBalance();
                 }
                 catch
                 {
@@ -170,6 +172,7 @@ namespace StishBoard
                 }
 
             }
+
         }
 
     }
