@@ -68,7 +68,7 @@ namespace StishBoard
         }
 
         //creates a public function called "getSquare", it will return the reference to the square object that sits in the position in "array" that is asked for in the arguments.
-        public Square getSquare(int row, int col)
+        public Square getSquare(uint row, uint col)
         {
             //TO DO: add error handling of arguments that are out of range of the array.
             return array[row, col];           

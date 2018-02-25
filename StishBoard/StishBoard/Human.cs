@@ -25,17 +25,13 @@ namespace StishBoard
             //will use the user interface to ask the player which unit they want to move and where to. it will call MoveUnit(from , to) in Player class to make from's position empty. it will set to's position to a unit or barracks.
             //need to make sure there is a friendly Unit at the 'from' posititon
             while (true)
-            {
-                Console.WriteLine("\nWhat Unit would you like to move? \n X co-ordinate:");
-                string unitX = Console.ReadLine();
-                int UnitX;
-                Console.WriteLine(" Y co-ordinate:");
-                string unitY = Console.ReadLine();
-                int UnitY;
+            {               
                 try
                 {
-                    UnitX = Int32.Parse(unitX);
-                    UnitY = Int32.Parse(unitY);
+                    Console.WriteLine("\nWhat Unit would you like to move? \n X co-ordinate:");
+                    uint UnitX = UInt32.Parse(Console.ReadLine());
+                    Console.WriteLine(" Y co-ordinate:");
+                    uint UnitY = UInt32.Parse(Console.ReadLine());
 
                     //if and else statement to make sure there is a friendly Unit in the given spot
                     Square MoveFrom = board.getSquare(UnitX, UnitY);
@@ -44,14 +40,9 @@ namespace StishBoard
                         //selected spot is a friendly unit
 
                         Console.WriteLine("Where would you like to move this unit to? \n X co-ordinate:");
-                        string moveX = Console.ReadLine();
-                        int MoveX;
+                        uint MoveX = UInt32.Parse(Console.ReadLine());
                         Console.WriteLine(" Y co-ordinate:");
-                        string moveY = Console.ReadLine();
-                        int MoveY;
-
-                        MoveX = Int32.Parse(moveX);
-                        MoveY = Int32.Parse(moveY);
+                        uint MoveY = UInt32.Parse(Console.ReadLine());
                         Square MoveTo = board.getSquare(MoveX, MoveY);
 
                         //events on moving a unit
@@ -117,6 +108,93 @@ namespace StishBoard
 
         }
 
+        private void BuyUnit()
+        {
+            //ask how much the player wants to spend           
+            uint cost;
+            bool Cont = true;
+            do
+            {
+                try
+                {
+                    //test that cost cannot be negative
+                    Console.WriteLine("how much money would you like to spend?");
+                    cost = UInt32.Parse(Console.ReadLine());
+                    if (Balance >= cost)
+                    {
+                        Balance = Balance - cost;
+                    }
+
+                    Console.WriteLine("Where would you like to place this unit? \n X co-ordinate:");
+                    uint placeX = UInt32.Parse(Console.ReadLine());
+                    Console.WriteLine(" Y co-ordinate:");
+                    uint placeY = UInt32.Parse(Console.ReadLine());
+
+                    Square Place = board.getSquare(placeX, placeY);
+
+
+                    //events on moving a unit
+                    // create a single fuction for movement criteria
+                    //move class and objects
+
+
+
+                    if ((placeX < 0 || placeX > 11) || (placeY < 0 || placeY > 11))
+                    {
+                        //does not move. position does not exist on the board
+                        Console.WriteLine("Please Enter co-ordinates that are on the board \nPress [ENTER] to continue");
+                        Console.ReadLine();
+                    }
+                    else if ((Place.Dep.DepType == "Unit") || (Place.Dep.DepType == "Barracks"))
+                    {
+                        //does not move. friendly barracks or unit occupies this square
+                        Console.WriteLine("You cannot move onto an occupied space \nPress [ENTER] to continue");
+                        Console.ReadLine();
+                    }
+                    /*else if (Place.Dep.OwnedBy != this)
+                    {
+                        //does not move. friendly barracks or unit occupies this square
+                        Console.WriteLine("You can only move onto a friendly space \nPress [ENTER] to continue");
+                        Console.ReadLine();
+                    }
+                    */
+                    else if ((Place.Dep.DepType == "Empty") /*&& (Place.Dep.OwnedBy == this)*/)
+                    {
+                        //moves with only territory impact
+
+                        PlaceDep(new Unit(), placeX, placeY);
+
+                        Console.WriteLine("a new Unit has been placed \nPress [ENTER] to continue");
+                        Console.ReadLine();
+                        //break because move was vaild
+                        Cont = false;
+                    }
+
+
+
+                }
+                catch
+                {
+                    //process crashed due to invalid input / attempting to parse a non int variable
+                    Console.WriteLine("Please enter a valid answer \nPress [ENTER] to continue");
+                    Console.ReadLine();
+                }
+
+            } while (Cont == true);
+            
+            //checked if they have that money
+            //if they dont then loop
+            //if they do then remove that quantity from the balance and ask where they want to place they unit
+            //check if this position is valid
+            //only continue if it is valid
+
+        }
+
+        private void BuyBarracks()
+        {
+
+        }
+
         public override void MakeMove()
         {
 
@@ -143,7 +221,7 @@ namespace StishBoard
                             break;
                         case Action.BuyUnit:
                             //buy a unit (and place it)
-
+                            BuyUnit();
                             break;
                         case Action.BuyBarracks:
                             //buy a barracks (and place it)
@@ -151,8 +229,9 @@ namespace StishBoard
                             break;
                         case Action.EndTurn:
                             //end player's turn
-                            
+
                             //EndTurn is set to True to end the turn loop.
+                            TurnBalance();
                             EndTurn = true;
                             break;
                         default:
@@ -162,7 +241,7 @@ namespace StishBoard
                             break;
                     }
 
-                    UpdateBalance();
+                    
                 }
                 catch
                 {
