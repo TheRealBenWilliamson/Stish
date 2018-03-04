@@ -9,11 +9,15 @@ namespace StishBoard
     public class Base : Deployment
     {
         //constructor: gives the new object it's variable values to represent that it contains a barracks
-        public Base()
+        public Base(Player player, Square square)
         {
+            //add health
             depType = "Base";
             Icon = "H";
-            ownedBy = null;
+            ownedBy = player;
+            square.Dep = this;
+            square.Owner = player;
+
         }
 
     }

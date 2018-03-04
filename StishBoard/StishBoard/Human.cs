@@ -161,8 +161,7 @@ namespace StishBoard
                     else if ((Place.Dep.DepType == "Empty") /*&& (Place.Dep.OwnedBy == this)*/)
                     {
                         //moves with only territory impact
-
-                        PlaceDep(new Unit(), placeX, placeY);
+                        new Unit(this, board.getSquare(placeX, placeY));
 
                         Console.WriteLine("a new Unit has been placed \nPress [ENTER] to continue");
                         Console.ReadLine();

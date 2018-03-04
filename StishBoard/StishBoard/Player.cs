@@ -32,16 +32,14 @@ namespace StishBoard
             playerNumber = PN;
             balance = 1;
 
-            homeBase = new Base();
+            //homeBase = new Base();
             if (playerNumber == PlayerNumber.Player1)
             {
-                board.getSquare(5, 9).Dep = homeBase;
-                homeBase.OwnedBy = this;
+                new Base(this,board.getSquare(5, 9));
             }
             else
             {
-                board.getSquare(5, 1).Dep = homeBase;
-                homeBase.OwnedBy = this;
+                new Base(this, board.getSquare(5, 1));
             }
         }
 
@@ -132,17 +130,13 @@ namespace StishBoard
 
             Square From = board.getSquare(FromX, FromY);
             Square To = board.getSquare(ToX, ToY);
+
+            From.Owner = this;
+            To.Owner = this;
                 
             To.Dep = From.Dep;
             From.Dep = new Empty();
                        
-        }
-
-        protected void PlaceDep(Deployment Dep, uint ToX, uint ToY)
-        {
-            Square To = board.getSquare(ToX, ToY);
-
-            To.Dep = Dep;
         }
 
     }

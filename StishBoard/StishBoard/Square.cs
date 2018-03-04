@@ -6,16 +6,19 @@ using System.Threading.Tasks;
 
 namespace StishBoard
 {
-    class Square
+    public class Square
     {
         //a square object has the ability to contain any derivative of 'deployment'
 
         //creates a reference to the private object of Deployment called "dep".
         private Deployment dep;
+
+        private Player owner;
         
         //default constructor: makes 'dep' contain a deployment object of "empty".
         public Square()
         {
+            owner = null;
             dep = new Empty();
         }
         
@@ -29,6 +32,18 @@ namespace StishBoard
             set
             {
                 dep = value;
+            }
+        }
+
+        public Player Owner
+        {
+            get
+            {
+                return owner;
+            }
+            set
+            {
+                owner = value;
             }
         }
 
