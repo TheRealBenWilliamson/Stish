@@ -15,6 +15,5 @@ namespace StishBoard
             Console.WriteLine(C);
             return;
         }
-
     }
 }

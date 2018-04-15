@@ -18,6 +18,9 @@ namespace StishBoard
         //a variable designed to show which player owns a particular as territory
         protected Player ownedBy;
 
+        //only a Unit should have more than 0 MP. a unit has the potential to move one square for every movement point it possesses. a unit is constructed with 0 MP but has them fully reset at the start of a turn. the max MP of a unit should be changed throughout testing and balancing in the "RefreshMP" function
+        protected uint MovementPoints;
+
         //ownedby Enums would be better than using strings to identify which player owns a square
         //public enum Owner { Null, Player1, Player2 };
         //protected Owner ownedby;
@@ -28,6 +31,7 @@ namespace StishBoard
             depType = "empty";
             Icon = " ";
             ownedBy = null;
+            MovementPoints = 0;
         }
 
         //an accessor so that a client can find what type of deployment this particular object is.
@@ -48,6 +52,19 @@ namespace StishBoard
             set
             {
                 ownedBy = value;
+            }
+        }
+
+        //MP stands for MovementPoints. this function should only be used on the Unit DepType
+        public uint MP
+        {
+            get
+            {
+                return MovementPoints;
+            }
+            set
+            {
+                MovementPoints = value;
             }
         }
 

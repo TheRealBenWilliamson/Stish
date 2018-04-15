@@ -8,10 +8,9 @@ namespace StishBoard
 {
     public abstract class Player
     {
-        // public or protected publicity?
 
-        private static Player Player1Instance;
-        private static Player Player2Instance;
+        //private static Player Player1Instance;
+        //private static Player Player2Instance;
         //dont know where to use these
 
         //by now a board should already have been created. StishBoard.Instance allows us to get a reference to the existing board.
@@ -30,7 +29,8 @@ namespace StishBoard
         protected Player(PlayerNumber PN)
         {
             playerNumber = PN;
-            balance = 1;
+            //balance can be changed for testing and balancing
+            balance = 10;
 
             //homeBase = new Base();
             if (playerNumber == PlayerNumber.Player1)
@@ -126,8 +126,6 @@ namespace StishBoard
         {
             //this method will be used by any object derived from the player class. it will allow a player to munipulate deployment positions on the board hence letting them move move a unit or buy/place a deployment.
 
-            //if a deployement is being bought then it has no original position. if the crane is given negative co-ordinates then it will not try to take it from any square on the board.
-
             Square From = board.getSquare(FromX, FromY);
             Square To = board.getSquare(ToX, ToY);
 
@@ -138,6 +136,125 @@ namespace StishBoard
             From.Dep = new Empty();
                        
         }
+
+
+        protected void TerritoryMapping(uint FromX, uint FromY, uint ToX, uint ToY)
+        {
+            //changes the territory value of every square in two dimention! because of this, all movement must be one dimentional for this fuction to work properly!
+
+            Square NewTerritory;
+           
+            if((ToX > FromX) || (ToY > FromY))
+            {
+                //if the unit is moveing right or down then the co-ordinates need to increase
+                for (uint y = FromY; y <= ToY; y++)
+                {
+                    for (uint x = FromX; x <= ToX; x++)
+                    {
+                        NewTerritory = board.getSquare(x, y);
+                        NewTerritory.Owner = this;
+                    }
+                }
+            }
+            else
+            {
+                //if the unit is moveing left or up then the co-ordinates need to decrease
+                for (uint y = FromY; y >= ToY; y--)
+                {
+                    for (uint x = FromX; x >= ToX; x--)
+                    {
+                        NewTerritory = board.getSquare(x, y);
+                        NewTerritory.Owner = this;
+                    }
+                }
+            }
+
+            
+        }
+
+        protected bool MoveObstructed(uint FromX, uint FromY, uint ToX, uint ToY)
+        {
+            //will function similarly to Terriroty mapping however it will return a boolean if any square in the movement path is not empty
+            bool obstructed = false;
+
+            //x and y values are increased or decreased by 1 so that it does not read the square that the unit is on as an obstruction. it also does not read the destination incase the unit is attempting to attack another unit
+
+            if ((ToX > FromX) || (ToY > FromY))
+            {
+                //if the unit is moveing right or down then the co-ordinates need to increase
+                if (ToX != FromX)
+                {
+                    //x value has changed
+                    for (uint x = FromX + 1; x < ToX; x++)
+                    {
+                        if (board.getSquare(x, FromY).Dep.DepType != "Empty")
+                        {
+                            obstructed = true;
+                        }
+                    }
+                }
+                else if (ToY != FromY)
+                {
+                    //y value has changed
+                    for (uint y = FromY + 1; y < ToY; y++)
+                    {
+                        if (board.getSquare(FromX, y).Dep.DepType != "Empty")
+                        {
+                            obstructed = true;
+                        }
+                    }
+                }               
+            }
+            else if ((ToX < FromX) || (ToY < FromY))
+            {
+                //if the unit is moveing left or up then the co-ordinates need to decrease
+                if (ToX != FromX)
+                {
+                    //x value has changed
+                    for (uint x = FromX - 1; x > ToX; x--)
+                    {
+                        if (board.getSquare(x, FromY).Dep.DepType != "Empty")
+                        {
+                            obstructed = true;
+                        }
+                    }
+                }
+                else if (ToY != FromY)
+                {
+                    //y value has changed
+                    for (uint y = FromY - 1; y > ToY; y--)
+                    {
+                        if (board.getSquare(FromX, y).Dep.DepType != "Empty")
+                        {
+                            obstructed = true;
+                        }
+                    }
+                }
+            }
+          
+
+            return obstructed;
+        }
+
+
+        protected void MaxMP()
+        {
+            //this fuction is run at the start of a turn and sets all units that belong to this player to the max MP.
+
+            for (uint y = 0; y < 11; y++)
+            {
+                for (uint x = 0; x < 11; x++)
+                {
+                    Square ThisSquare = board.getSquare(x, y);
+                    if ((ThisSquare.Owner == this) && (ThisSquare.Dep.DepType == "Unit"))
+                    {
+                        //This number is subject to change throughout testing and balancing
+                        ThisSquare.Dep.MP = 10;
+                    }
+                }
+            }
+        }
+
 
     }
 }

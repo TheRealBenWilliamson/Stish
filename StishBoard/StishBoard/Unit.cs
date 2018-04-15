@@ -8,6 +8,10 @@ namespace StishBoard
 {
     public class Unit : Deployment
     {
+
+        //Health represents the amount of damage a unit can deal or absorb. when it reaches 0, the unit dies.
+        uint Health;
+
         //constructor: gives the new object it's variable values to represent that it contains a unit
         public Unit()
         {
@@ -17,6 +21,8 @@ namespace StishBoard
             ownedBy = null;
         }
 
+        //units will have to have another argument in the constructor that gives them a value for their health
+
         public Unit(Player player, Square square)
         {
             //add health
@@ -25,7 +31,12 @@ namespace StishBoard
             ownedBy = player;
             square.Dep = this;
             square.Owner = player;
+            MP = 0;
+
 
         }
+
+        
+
     }
 }

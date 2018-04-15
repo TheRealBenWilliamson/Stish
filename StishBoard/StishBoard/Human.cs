@@ -22,89 +22,8 @@ namespace StishBoard
 
         private void HumanMoveUnit()
         {
-            //will use the user interface to ask the player which unit they want to move and where to. it will call MoveUnit(from , to) in Player class to make from's position empty. it will set to's position to a unit or barracks.
-            //need to make sure there is a friendly Unit at the 'from' posititon
-            while (true)
-            {               
-                try
-                {
-                    Console.WriteLine("\nWhat Unit would you like to move? \n X co-ordinate:");
-                    uint UnitX = UInt32.Parse(Console.ReadLine());
-                    Console.WriteLine(" Y co-ordinate:");
-                    uint UnitY = UInt32.Parse(Console.ReadLine());
-
-                    //if and else statement to make sure there is a friendly Unit in the given spot
-                    Square MoveFrom = board.getSquare(UnitX, UnitY);
-                    if (MoveFrom.Dep.DepType == "Unit" && MoveFrom.Dep.OwnedBy == this)
-                    {
-                        //selected spot is a friendly unit
-
-                        Console.WriteLine("Where would you like to move this unit to? \n X co-ordinate:");
-                        uint MoveX = UInt32.Parse(Console.ReadLine());
-                        Console.WriteLine(" Y co-ordinate:");
-                        uint MoveY = UInt32.Parse(Console.ReadLine());
-                        Square MoveTo = board.getSquare(MoveX, MoveY);
-
-                        //events on moving a unit
-                        if ((MoveX < 0 || MoveX > 11) || (MoveY < 0 || MoveY > 11))
-                        {
-                            //does not move. position does not exist on the board
-                            Console.WriteLine("Please Enter co-ordinates that are on the board \nPress [ENTER] to continue");
-                            Console.ReadLine();
-                        }                        
-                        else if ((MoveTo.Dep.DepType == "Unit" && MoveTo.Dep.OwnedBy == this) || (MoveTo.Dep.DepType == "Barracks" && MoveTo.Dep.OwnedBy == this))
-                        {
-                            //does not move. friendly barracks or unit occupies this square
-                            Console.WriteLine("You cannot move onto an occupied friendly square \nPress [ENTER] to continue");
-                            Console.ReadLine();
-                        }
-                        else if (MoveTo.Dep.DepType == "Unit" && MoveTo.Dep.OwnedBy != this)
-                        {
-                            //COMBAT against Unit, only moves to square if it wins the fight
-                            Console.WriteLine("combat test! Unit! \nPress [ENTER] to continue");
-                            Console.ReadLine();
-
-
-                            //break because move was vaild
-                            break;
-                        }
-                        else if (MoveTo.Dep.DepType == "Barracks" && MoveTo.Dep.OwnedBy != this)
-                        {
-                            //COMBAT against Barracks, moves to square infront of barracks if the Unit doesnt die
-                            Console.WriteLine("combat test! Barracks! \nPress [ENTER] to continue");
-                            Console.ReadLine();
-
-
-                            //break because move was vaild
-                            break;
-                        }
-                        else if (MoveTo.Dep.DepType == "Empty")
-                        {
-                            //moves with only territory impact
-                            PlayerCrane(UnitX, UnitY, MoveX, MoveY);
-                            Console.WriteLine("Empty! Unit will move! \nPress [ENTER] to continue");
-                            Console.ReadLine();
-
-
-                            //break because move was vaild
-                            break;
-                        }
-                    }
-                    else
-                    {
-                        //selected spot is not a friendly unit
-                        Console.WriteLine("Please enter the Co-ordinates of a friendly Unit \nPress [ENTER] to continue");
-                        Console.ReadLine();
-                    }
-                }
-                catch
-                {
-                    //process crashed due to invalid input / attempting to parse a non int variable
-                    Console.WriteLine("Please enter a valid answer \nPress [ENTER] to continue");
-                    Console.ReadLine();
-                }
-            }
-            
+            Movement m = new Movement(this);
+            m.HumanMoveUnit();
 
         }
 
@@ -118,58 +37,69 @@ namespace StishBoard
                 try
                 {
                     //test that cost cannot be negative
-                    Console.WriteLine("how much money would you like to spend?");
+                    Console.WriteLine("how much money would you like to spend? \n(Enter '0' to go back)");
                     cost = UInt32.Parse(Console.ReadLine());
-                    if (Balance >= cost)
+                    if(cost == 0)
                     {
-                        Balance = Balance - cost;
-                    }
-
-                    Console.WriteLine("Where would you like to place this unit? \n X co-ordinate:");
-                    uint placeX = UInt32.Parse(Console.ReadLine());
-                    Console.WriteLine(" Y co-ordinate:");
-                    uint placeY = UInt32.Parse(Console.ReadLine());
-
-                    Square Place = board.getSquare(placeX, placeY);
-
-
-                    //events on moving a unit
-                    // create a single fuction for movement criteria
-                    //move class and objects
-
-
-
-                    if ((placeX < 0 || placeX > 11) || (placeY < 0 || placeY > 11))
-                    {
-                        //does not move. position does not exist on the board
-                        Console.WriteLine("Please Enter co-ordinates that are on the board \nPress [ENTER] to continue");
+                        Console.WriteLine("Returning to menu \nPress [ENTER] to continue");
                         Console.ReadLine();
-                    }
-                    else if ((Place.Dep.DepType == "Unit") || (Place.Dep.DepType == "Barracks"))
-                    {
-                        //does not move. friendly barracks or unit occupies this square
-                        Console.WriteLine("You cannot move onto an occupied space \nPress [ENTER] to continue");
-                        Console.ReadLine();
-                    }
-                    /*else if (Place.Dep.OwnedBy != this)
-                    {
-                        //does not move. friendly barracks or unit occupies this square
-                        Console.WriteLine("You can only move onto a friendly space \nPress [ENTER] to continue");
-                        Console.ReadLine();
-                    }
-                    */
-                    else if ((Place.Dep.DepType == "Empty") /*&& (Place.Dep.OwnedBy == this)*/)
-                    {
-                        //moves with only territory impact
-                        new Unit(this, board.getSquare(placeX, placeY));
-
-                        Console.WriteLine("a new Unit has been placed \nPress [ENTER] to continue");
-                        Console.ReadLine();
-                        //break because move was vaild
                         Cont = false;
                     }
+                    else if (Balance >= cost)
+                    {
+                        //cost will be deducted when the unit is actually placed
+
+                        Console.WriteLine("Where would you like to place this unit? \n X co-ordinate:");
+                        uint placeX = UInt32.Parse(Console.ReadLine());
+                        Console.WriteLine(" Y co-ordinate:");
+                        uint placeY = UInt32.Parse(Console.ReadLine());
+
+                        Square Place = board.getSquare(placeX, placeY);
 
 
+                        //events on moving a unit
+                        // create a single fuction for movement criteria
+                        //move class and objects
+
+
+
+                        if ((placeX < 0 || placeX > 11) || (placeY < 0 || placeY > 11))
+                        {
+                            //cannot be placed. position does not exist on the board
+                            Console.WriteLine("Please Enter co-ordinates that are on the board \nPress [ENTER] to continue");
+                            Console.ReadLine();
+                        }
+                        else if (Place.Dep.DepType != "Empty")
+                        {
+                            //cannot be placed. a barracks or unit occupies this square
+                            Console.WriteLine("You cannot place a unit onto an occupied space \nPress [ENTER] to continue");
+                            Console.ReadLine();
+                        }
+                        else if (Place.Owner != this)
+                        {
+                            //cannot be placed. this square is not owned by the player
+                            Console.WriteLine("You can only place a unit onto a friendly square \nPress [ENTER] to continue");
+                            Console.ReadLine();
+                        }                        
+                        else if ((Place.Dep.DepType == "Empty") && (Place.Owner == this))
+                        {
+                            //is placed
+                            Balance = Balance - cost;
+                            new Unit(this, board.getSquare(placeX, placeY));
+
+                            Console.WriteLine("a new Unit has been placed \nPress [ENTER] to continue");
+                            Console.ReadLine();
+                            //break because move was vaild
+                            Cont = false;
+                        }
+
+
+                    }
+                    else
+                    {
+                        Console.WriteLine("You do not have this much money");
+                    }
+                
 
                 }
                 catch
@@ -191,11 +121,87 @@ namespace StishBoard
 
         private void BuyBarracks()
         {
+            //ask how much the player wants to spend           
+            string ans;
+            bool Cont = true;
+            do
+            {
+                try
+                {
+                    //test that cost cannot be negative
+                    Console.WriteLine("This will cost 5 money. \nEnter '1' to Continue or Enter '0' to go back");
+                    ans = Console.ReadLine();
+                    if (ans == "0")
+                    {
+                        Console.WriteLine("Returning to menu \nPress [ENTER] to continue");
+                        Console.ReadLine();
+                        Cont = false;
+                    }
+                    else if (ans == "1")
+                    {
+                        //cost will be deducted when the unit is actually placed
 
+                        Console.WriteLine("Where would you like to place this Barracks? \n X co-ordinate:");
+                        uint placeX = UInt32.Parse(Console.ReadLine());
+                        Console.WriteLine(" Y co-ordinate:");
+                        uint placeY = UInt32.Parse(Console.ReadLine());
+
+                        Square Place = board.getSquare(placeX, placeY);
+
+                        if ((placeX < 0 || placeX > 11) || (placeY < 0 || placeY > 11))
+                        {
+                            //cannot be placed. position does not exist on the board
+                            Console.WriteLine("Please Enter co-ordinates that are on the board \nPress [ENTER] to continue");
+                            Console.ReadLine();
+                        }
+                        else if (Place.Dep.DepType != "Empty")
+                        {
+                            //cannot be placed. a barracks or unit occupies this square
+                            Console.WriteLine("You cannot place a barracks onto an occupied space \nPress [ENTER] to continue");
+                            Console.ReadLine();
+                        }
+                        else if (Place.Owner != this)
+                        {
+                            //cannot be placed. this square is not owned by the player
+                            Console.WriteLine("You can only place a barracks onto a friendly square \nPress [ENTER] to continue");
+                            Console.ReadLine();
+                        }
+                        else if ((Place.Dep.DepType == "Empty") && (Place.Owner == this))
+                        {
+                            //is placed
+                            Balance -= 5;
+                            new Barracks(this, board.getSquare(placeX, placeY));
+
+                            Console.WriteLine("a new Barracks has been placed \nPress [ENTER] to continue");
+                            Console.ReadLine();
+                            //break because move was vaild
+                            Cont = false;
+                        }
+
+
+                    }
+                    else
+                    {
+                        Console.WriteLine("You do not have this much money");
+                    }
+
+
+                }
+                catch
+                {
+                    //process crashed due to invalid input / attempting to parse a non int variable
+                    Console.WriteLine("Please enter a valid answer \nPress [ENTER] to continue");
+                    Console.ReadLine();
+                }
+
+            } while (Cont == true);
         }
 
         public override void MakeMove()
         {
+
+            //MovementPoints are set to max MP at the start of the turn
+            MaxMP();
 
             //things to do in a turn: move a unit, buy a unit (and place it), buy a barracks (and place it), end their turn.
             bool EndTurn = false;
@@ -207,7 +213,7 @@ namespace StishBoard
 
                 board.Render();
                 
-                Console.WriteLine("\nPress the Corrosponding number to act: \n 1. Move a unit \n 2. Buy a unit (and place it) \n 3. Buy a barracks (and place it) \n 4. End your turn");
+                Console.WriteLine("\nPress the Corrosponding number to act: \n 1. Move a unit \n 2. Buy a unit \n 3. Buy a barracks \n 4. End your turn");
 
                 try
                 {
@@ -220,11 +226,12 @@ namespace StishBoard
                             break;
                         case Action.BuyUnit:
                             //buy a unit (and place it)
+                            //as long as one friendly unit is on the board
                             BuyUnit();
                             break;
                         case Action.BuyBarracks:
                             //buy a barracks (and place it)
-
+                            BuyBarracks();
                             break;
                         case Action.EndTurn:
                             //end player's turn

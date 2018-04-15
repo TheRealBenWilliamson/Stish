@@ -50,11 +50,21 @@ namespace StishBoard
         //creates a public render method called "Render" which utilises the 'helper' class to draw the squares into the console. it creates the *shell* of the square and fills it with whatever the square actually contains. 
         public void Render(int x, int y)
         {
+            if (Owner != null)
+            {
+                System.Console.ForegroundColor = Owner.GetRenderColour();
+            }
             //the x coordinate is multiplied by four since each "square" on the board consists of 4 ascii characters.
             x = x * 4;
             Helper.StishWrite(x, y, "[");
+            Console.ResetColor();
             dep.Render(x+1, y);
+            if (Owner != null)
+            {
+                System.Console.ForegroundColor = Owner.GetRenderColour();
+            }
             Helper.StishWrite(x+2, y, "] ");
+            Console.ResetColor();
 
             return;
         }
