@@ -9,9 +9,6 @@ namespace StishBoard
     public class Unit : Deployment
     {
 
-        //Health represents the amount of damage a unit can deal or absorb. when it reaches 0, the unit dies.
-        uint Health;
-
         //constructor: gives the new object it's variable values to represent that it contains a unit
         public Unit()
         {

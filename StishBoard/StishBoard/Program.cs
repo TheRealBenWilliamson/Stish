@@ -40,6 +40,8 @@ namespace StishBoard
             //not sure if this change is right, there used to be parameter values that did next to nothing ...   board.Render(0, 0);
             P1.MakeMove();
 
+            P1.MakeMove();
+
             Console.Clear();
             board.Render();
 

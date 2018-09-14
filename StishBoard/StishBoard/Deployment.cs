@@ -21,6 +21,11 @@ namespace StishBoard
         //only a Unit should have more than 0 MP. a unit has the potential to move one square for every movement point it possesses. a unit is constructed with 0 MP but has them fully reset at the start of a turn. the max MP of a unit should be changed throughout testing and balancing in the "RefreshMP" function
         protected uint MovementPoints;
 
+        //giving health to all Dep types
+        ////Health represents the amount of damage a unit can deal or absorb. when it reaches 0, the Dep dies.
+        //all Deps can die except Empty
+        uint Health;
+
         //ownedby Enums would be better than using strings to identify which player owns a square
         //public enum Owner { Null, Player1, Player2 };
         //protected Owner ownedby;

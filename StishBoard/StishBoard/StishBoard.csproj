@@ -45,6 +45,7 @@
     <Compile Include="Barracks.cs" />
     <Compile Include="Base.cs" />
     <Compile Include="Computer.cs" />
+    <Compile Include="Cursor.cs" />
     <Compile Include="Deployment.cs" />
     <Compile Include="Empty.cs" />
     <Compile Include="Helper.cs" />

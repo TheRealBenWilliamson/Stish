@@ -13,7 +13,9 @@ namespace StishBoard
 
         }
 
-        public enum Action { MoveUnit, BuyUnit, BuyBarracks, EndTurn };
+        //Option helps use enums for the player making number corrosponding branching choices
+        public enum Option { opt0, opt1, opt2, opt3 };
+        public enum Action { MoveUnit, BuyUnit, BuyBarracks, EndTurn};
 
         //by now a board should already have been created. StishBoard.Instance allows us to get a reference to the existing board.
         StishBoard board = StishBoard.Instance;
@@ -122,69 +124,72 @@ namespace StishBoard
         private void BuyBarracks()
         {
             //ask how much the player wants to spend           
-            string ans;
             bool Cont = true;
-            do
+            if(balance < 5)
+            {
+                Cont = false;
+                Console.WriteLine("This will cost 5 money. you cannot afford this. \nPress [ENTER] to continue");
+                Console.ReadLine();
+            }
+
+            while (Cont == true)
             {
                 try
                 {
                     //test that cost cannot be negative
                     Console.WriteLine("This will cost 5 money. \nEnter '1' to Continue or Enter '0' to go back");
-                    ans = Console.ReadLine();
-                    if (ans == "0")
+                    Option ans = (Option)((Int32.Parse(Console.ReadLine())));
+                    switch (ans)
                     {
-                        Console.WriteLine("Returning to menu \nPress [ENTER] to continue");
-                        Console.ReadLine();
-                        Cont = false;
-                    }
-                    else if (ans == "1")
-                    {
-                        //cost will be deducted when the unit is actually placed
-
-                        Console.WriteLine("Where would you like to place this Barracks? \n X co-ordinate:");
-                        uint placeX = UInt32.Parse(Console.ReadLine());
-                        Console.WriteLine(" Y co-ordinate:");
-                        uint placeY = UInt32.Parse(Console.ReadLine());
-
-                        Square Place = board.getSquare(placeX, placeY);
-
-                        if ((placeX < 0 || placeX > 11) || (placeY < 0 || placeY > 11))
-                        {
-                            //cannot be placed. position does not exist on the board
-                            Console.WriteLine("Please Enter co-ordinates that are on the board \nPress [ENTER] to continue");
+                        case Option.opt0:
+                            Console.WriteLine("Returning to menu \nPress [ENTER] to continue");
                             Console.ReadLine();
-                        }
-                        else if (Place.Dep.DepType != "Empty")
-                        {
-                            //cannot be placed. a barracks or unit occupies this square
-                            Console.WriteLine("You cannot place a barracks onto an occupied space \nPress [ENTER] to continue");
-                            Console.ReadLine();
-                        }
-                        else if (Place.Owner != this)
-                        {
-                            //cannot be placed. this square is not owned by the player
-                            Console.WriteLine("You can only place a barracks onto a friendly square \nPress [ENTER] to continue");
-                            Console.ReadLine();
-                        }
-                        else if ((Place.Dep.DepType == "Empty") && (Place.Owner == this))
-                        {
-                            //is placed
-                            Balance -= 5;
-                            new Barracks(this, board.getSquare(placeX, placeY));
-
-                            Console.WriteLine("a new Barracks has been placed \nPress [ENTER] to continue");
-                            Console.ReadLine();
-                            //break because move was vaild
                             Cont = false;
-                        }
+                            break;
 
+                        case Option.opt1:
+                            //cost will be deducted when the unit is actually placed
 
+                            Console.WriteLine("Where would you like to place this Barracks? \n X co-ordinate:");
+                            uint placeX = UInt32.Parse(Console.ReadLine());
+                            Console.WriteLine(" Y co-ordinate:");
+                            uint placeY = UInt32.Parse(Console.ReadLine());
+
+                            Square Place = board.getSquare(placeX, placeY);
+
+                            if ((placeX < 0 || placeX > 11) || (placeY < 0 || placeY > 11))
+                            {
+                                //cannot be placed. position does not exist on the board
+                                Console.WriteLine("Please Enter co-ordinates that are on the board \nPress [ENTER] to continue");
+                                Console.ReadLine();
+                            }
+                            else if (Place.Dep.DepType != "Empty")
+                            {
+                                //cannot be placed. a barracks or unit occupies this square
+                                Console.WriteLine("You cannot place a barracks onto an occupied space \nPress [ENTER] to continue");
+                                Console.ReadLine();
+                            }
+                            else if (Place.Owner != this)
+                            {
+                                //cannot be placed. this square is not owned by the player
+                                Console.WriteLine("You can only place a barracks onto a friendly square \nPress [ENTER] to continue");
+                                Console.ReadLine();
+                            }
+                            else if ((Place.Dep.DepType == "Empty") && (Place.Owner == this))
+                            {
+                                //is placed
+                                Balance -= 5;
+                                new Barracks(this, board.getSquare(placeX, placeY));
+
+                                Console.WriteLine("a new Barracks has been placed \nPress [ENTER] to continue");
+                                Console.ReadLine();
+                                //break because move was vaild
+                                Cont = false;
+                            }
+
+                            break;
                     }
-                    else
-                    {
-                        Console.WriteLine("You do not have this much money");
-                    }
-
+                    
 
                 }
                 catch
@@ -194,7 +199,7 @@ namespace StishBoard
                     Console.ReadLine();
                 }
 
-            } while (Cont == true);
+            } 
         }
 
         public override void MakeMove()
