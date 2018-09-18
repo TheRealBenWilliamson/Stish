@@ -11,7 +11,7 @@ namespace StishBoard
         //the cursor is not a deployment type calss as it has no owner, health, or icon.
         //cursor can be controlled by the player on their turn.
         //the cursor is always in one of two modes, free or locked.
-        //the free cursor will be yellow and can be moved about the board freely, it does not change any game elements and is used to "land" the static cursor and show the information of squares beneath it.
+        //the free cursor will be yellow and can be moved about the board freely, it does not change any game elements and is used to "land" the Locked cursor and show the information of squares beneath it.
         //the locked cursor will be green and is used to depict which square on the board is being munipulated. the static cursor can only be ontop of a friendly unit.
         //the cursor can only be toggled above friendly territory.
 
@@ -20,9 +20,29 @@ namespace StishBoard
         /*functions:
         movement that splits off to the appropriate "locked" or "free" functions
         free movment
-        locked movement (uses a black list array to determine where the unit cant 
-
+        locked movement (Checks adjacent squares to see what will happen upon moving onto that square. the action is determined by the deptype and owner of the sqaure)
+        detection to discover what surrounds the cursor
+        evaluation to tell the user what surrounds the cursor
+        render
         */
+
+        //the Cursor is a singleton
+        private static Cursor instance;
+
+        public static Cursor Instance
+        {
+            get
+            {
+                if (instance == null)
+                {
+                    instance = new Cursor();
+                }
+                return instance;
+            }
+        }
+
+        StishBoard board = StishBoard.Instance;
+
 
         private uint Xco = 0;
         private uint Yco = 0;
@@ -30,47 +50,158 @@ namespace StishBoard
         public Mode mode = Mode.free;
 
 
-        
-        public enum Cardinal { can,cant,attack }
+        //this is purely cosmetic and helps describe the squares surrounding the cursor
+        //it is not done yet
+        public enum SquareType { Empty, Edge, FUnit, EUnit, FBarracks, EBarracks, FBase, EBase}
 
-        public Cardinal Detect(Cardinal Up, Cardinal Right, Cardinal Down, Cardinal Left)
+        public SquareType Cardinal(SquareType Centre, SquareType Up, SquareType Right, SquareType Down, SquareType Left)
         {
+            Centre = 0;
             Up = 0;
             Right = 0;
             Down = 0;
             Left = 0;
             return Left;
-
         }
 
-        public void FreeMove()
+        public void Render(int x, int y)
+        {
+            System.Console.ForegroundColor = ConsoleColor.Green;
+            x = x * 4;
+            Helper.StishWrite(x, y, "[");
+            Helper.StishWrite(x + 2, y, "] ");
+            Console.ResetColor();
+        }
+
+        public void Drag(uint FromX, uint FromY, uint ToX, uint ToY, Player MyPlayer)
+        {
+            Square From = board.getSquare(FromX, FromY);
+            Square To = board.getSquare(ToX, ToY);
+
+            From.Owner = MyPlayer;
+            To.Owner = MyPlayer;
+
+            To.Dep = From.Dep;
+            From.Dep = new Empty();
+        }
+
+
+        public void CheckSQ(uint XCheck, uint YCheck , Player MyPlayer)
+        {
+            String CheckDep = board.getSquare(XCheck, YCheck).Dep.DepType;
+            Player Owner = board.getSquare(XCheck, YCheck).Dep.OwnedBy;
+            if (CheckDep == "Empty")
+            {
+                //drag
+            }
+            else if ((CheckDep == "Unit" || CheckDep == "Barracks") && (Owner != MyPlayer))
+            {
+                //attack
+            }
+            else if (CheckDep == "Barracks" && Owner == MyPlayer)
+            {
+                //destroy the barracks
+            }
+        }
+
+        public bool Land(uint XCheck, uint YCheck, Player MyPlayer)
+        {
+            if (board.getSquare(XCheck, YCheck).Dep.DepType == "Unit" && board.getSquare(XCheck, YCheck).Dep.OwnedBy == MyPlayer)
+            {
+                return true;
+            }
+            else return false;
+        }
+
+        //coordinates are uints so anything less than 0 will overflow
+        public bool OnBoard(uint numX, uint numY)
+        {
+            if ((numX < 11) && (numY < 11))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public void Move(Player ConPlayer)
         {
             System.ConsoleKey put = Console.ReadKey(true).Key;
-            
+            uint ChangeX = Xco;
+            uint ChangeY = Yco;
+
             if (put == ConsoleKey.W)
             {
-                Yco += 1;
+                ChangeY += 1;
             }
             else if (put == ConsoleKey.A)
             {
-                Xco += 1;
+                ChangeX -= 1;
             }
             else if (put == ConsoleKey.S)
             {
-                Yco -= 1;
+                ChangeY -= 1;
             }
             else if (put == ConsoleKey.D)
             {
-                Xco -= 1;
+                ChangeX += 1;
             }
             else if (put == ConsoleKey.Spacebar)
             {
-                mode = Mode.locked;
+                //free
+                if (mode == Mode.free)
+                {
+                    //can only be done on a friendly Unit
+                    if (Land(ChangeX, ChangeY, ConPlayer) == true)
+                    {
+                        mode = Mode.locked;
+                    }
+                }
+
+                //locked
+                if (mode == Mode.locked)
+                {
+                    //can be done anytime
+                    mode = Mode.free;
+                }
+
             }
+            else if (put == ConsoleKey.Enter)
+            {
+                //End Turn
+                
+            }
+
+            if(OnBoard(ChangeX,ChangeY) == true)
+            {
+                //free
+                if (mode == Mode.free)
+                {
+                    Xco = ChangeX;
+                    Yco = ChangeY;
+                    Console.WriteLine(Xco);
+                    Console.WriteLine(Yco);
+                    Render((int)Xco, (int)Yco);
+                }
+
+                //locked
+                if (mode == Mode.locked)
+                {
+                    CheckSQ(ChangeX, ChangeY, ConPlayer);
+                }
+
+            }
+            else
+            {
+                //move was not valid
+            }
+
         }
 
 
-
+        
 
         
     }

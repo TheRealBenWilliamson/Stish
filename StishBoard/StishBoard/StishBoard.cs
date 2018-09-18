@@ -88,6 +88,7 @@ namespace StishBoard
                     array[x, y].Render(x, y);
                 }
             }
+
         }
 
 

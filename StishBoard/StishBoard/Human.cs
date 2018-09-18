@@ -19,6 +19,7 @@ namespace StishBoard
 
         //by now a board should already have been created. StishBoard.Instance allows us to get a reference to the existing board.
         StishBoard board = StishBoard.Instance;
+        Cursor cursor = Cursor.Instance;
 
         //define methods for the player's move
 
@@ -202,6 +203,19 @@ namespace StishBoard
             } 
         }
 
+
+        public override void MakeMove()
+        {
+            while (true)
+            {
+                cursor.Move(this);
+                board.Render();
+            }
+        }
+
+
+
+        /*
         public override void MakeMove()
         {
 
@@ -264,6 +278,7 @@ namespace StishBoard
             }
 
         }
+        */
 
     }
 }

@@ -15,7 +15,7 @@ namespace StishBoard
 
         public override void MakeMove()
         {
-
+            
         }
 
     }

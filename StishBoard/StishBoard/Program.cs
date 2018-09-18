@@ -12,6 +12,7 @@ namespace StishBoard
         {
             //creates a board from the StishBoard class called "board" by calling the public 'Instance' method.
             StishBoard board = StishBoard.Instance;
+            Cursor cursor = Cursor.Instance;
 
             Player P1;
             P1 = Player.PlayerFactory(Player.PlayerNumber.Player1, Player.PlayerType.Human);
