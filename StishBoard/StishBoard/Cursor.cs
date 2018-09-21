@@ -64,13 +64,27 @@ namespace StishBoard
             return Left;
         }
 
-        public void Render(int x, int y)
+        public void Render()
         {
-            System.Console.ForegroundColor = ConsoleColor.Green;
+            if(mode == Mode.free)
+            {
+                System.Console.ForegroundColor = ConsoleColor.Green;
+            }
+            else
+            {
+                System.Console.ForegroundColor = ConsoleColor.DarkGreen;
+            }
+            
+            int x = (int)Xco;
+            int y = (int)Yco;
             x = x * 4;
-            Helper.StishWrite(x, y, "[");
-            Helper.StishWrite(x + 2, y, "] ");
+            Console.SetCursorPosition(x, y + 2);
+            Console.WriteLine("[");
+            Console.SetCursorPosition(x + 2, y + 2);
+            Console.WriteLine("] ");
             Console.ResetColor();
+            Console.SetCursorPosition(0, 13);
+
         }
 
         public void Drag(uint FromX, uint FromY, uint ToX, uint ToY, Player MyPlayer)
@@ -134,7 +148,7 @@ namespace StishBoard
 
             if (put == ConsoleKey.W)
             {
-                ChangeY += 1;
+                ChangeY -= 1;
             }
             else if (put == ConsoleKey.A)
             {
@@ -142,7 +156,7 @@ namespace StishBoard
             }
             else if (put == ConsoleKey.S)
             {
-                ChangeY -= 1;
+                ChangeY += 1;
             }
             else if (put == ConsoleKey.D)
             {
@@ -181,9 +195,7 @@ namespace StishBoard
                 {
                     Xco = ChangeX;
                     Yco = ChangeY;
-                    Console.WriteLine(Xco);
-                    Console.WriteLine(Yco);
-                    Render((int)Xco, (int)Yco);
+                    Render();
                 }
 
                 //locked

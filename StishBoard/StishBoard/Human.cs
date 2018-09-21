@@ -210,6 +210,7 @@ namespace StishBoard
             {
                 cursor.Move(this);
                 board.Render();
+                cursor.Render();
             }
         }
 
