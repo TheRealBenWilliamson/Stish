@@ -20,7 +20,7 @@ namespace StishBoard
 
         //units will have to have another argument in the constructor that gives them a value for their health
 
-        public Unit(Player player, Square square)
+        public Unit(Player player, Square square, uint Health)
         {
             //add health
             depType = "Unit";
@@ -30,6 +30,7 @@ namespace StishBoard
             square.Owner = player;
             MP = 0;
 
+            Health = Health;
 
         }
 

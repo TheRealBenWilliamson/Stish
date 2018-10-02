@@ -71,16 +71,24 @@ namespace StishBoard
         public Square getSquare(uint row, uint col)
         {
             //TO DO: add error handling of arguments that are out of range of the array.
-            return array[row, col];           
+            try
+            {
+                return array[row, col];
+            }
+            catch
+            {
+                return null;
+            }
+                       
         }
 
         //creates a public render method called "Render" to render each of the squares to the console. it calls a Render method on each of the square objects held within 'array'.
         //not sure if this change is right (stolen from the arguments of Render() ) ...   int x, int y    
         public void Render()
         {
-           
-            Console.WriteLine("Player1 has: {0}" , player1.Balance);
-            Console.WriteLine("Player2 has: {0}" , player2.Balance);
+            Console.SetCursorPosition(0, 0);
+            Console.WriteLine("Player1 has: {0} Coins" , player1.Balance);
+            Console.WriteLine("Player2 has: {0} Coins" , player2.Balance);
             for (int y = 0; y < 11; y++)
             {
                 for (int x = 0; x < 11; x++)

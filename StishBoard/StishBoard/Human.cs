@@ -30,6 +30,8 @@ namespace StishBoard
 
         }
 
+        /*
+
         private void BuyUnit()
         {
             //ask how much the player wants to spend           
@@ -203,14 +205,16 @@ namespace StishBoard
             } 
         }
 
+        */
 
         public override void MakeMove()
         {
             while (true)
             {
-                cursor.Move(this);
+                Console.Clear();
                 board.Render();
                 cursor.Render();
+                cursor.Move(this);
             }
         }
 

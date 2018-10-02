@@ -24,7 +24,7 @@ namespace StishBoard
         //giving health to all Dep types
         ////Health represents the amount of damage a unit can deal or absorb. when it reaches 0, the Dep dies.
         //all Deps can die except Empty
-        uint Health;
+        protected uint Health;
 
         //ownedby Enums would be better than using strings to identify which player owns a square
         //public enum Owner { Null, Player1, Player2 };
@@ -37,6 +37,7 @@ namespace StishBoard
             Icon = " ";
             ownedBy = null;
             MovementPoints = 0;
+            Health = 0;
         }
 
         //an accessor so that a client can find what type of deployment this particular object is.
@@ -59,6 +60,8 @@ namespace StishBoard
                 ownedBy = value;
             }
         }
+
+        
 
         //MP stands for MovementPoints. this function should only be used on the Unit DepType
         public uint MP

@@ -35,11 +35,11 @@ namespace StishBoard
             //homeBase = new Base();
             if (playerNumber == PlayerNumber.Player1)
             {
-                new Base(this,board.getSquare(5, 9));
+                new Base(this,board.getSquare(5, 9), 20);
             }
             else
             {
-                new Base(this, board.getSquare(5, 1));
+                new Base(this, board.getSquare(5, 1), 20);
             }
         }
 

@@ -47,26 +47,47 @@ namespace StishBoard
         private uint Xco = 0;
         private uint Yco = 0;
         public enum Mode { free, locked }
-        public Mode mode = Mode.free;
+        private Mode mode = Mode.free;
+
+        public Mode GetMode()
+        {
+            return mode;
+        }
 
 
         //this is purely cosmetic and helps describe the squares surrounding the cursor
         //it is not done yet
         public enum SquareType { Empty, Edge, FUnit, EUnit, FBarracks, EBarracks, FBase, EBase}
 
-        public SquareType Cardinal(SquareType Centre, SquareType Up, SquareType Right, SquareType Down, SquareType Left)
+        public void TypeToString(Square check)
         {
-            Centre = 0;
-            Up = 0;
-            Right = 0;
-            Down = 0;
-            Left = 0;
-            return Left;
+            
+        }
+
+        public void Cardinal(uint Xc, uint Yc, uint Xu, uint Yu, uint Xr, uint Yr, uint Xd, uint Yd, uint Xl, uint Yl)
+        {
+            Square Centre, Up, Right, Down, Left;
+            Centre = board.getSquare(Xc,Yc);
+            Up = board.getSquare(Xu, Yu);
+            Right = board.getSquare(Xr, Yr);
+            Down = board.getSquare(Xd, Yd);
+            Left = board.getSquare(Xl, Yl);
+
+            //there is definately a better way to do this using for loops
+            //add more info
+            Console.SetCursorPosition(4 * 13, 2);
+            Console.WriteLine("Centre has: {2} Health, it is contains: {0} and belongs to: {1}", Centre.Dep, Centre.Owner, Centre.GetHealth);
+
         }
 
         public void Render()
         {
-            if(mode == Mode.free)
+            //Info
+            Cardinal(Xco, Yco, Xco, (Yco - 1), (Xco + 1), Yco, Xco, (Yco + 1), (Xco - 1), Yco);
+
+
+            //Cursor
+            if(GetMode() == Mode.free)
             {
                 System.Console.ForegroundColor = ConsoleColor.Green;
             }
@@ -100,22 +121,25 @@ namespace StishBoard
         }
 
 
-        public void CheckSQ(uint XCheck, uint YCheck , Player MyPlayer)
+        public bool Action(uint FromX, uint FromY, uint CheckX, uint CheckY , Player MyPlayer)
         {
-            String CheckDep = board.getSquare(XCheck, YCheck).Dep.DepType;
-            Player Owner = board.getSquare(XCheck, YCheck).Dep.OwnedBy;
-            if (CheckDep == "Empty")
+            //the bool output lets the caller know if the unit moved
+            bool Moved = false;
+            String CheckDep = board.getSquare(CheckX, CheckY).Dep.DepType;
+            Player Owner = board.getSquare(CheckX, CheckY).Dep.OwnedBy;
+            if ((CheckDep == "Empty") || (CheckDep == "Barracks" && Owner == MyPlayer))
             {
-                //drag
+                //drag or destroys a friendly barracks
+                Drag(Xco, Yco, CheckX, CheckY, MyPlayer);
+                Moved = true;
             }
             else if ((CheckDep == "Unit" || CheckDep == "Barracks") && (Owner != MyPlayer))
             {
                 //attack
+                //adjust health and then if the attacking unit won, use the drag function
             }
-            else if (CheckDep == "Barracks" && Owner == MyPlayer)
-            {
-                //destroy the barracks
-            }
+
+            return Moved;
         }
 
         public bool Land(uint XCheck, uint YCheck, Player MyPlayer)
@@ -138,10 +162,12 @@ namespace StishBoard
             {
                 return false;
             }
-        }
+        }       
 
         public void Move(Player ConPlayer)
         {
+            Render();
+
             System.ConsoleKey put = Console.ReadKey(true).Key;
             uint ChangeX = Xco;
             uint ChangeY = Yco;
@@ -173,9 +199,8 @@ namespace StishBoard
                         mode = Mode.locked;
                     }
                 }
-
                 //locked
-                if (mode == Mode.locked)
+                else if (mode == Mode.locked)
                 {
                     //can be done anytime
                     mode = Mode.free;
@@ -191,17 +216,20 @@ namespace StishBoard
             if(OnBoard(ChangeX,ChangeY) == true)
             {
                 //free
-                if (mode == Mode.free)
+                if (GetMode() == Mode.free)
                 {
                     Xco = ChangeX;
-                    Yco = ChangeY;
-                    Render();
+                    Yco = ChangeY;                  
                 }
 
                 //locked
-                if (mode == Mode.locked)
+                if (GetMode() == Mode.locked)
                 {
-                    CheckSQ(ChangeX, ChangeY, ConPlayer);
+                    if ( Action(Xco, Yco, ChangeX, ChangeY, ConPlayer) == true)
+                    {
+                        Xco = ChangeX;
+                        Yco = ChangeY;
+                    }
                 }
 
             }
@@ -209,6 +237,8 @@ namespace StishBoard
             {
                 //move was not valid
             }
+
+            
 
         }
 
