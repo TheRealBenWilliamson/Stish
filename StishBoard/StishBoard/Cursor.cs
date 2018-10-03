@@ -43,12 +43,15 @@ namespace StishBoard
 
         StishBoard board = StishBoard.Instance;
 
-
-        private uint Xco = 0;
-        private uint Yco = 0;
-        public enum Mode { free, locked }
-        private Mode mode = Mode.free;
-
+        private Cursor()
+        {
+            private uint Xco = 0;
+            private uint Yco = 0;
+            public enum Mode { free, locked }
+            private Mode mode = Mode.free;
+        }
+            
+        
         public Mode GetMode()
         {
             return mode;
@@ -72,11 +75,13 @@ namespace StishBoard
             Right = board.getSquare(Xr, Yr);
             Down = board.getSquare(Xd, Yd);
             Left = board.getSquare(Xl, Yl);
+            
+            String CheckDep = board.getSquare(CheckX, CheckY).Dep.DepType;
 
             //there is definately a better way to do this using for loops
             //add more info
             Console.SetCursorPosition(4 * 13, 2);
-            Console.WriteLine("Centre has: {2} Health, it is contains: {0} and belongs to: {1}", Centre.Dep, Centre.Owner, Centre.GetHealth);
+            Console.WriteLine("Centre has: {0} Health, it is contains: {1} and belongs to: {2}", Centre.GetHealth, board.Centre.Dep.DepType, Centre.Ownerh);
 
         }
 
