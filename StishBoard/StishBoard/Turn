@@ -1,0 +1,3 @@
+//Turn class
+//decides who's turn it is & keeps the game within win/loss conditions
+is responsible of board wide / player wide "game changes" as if it were an umpire
