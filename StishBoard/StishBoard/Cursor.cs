@@ -62,10 +62,6 @@ namespace StishBoard
         //it is not done yet
         public enum SquareType { Empty, Edge, FUnit, EUnit, FBarracks, EBarracks, FBase, EBase}
 
-        public void TypeToString(Square check)
-        {
-            
-        }
 
         public void Cardinal(uint Xc, uint Yc, uint Xu, uint Yu, uint Xr, uint Yr, uint Xd, uint Yd, uint Xl, uint Yl)
         {
@@ -81,7 +77,7 @@ namespace StishBoard
             //there is definately a better way to do this using for loops
             //add more info
             Console.SetCursorPosition(4 * 13, 2);
-            Console.WriteLine("Centre has: {0} Health, it is contains: {1} and belongs to: {2}", Centre.GetHealth, board.Centre.Dep.DepType, Centre.Ownerh);
+            Console.WriteLine("Centre has: {0} Health, it is contains: {1} and belongs to: {2}", Centre.GetHealth.ToString(), board.Centre.Dep.DepType.ToSting(), Centre.OwnedBy.ToString());
 
         }
 
@@ -113,7 +109,7 @@ namespace StishBoard
 
         }
 
-        public void Drag(uint FromX, uint FromY, uint ToX, uint ToY, Player MyPlayer)
+        private void Drag(uint FromX, uint FromY, uint ToX, uint ToY, Player MyPlayer)
         {
             Square From = board.getSquare(FromX, FromY);
             Square To = board.getSquare(ToX, ToY);
@@ -124,6 +120,19 @@ namespace StishBoard
             To.Dep = From.Dep;
             From.Dep = new Empty();
         }
+        
+        private void Attack(uint AttackX, uint AttackY, uint DefendX, uint DefendY, Player MyPlayer)
+        {
+            
+        }
+            
+            /*
+            From.Owner = MyPlayer;
+            To.Owner = MyPlayer;
+
+            To.Dep = From.Dep;
+            From.Dep = new Empty();
+            */       
 
 
         public bool Action(uint FromX, uint FromY, uint CheckX, uint CheckY , Player MyPlayer)
@@ -142,6 +151,24 @@ namespace StishBoard
             {
                 //attack
                 //adjust health and then if the attacking unit won, use the drag function
+                //i dont know if i want to use the drag function on an attack. i will wait until i test it to decide
+                //i dont have to redefine these squares but i think it helps the code read better
+                Square Attacker = board.getSquare(FromX, FromY);
+                Square Defender = board.getSquare(ToX, ToY);
+            
+                //checks who wins the combat: attacker or defender
+                //attacker wins
+                if(Attacker.GetHealth >= Defender.GetHealth)
+                {
+                    Attacker.GetHealth -= Defender.getHealth;
+                    Defender = new Empty();
+                }
+                //defender wins
+                else
+                {
+                    Defender.GetHealth -= Attacker.getHealth;
+                    Attacker = new Empty();
+                }
             }
 
             return Moved;
@@ -159,11 +186,11 @@ namespace StishBoard
         //coordinates are uints so anything less than 0 will overflow
         public bool OnBoard(uint numX, uint numY)
         {
-            if ((numX < 11) && (numY < 11))
+            try
             {
-                return true;
+                board.getSquare............
             }
-            else
+            catch
             {
                 return false;
             }
