@@ -56,6 +56,10 @@ namespace StishBoard
             {
                 return Health;
             }
+            set
+            {
+                Health = value;
+            }
         }
 
         //creates a public render method called "Render" which utilises the 'helper' class to draw the squares into the console. it creates the *shell* of the square and fills it with whatever the square actually contains. 
