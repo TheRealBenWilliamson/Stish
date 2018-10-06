@@ -37,7 +37,7 @@ namespace StishBoard
             Icon = " ";
             ownedBy = null;
             MovementPoints = 0;
-            Health = 0;
+            //Health is already passed through by the calling function
         }
 
         //an accessor so that a client can find what type of deployment this particular object is.

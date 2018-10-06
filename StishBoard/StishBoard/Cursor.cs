@@ -43,15 +43,12 @@ namespace StishBoard
 
         StishBoard board = StishBoard.Instance;
 
-        private Cursor()
-        {
-            private uint Xco = 0;
-            private uint Yco = 0;
-            public enum Mode { free, locked }
-            private Mode mode = Mode.free;
-        }
-            
-        
+        //this constructor is behaving wildly and is causing a lot of errors so i have removed it
+        private uint Xco = 0;
+        private uint Yco = 0;
+        public enum Mode { free, locked };
+        private Mode mode = Mode.free;
+
         public Mode GetMode()
         {
             return mode;
@@ -71,13 +68,35 @@ namespace StishBoard
             Right = board.getSquare(Xr, Yr);
             Down = board.getSquare(Xd, Yd);
             Left = board.getSquare(Xl, Yl);
-            
-            String CheckDep = board.getSquare(CheckX, CheckY).Dep.DepType;
 
-            //there is definately a better way to do this using for loops
-            //add more info
-            Console.SetCursorPosition(4 * 13, 2);
-            Console.WriteLine("Centre has: {0} Health, it is contains: {1} and belongs to: {2}", Centre.GetHealth.ToString(), board.Centre.Dep.DepType.ToSting(), Centre.OwnedBy.ToString());
+            if (Centre != null)
+            {
+                string CentreType;
+                if (Centre.Dep.DepType == null)
+                {
+                    CentreType = "Nothing";
+                }
+                else
+                {
+                    CentreType = Centre.Dep.DepType;
+                }
+
+                string CentreOwner;
+                if (Centre.Dep.OwnedBy == null)
+                {
+                    CentreOwner = "No One";
+                }
+                else
+                {
+                    CentreOwner = Centre.Dep.OwnedBy.ToString();
+                }
+
+                //there is definately a better way to do this using for loops
+                //add more info
+                Console.SetCursorPosition(4 * 13, 2);
+                Console.WriteLine("Centre has: {0} Health, it is contains: {1} and belongs to: {2}", Centre.GetHealth.ToString(), CentreType, CentreOwner);
+            }
+            
 
         }
 
@@ -154,20 +173,28 @@ namespace StishBoard
                 //i dont know if i want to use the drag function on an attack. i will wait until i test it to decide
                 //i dont have to redefine these squares but i think it helps the code read better
                 Square Attacker = board.getSquare(FromX, FromY);
-                Square Defender = board.getSquare(ToX, ToY);
+                Square Defender = board.getSquare(CheckX, CheckY);
             
                 //checks who wins the combat: attacker or defender
                 //attacker wins
-                if(Attacker.GetHealth >= Defender.GetHealth)
+                if(Attacker.GetHealth > Defender.GetHealth)
                 {
-                    Attacker.GetHealth -= Defender.getHealth;
-                    Defender = new Empty();
+                    Attacker.GetHealth -= Defender.GetHealth;
+                    Defender.Dep = new Empty();
                 }
                 //defender wins
+                else if (Attacker.GetHealth < Defender.GetHealth)
+                {
+                    Defender.GetHealth -= Attacker.GetHealth;
+                    Attacker.Dep = new Empty();
+                    mode = Mode.free;
+                }
+                //both have equal health
                 else
                 {
-                    Defender.GetHealth -= Attacker.getHealth;
-                    Attacker = new Empty();
+                    Attacker.Dep = new Empty();
+                    Defender.Dep = new Empty();
+                    mode = Mode.free;
                 }
             }
 
@@ -188,7 +215,16 @@ namespace StishBoard
         {
             try
             {
-                board.getSquare............
+                Square Check = board.getSquare(numX, numY);
+                if(Check != null)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+                
             }
             catch
             {
@@ -273,10 +309,14 @@ namespace StishBoard
             
 
         }
-
-
-        
-
-        
     }
 }
+
+
+
+
+        
+
+        
+    
+
