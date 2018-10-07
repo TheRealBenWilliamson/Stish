@@ -8,6 +8,9 @@ namespace StishBoard
 {
     class Program
     {
+        public enum Lost { Player1, Player2 };
+        public enum Turn { Player1, Player2 };
+
         static void Main(string[] args)
         {
             //creates a board from the StishBoard class called "board" by calling the public 'Instance' method.
@@ -25,32 +28,59 @@ namespace StishBoard
             board.Player1 = P1;
             board.Player2 = P2;
 
-            //creates a 'Square' object called "s1" and assigns it to position (1,1) on the board. it then tells s1 that it contains a barracks.
-            new Barracks(P1, board.getSquare(1, 1), 5);
-
-            //creates a 'Square' object called "s2" and assigns it to position (2,2) on the board. it then tells s2 that it contains a unit. 
-            new Unit(P2, board.getSquare(2, 2), 2);
-
-            //creates a 'Square' object called "s3" and assigns it to position (3,3) on the board. nothing is put inside s3 so it assumes that it is empty.
-            Square s3 = board.getSquare(3, 3);
-
-            //two units are created for move testing
-            new Unit(P1, board.getSquare(0, 0), 3);
-
-            new Unit(P2, board.getSquare(0, 1), 2);
-
-            //calls the Render function on the object "board". the Render function is called from the StishBoard class because "board" belongs to that class. this renders the board onto the console for the screen.
-            //not sure if this change is right, there used to be parameter values that did next to nothing ...   board.Render(0, 0);
-
-            Console.WriteLine(board.getSquare(1, 1).Owner.GetPlayerNum);
-
-
-            P1.MakeMove();
-
-            P2.MakeMove();
-
             Console.Clear();
             board.Render();
+
+            //game loop takes place here
+            bool GameEnd = false;
+            Lost lost = 0;
+            Turn turn = Turn.Player1;
+            while (GameEnd == false)
+            {
+                //checks if a base has been destroyed. if one has then the other player has won.
+                //if not then alternate player turns
+                if(board.getSquare(5, 9).Dep.Health < 1)
+                {
+                    //Player1 has lost
+                    GameEnd = true;
+                    lost = Lost.Player1;
+                }
+                else if (board.getSquare(5, 1).Dep.Health < 1)
+                {
+                    //Player2 has lost
+                    GameEnd = true;
+                    lost = Lost.Player2;
+                }
+                else
+                {
+                    //Game Continues
+                    if(turn == Turn.Player1)
+                    {
+                        P1.TurnBalance();
+                        P1.MaxMP();
+                        cursor.FindX = P1.CursorX;
+                        cursor.FindY = P1.Cursory;
+                        P1.MakeMove();
+                        turn++;
+                    }
+                    else if (turn == Turn.Player2)
+                    {
+                        P2.TurnBalance();
+                        P2.MaxMP();
+                        cursor.FindX = P2.CursorX;
+                        cursor.FindY = P2.Cursory;
+                        P2.MakeMove();
+                        turn--;
+                    }
+                }
+                
+
+            }
+
+            Console.WriteLine("{0} HAS WON THE GAME \nPRESS <ENTER> TO KILL THE PROGRAM", lost.ToString());
+            Console.ReadLine();
+
+            
 
         }
     }

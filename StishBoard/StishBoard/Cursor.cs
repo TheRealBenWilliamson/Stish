@@ -51,11 +51,42 @@ namespace StishBoard
         public enum Purchase { Barracks, Unit };
         private Purchase purchase;
 
-        public Mode GetMode()
+        public Mode CursorMode
         {
-            return mode;
+            get
+            {
+                return mode;
+            }
+            set
+            {
+                mode = value;
+            }
+            
         }
 
+        public uint FindX
+        {
+            get
+            {
+                return Xco;
+            }
+            set
+            {
+                Xco = value;
+            }
+        }
+
+        public uint FindY
+        {
+            get
+            {
+                return Yco;
+            }
+            set
+            {
+                Yco = value;
+            }
+        }
 
 
         //this is purely cosmetic and helps describe the squares surrounding the cursor
@@ -115,7 +146,7 @@ namespace StishBoard
                     //repeat for all cardinal directions
                     //add movement points
                     Console.SetCursorPosition(4 * 13, (card + 2));
-                    Console.WriteLine("{0} has: {1} Health, it is contains: {2} and belongs to: {3}", CardinalString[card],Check.Dep.Health.ToString(), CheckType, CheckOwner);
+                    Console.WriteLine("{0} has: {1} Health, it is contains: {2} , belongs to: {3} and has {4} Movement Points", CardinalString[card],Check.Dep.Health.ToString(), CheckType, CheckOwner, Check.Dep.MP.ToString());
                 }
 
             
@@ -130,7 +161,7 @@ namespace StishBoard
             Cardinal(Xco, Yco, Xco, (Yco - 1), (Xco + 1), Yco, Xco, (Yco + 1), (Xco - 1), Yco, Cont);
         
             //Cursor
-            if (GetMode() == Mode.free)
+            if (CursorMode == Mode.free)
             {
                 System.Console.ForegroundColor = ConsoleColor.Green;
             }
@@ -173,8 +204,13 @@ namespace StishBoard
             if ((CheckDep == "Empty") || (CheckDep == "Barracks" && Owner == MyPlayer))
             {
                 //drag or destroys a friendly barracks
-                Drag(Xco, Yco, CheckX, CheckY, MyPlayer);
-                Moved = true;
+                if(board.getSquare(FromX, FromY).Dep.MP > 0)
+                {
+                    board.getSquare(FromX, FromY).Dep.MP--;
+                    Drag(Xco, Yco, CheckX, CheckY, MyPlayer);
+                    Moved = true;
+                }
+                
             }
             else if ((CheckDep == "Unit" || CheckDep == "Barracks" || CheckDep == "Base") && (Owner != MyPlayer))
             {
@@ -194,6 +230,7 @@ namespace StishBoard
                     if (CheckDep == "Barracks")
                     {
                         board.getSquare(CheckX, CheckY).Dep.OwnedBy = MyPlayer;
+                        board.getSquare(CheckX, CheckY).Owner = MyPlayer;
                     }
                     else
                     {                       
@@ -300,100 +337,95 @@ namespace StishBoard
             }
         }
 
-        public void Move(Player ConPlayer)
-        {
-            bool EndTurn = false;
-            do
-            {               
-                Console.Clear();
-                board.Render();
-                Render(ConPlayer);
+        public void Move(Player ConPlayer, string input)
+        {            
 
-                System.ConsoleKey put = Console.ReadKey(true).Key;
-                uint ChangeX = Xco;
-                uint ChangeY = Yco;
+            uint ChangeX = Xco;
+            uint ChangeY = Yco;
 
-                if (put == ConsoleKey.W)
+            if (input == "W")
+            {
+                ChangeY -= 1;
+            }
+            else if (input == "A")
+            {
+                ChangeX -= 1;
+            }
+            else if (input == "S")
+            {
+                ChangeY += 1;
+            }
+            else if (input == "D")
+            {
+                ChangeX += 1;
+            }
+            else if (input == " ")
+            {
+                //free
+                if (mode == Mode.free)
                 {
-                    ChangeY -= 1;
-                }
-                else if (put == ConsoleKey.A)
-                {
-                    ChangeX -= 1;
-                }
-                else if (put == ConsoleKey.S)
-                {
-                    ChangeY += 1;
-                }
-                else if (put == ConsoleKey.D)
-                {
-                    ChangeX += 1;
-                }
-                else if (put == ConsoleKey.Spacebar)
-                {
-                    //free
-                    if (mode == Mode.free)
+                    //can only be done on a friendly Unit
+                    if (Land(ChangeX, ChangeY, ConPlayer) == true)
                     {
-                        //can only be done on a friendly Unit
-                        if (Land(ChangeX, ChangeY, ConPlayer) == true)
-                        {
-                            mode = Mode.locked;
-                        }
+                        mode = Mode.locked;
                     }
-                    //locked
-                    else if (mode == Mode.locked)
-                    {
-                        //can be done anytime
-                        mode = Mode.free;
-                    }
-
                 }
-                else if (put == ConsoleKey.Q)
+                //locked
+                else if (mode == Mode.locked)
                 {
-                    //buy barracks
-                    purchase = Purchase.Barracks;
-                    BuyDep(ChangeX, ChangeY, ConPlayer);
-                }
-                else if (put == ConsoleKey.E)
-                {
-                    //buy unit
-                    purchase = Purchase.Unit;
-                    BuyDep(ChangeX, ChangeY, ConPlayer);
-                }
-                else if (put == ConsoleKey.Enter)
-                {
-                    EndTurn = true;
+                    //can be done anytime
+                    mode = Mode.free;
                 }
 
-                if (OnBoard(ChangeX, ChangeY) == true)
+            }
+            else if (input == "Q")
+            {
+                //buy barracks
+                purchase = Purchase.Barracks;
+                BuyDep(ChangeX, ChangeY, ConPlayer);
+            }
+            else if (input == "E")
+            {
+                //buy unit
+                purchase = Purchase.Unit;
+                BuyDep(ChangeX, ChangeY, ConPlayer);
+            }
+            else if (input == "_")
+            {
+                //enter has to be done in the human/computer override
+            }
+
+            if (OnBoard(ChangeX, ChangeY) == true)
+            {
+                //free
+                if (CursorMode == Mode.free)
                 {
-                    //free
-                    if (GetMode() == Mode.free)
+                    Xco = ChangeX;
+                    Yco = ChangeY;
+                }
+
+                //locked
+                if (CursorMode == Mode.locked)
+                {
+                    if (Action(Xco, Yco, ChangeX, ChangeY, ConPlayer) == true)
                     {
                         Xco = ChangeX;
                         Yco = ChangeY;
                     }
-
-                    //locked
-                    if (GetMode() == Mode.locked)
-                    {
-                        if (Action(Xco, Yco, ChangeX, ChangeY, ConPlayer) == true)
-                        {
-                            Xco = ChangeX;
-                            Yco = ChangeY;
-                        }
-                    }
-
-                }
-                else
-                {
-                    //move was not valid
                 }
 
-            } while (EndTurn == false);
+            }
+            else
+            {
+                //move was not valid
+            }
+
+            Console.Clear();
+            board.Render();
+            Render(ConPlayer);
 
             //at the end of a turn the cursor is set to free so that the other player cannot control enemy units
-            mode = Mode.free;
+
 
         }
     }

@@ -23,11 +23,58 @@ namespace StishBoard
 
         //define methods for the player's move
 
-        private void HumanMoveUnit()
-        {
-            //Movement m = new Movement(this);
-            //m.HumanMoveUnit();
 
+        public override void MakeMove()
+        {
+            Console.Clear();
+            board.Render();
+            cursor.Render(this);
+
+            bool EndTurn = false;
+            do
+            {
+                string output = "Nothing";
+                System.ConsoleKey put = Console.ReadKey(true).Key;
+                
+                if (put == ConsoleKey.W)
+                {
+                    output = "W";
+                }
+                else if (put == ConsoleKey.A)
+                {
+                    output = "A";
+                }
+                else if (put == ConsoleKey.S)
+                {
+                    output = "S";
+                }
+                else if (put == ConsoleKey.D)
+                {
+                    output = "D";
+                }
+                else if (put == ConsoleKey.Spacebar)
+                {
+                    output = " ";
+                }
+                else if (put == ConsoleKey.Q)
+                {
+                    output = "Q";
+                }
+                else if (put == ConsoleKey.E)
+                {
+                    output = "E";
+                }
+                else if (put == ConsoleKey.Enter)
+                {
+                    EndTurn = true;
+                    cursor.CursorMode = Cursor.Mode.free;
+                    CursorX = cursor.FindX;
+                    Cursory = cursor.FindY;
+                }
+
+                cursor.Move(this, output);
+            } while (EndTurn == false);
+            
         }
 
         /*
@@ -206,12 +253,6 @@ namespace StishBoard
         }
 
         */
-
-        public override void MakeMove()
-        {   
-            cursor.Move(this);
-        }
-
 
 
         /*
