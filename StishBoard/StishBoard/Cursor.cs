@@ -48,6 +48,8 @@ namespace StishBoard
         private uint Yco = 0;
         public enum Mode { free, locked };
         private Mode mode = Mode.free;
+        public enum Purchase { Barracks, Unit };
+        private Purchase purchase;
 
         public Mode GetMode()
         {
@@ -55,59 +57,80 @@ namespace StishBoard
         }
 
 
+
         //this is purely cosmetic and helps describe the squares surrounding the cursor
         //it is not done yet
-        public enum SquareType { Empty, Edge, FUnit, EUnit, FBarracks, EBarracks, FBase, EBase}
+        public enum SquareType { Empty, Edge, FUnit, EUnit, FBarracks, EBarracks, FBase, EBase};                   
 
-
-        public void Cardinal(uint Xc, uint Yc, uint Xu, uint Yu, uint Xr, uint Yr, uint Xd, uint Yd, uint Xl, uint Yl)
+        public void Cardinal(uint Xc, uint Yc, uint Xu, uint Yu, uint Xr, uint Yr, uint Xd, uint Yd, uint Xl, uint Yl, Player Cont)
         {
-            Square Centre, Up, Right, Down, Left;
-            Centre = board.getSquare(Xc,Yc);
-            Up = board.getSquare(Xu, Yu);
-            Right = board.getSquare(Xr, Yr);
-            Down = board.getSquare(Xd, Yd);
-            Left = board.getSquare(Xl, Yl);
 
-            if (Centre != null)
+            System.Console.ForegroundColor = Cont.GetRenderColour();
+            Console.SetCursorPosition(4 * 13, 0);
+            Console.WriteLine("{0}'s Turn", Cont.GetPlayerNum);
+            Console.ResetColor();
+
+            uint[,] CardinalDir = new uint[1, 5];
+            uint[,] Coord = new uint[5, 2];
+            List<string> CardinalString = new List<string>() { "Centre", "Up", "Right", "Down", "Left" };
+            List<uint> CoordSing = new List<uint>(){ Xc, Yc, Xu, Yu, Xr, Yr, Xd, Yd, Xl, Yl };
+
+            int count = 0;
+            for (uint row = 0; row < 5; row++)
             {
-                string CentreType;
-                if (Centre.Dep.DepType == null)
+                for (uint col = 0; col < 2; col++)
                 {
-                    CentreType = "Nothing";
+                    Coord[row, col] = CoordSing[count];
+                    count++;
                 }
-                else
+            }
+            
+            for (int card = 0; card < 5; card++)
+            {
+                Square Check = board.getSquare(Coord[card,0], Coord[card, 1]);
+
+                if (Check != null)
                 {
-                    CentreType = Centre.Dep.DepType;
+                    string CheckType;
+                    if (Check.Dep.DepType == null)
+                    {
+                        CheckType = "Nothing";
+                    }
+                    else
+                    {
+                        CheckType = Check.Dep.DepType;
+                    }
+
+                    string CheckOwner;
+                    if (Check.Owner == null)
+                    {
+                        CheckOwner = "No One";
+                    }
+                    else
+                    {
+                        CheckOwner = Check.Owner.GetPlayerNum;
+                    }
+
+                    //there is definately a better way to do this using for loops
+                    //repeat for all cardinal directions
+                    //add movement points
+                    Console.SetCursorPosition(4 * 13, (card + 2));
+                    Console.WriteLine("{0} has: {1} Health, it is contains: {2} and belongs to: {3}", CardinalString[card],Check.Dep.Health.ToString(), CheckType, CheckOwner);
                 }
 
-                string CentreOwner;
-                if (Centre.Dep.OwnedBy == null)
-                {
-                    CentreOwner = "No One";
-                }
-                else
-                {
-                    CentreOwner = Centre.Dep.OwnedBy.ToString();
-                }
-
-                //there is definately a better way to do this using for loops
-                //add more info
-                Console.SetCursorPosition(4 * 13, 2);
-                Console.WriteLine("Centre has: {0} Health, it is contains: {1} and belongs to: {2}", Centre.GetHealth.ToString(), CentreType, CentreOwner);
+            
             }
             
 
         }
 
-        public void Render()
+        public void Render(Player Cont)
         {
             //Info
-            Cardinal(Xco, Yco, Xco, (Yco - 1), (Xco + 1), Yco, Xco, (Yco + 1), (Xco - 1), Yco);
-
-
+            Cardinal(Xco, Yco, Xco, (Yco - 1), (Xco + 1), Yco, Xco, (Yco + 1), (Xco - 1), Yco, Cont);
+        
             //Cursor
-            if(GetMode() == Mode.free)
+            if (GetMode() == Mode.free)
             {
                 System.Console.ForegroundColor = ConsoleColor.Green;
             }
@@ -139,20 +162,7 @@ namespace StishBoard
             To.Dep = From.Dep;
             From.Dep = new Empty();
         }
-        
-        private void Attack(uint AttackX, uint AttackY, uint DefendX, uint DefendY, Player MyPlayer)
-        {
             
-        }
-            
-            /*
-            From.Owner = MyPlayer;
-            To.Owner = MyPlayer;
-
-            To.Dep = From.Dep;
-            From.Dep = new Empty();
-            */       
-
 
         public bool Action(uint FromX, uint FromY, uint CheckX, uint CheckY , Player MyPlayer)
         {
@@ -166,7 +176,7 @@ namespace StishBoard
                 Drag(Xco, Yco, CheckX, CheckY, MyPlayer);
                 Moved = true;
             }
-            else if ((CheckDep == "Unit" || CheckDep == "Barracks") && (Owner != MyPlayer))
+            else if ((CheckDep == "Unit" || CheckDep == "Barracks" || CheckDep == "Base") && (Owner != MyPlayer))
             {
                 //attack
                 //adjust health and then if the attacking unit won, use the drag function
@@ -174,26 +184,43 @@ namespace StishBoard
                 //i dont have to redefine these squares but i think it helps the code read better
                 Square Attacker = board.getSquare(FromX, FromY);
                 Square Defender = board.getSquare(CheckX, CheckY);
-            
+                
                 //checks who wins the combat: attacker or defender
                 //attacker wins
-                if(Attacker.GetHealth > Defender.GetHealth)
+                if(Attacker.Dep.Health > Defender.Dep.Health)
                 {
-                    Attacker.GetHealth -= Defender.GetHealth;
-                    Defender.Dep = new Empty();
+                    Attacker.Dep.Health -= Defender.Dep.Health;
+                    //Barracks are a special case
+                    if (CheckDep == "Barracks")
+                    {
+                        board.getSquare(CheckX, CheckY).Dep.OwnedBy = MyPlayer;
+                    }
+                    else
+                    {                       
+                        Defender.Dep = new Empty();
+                    }
+                    
                 }
                 //defender wins
-                else if (Attacker.GetHealth < Defender.GetHealth)
+                else if (Attacker.Dep.Health < Defender.Dep.Health)
                 {
-                    Defender.GetHealth -= Attacker.GetHealth;
+                    Defender.Dep.Health -= Attacker.Dep.Health;
                     Attacker.Dep = new Empty();
                     mode = Mode.free;
                 }
                 //both have equal health
                 else
                 {
-                    Attacker.Dep = new Empty();
-                    Defender.Dep = new Empty();
+                    if (CheckDep == "Barracks")
+                    {
+                        board.getSquare(CheckX, CheckY).Dep.OwnedBy = MyPlayer;
+                        board.getSquare(CheckX, CheckY).Owner = MyPlayer;
+                    }
+                    else
+                    {
+                        Defender.Dep = new Empty();
+                    }
+                    Attacker.Dep = new Empty();                  
                     mode = Mode.free;
                 }
             }
@@ -230,83 +257,143 @@ namespace StishBoard
             {
                 return false;
             }
-        }       
+        }
+
+        private void BuyDep(uint XPur,uint YPur,Player ConPlayer)
+        {
+            if((board.getSquare(XPur,YPur) != null) && (board.getSquare(XPur, YPur).Dep.DepType == "Empty") && (board.getSquare(XPur, YPur).Owner == ConPlayer))
+            {
+                //purchase is acceptable
+                if (purchase == Purchase.Barracks)
+                {
+                    //check how many barracks the player already has and multiply it buy the cost of one barracks
+                    uint multiply = 0;
+
+                    for (uint y = 0; y < 11; y++)
+                    {
+                        for (uint x = 0; x < 11; x++)
+                        {
+                            if ((board.getSquare(x, y).Dep.DepType == "Barracks" || board.getSquare(x, y).Dep.DepType == "Base") && board.getSquare(x, y).Dep.OwnedBy == ConPlayer)
+                            {
+                                multiply++;
+                            }
+                        }
+                    }
+
+                    if(ConPlayer.Balance >= 5 * multiply)
+                    {
+                        board.getSquare(XPur, YPur).Dep = new Barracks(board.getSquare(XPur, YPur).Owner, board.getSquare(XPur, YPur), 5);
+                        ConPlayer.Balance -= 5 * multiply;
+                    }
+                    
+                }
+                else if(purchase == Purchase.Unit)
+                {
+                    //spend the entire player balance 
+                    if(ConPlayer.Balance > 0)
+                    {
+                        board.getSquare(XPur, YPur).Dep = new Unit(board.getSquare(XPur, YPur).Owner, board.getSquare(XPur, YPur), ConPlayer.Balance);
+                        ConPlayer.Balance = 0;
+                    }
+                    
+                }
+            }
+        }
 
         public void Move(Player ConPlayer)
         {
-            Render();
+            bool EndTurn = false;
+            do
+            {               
+                Console.Clear();
+                board.Render();
+                Render(ConPlayer);
 
-            System.ConsoleKey put = Console.ReadKey(true).Key;
-            uint ChangeX = Xco;
-            uint ChangeY = Yco;
+                System.ConsoleKey put = Console.ReadKey(true).Key;
+                uint ChangeX = Xco;
+                uint ChangeY = Yco;
 
-            if (put == ConsoleKey.W)
-            {
-                ChangeY -= 1;
-            }
-            else if (put == ConsoleKey.A)
-            {
-                ChangeX -= 1;
-            }
-            else if (put == ConsoleKey.S)
-            {
-                ChangeY += 1;
-            }
-            else if (put == ConsoleKey.D)
-            {
-                ChangeX += 1;
-            }
-            else if (put == ConsoleKey.Spacebar)
-            {
-                //free
-                if (mode == Mode.free)
+                if (put == ConsoleKey.W)
                 {
-                    //can only be done on a friendly Unit
-                    if (Land(ChangeX, ChangeY, ConPlayer) == true)
+                    ChangeY -= 1;
+                }
+                else if (put == ConsoleKey.A)
+                {
+                    ChangeX -= 1;
+                }
+                else if (put == ConsoleKey.S)
+                {
+                    ChangeY += 1;
+                }
+                else if (put == ConsoleKey.D)
+                {
+                    ChangeX += 1;
+                }
+                else if (put == ConsoleKey.Spacebar)
+                {
+                    //free
+                    if (mode == Mode.free)
                     {
-                        mode = Mode.locked;
+                        //can only be done on a friendly Unit
+                        if (Land(ChangeX, ChangeY, ConPlayer) == true)
+                        {
+                            mode = Mode.locked;
+                        }
                     }
+                    //locked
+                    else if (mode == Mode.locked)
+                    {
+                        //can be done anytime
+                        mode = Mode.free;
+                    }
+
                 }
-                //locked
-                else if (mode == Mode.locked)
+                else if (put == ConsoleKey.Q)
                 {
-                    //can be done anytime
-                    mode = Mode.free;
+                    //buy barracks
+                    purchase = Purchase.Barracks;
+                    BuyDep(ChangeX, ChangeY, ConPlayer);
+                }
+                else if (put == ConsoleKey.E)
+                {
+                    //buy unit
+                    purchase = Purchase.Unit;
+                    BuyDep(ChangeX, ChangeY, ConPlayer);
+                }
+                else if (put == ConsoleKey.Enter)
+                {
+                    EndTurn = true;
                 }
 
-            }
-            else if (put == ConsoleKey.Enter)
-            {
-                //End Turn
-                
-            }
-
-            if(OnBoard(ChangeX,ChangeY) == true)
-            {
-                //free
-                if (GetMode() == Mode.free)
+                if (OnBoard(ChangeX, ChangeY) == true)
                 {
-                    Xco = ChangeX;
-                    Yco = ChangeY;                  
-                }
-
-                //locked
-                if (GetMode() == Mode.locked)
-                {
-                    if ( Action(Xco, Yco, ChangeX, ChangeY, ConPlayer) == true)
+                    //free
+                    if (GetMode() == Mode.free)
                     {
                         Xco = ChangeX;
                         Yco = ChangeY;
                     }
+
+                    //locked
+                    if (GetMode() == Mode.locked)
+                    {
+                        if (Action(Xco, Yco, ChangeX, ChangeY, ConPlayer) == true)
+                        {
+                            Xco = ChangeX;
+                            Yco = ChangeY;
+                        }
+                    }
+
+                }
+                else
+                {
+                    //move was not valid
                 }
 
-            }
-            else
-            {
-                //move was not valid
-            }
+            } while (EndTurn == false);
 
-            
+            //at the end of a turn the cursor is set to free so that the other player cannot control enemy units
+            mode = Mode.free;
 
         }
     }

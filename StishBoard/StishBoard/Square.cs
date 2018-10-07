@@ -14,15 +14,12 @@ namespace StishBoard
         private Deployment dep;
 
         private Player owner;
-
-        private uint Health;
         
         //default constructor: makes 'dep' contain a deployment object of "empty".
         public Square()
         {
             owner = null;
             dep = new Empty();
-            Health = 0;
         }
         
         //this is the accessor for the deployment type of the square. it allows another client to find what a particular square contains or to set what a particular square contains.
@@ -49,18 +46,7 @@ namespace StishBoard
                 owner = value;
             }
         }
-
-        public uint GetHealth
-        {
-            get
-            {
-                return Health;
-            }
-            set
-            {
-                Health = value;
-            }
-        }
+      
 
         //creates a public render method called "Render" which utilises the 'helper' class to draw the squares into the console. it creates the *shell* of the square and fills it with whatever the square actually contains. 
         public void Render(int x, int y)

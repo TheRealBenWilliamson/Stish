@@ -9,7 +9,7 @@ namespace StishBoard
     public class Base : Deployment
     {
         //constructor: gives the new object it's variable values to represent that it contains a barracks
-        public Base(Player player, Square square, uint Health)
+        public Base(Player player, Square square, uint CalledHealth)
         {
             //add health
             depType = "Base";

@@ -42,11 +42,12 @@ namespace StishBoard
             //calls the Render function on the object "board". the Render function is called from the StishBoard class because "board" belongs to that class. this renders the board onto the console for the screen.
             //not sure if this change is right, there used to be parameter values that did next to nothing ...   board.Render(0, 0);
 
-            board.getSquare(16, 16);
+            Console.WriteLine(board.getSquare(1, 1).Owner.GetPlayerNum);
+
 
             P1.MakeMove();
 
-            P1.MakeMove();
+            P2.MakeMove();
 
             Console.Clear();
             board.Render();

@@ -18,7 +18,7 @@ namespace StishBoard
             Health = 5;
         }
 
-        public Barracks(Player player, Square square, uint Health)
+        public Barracks(Player player, Square square, uint CalledHealth)
         {
             //add health
             depType = "Barracks";
@@ -26,7 +26,7 @@ namespace StishBoard
             ownedBy = player;
             square.Dep = this;
             square.Owner = player;
-            Health = 5;
+            Health = CalledHealth;
 
         }
 

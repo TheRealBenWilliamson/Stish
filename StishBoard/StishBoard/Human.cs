@@ -25,8 +25,8 @@ namespace StishBoard
 
         private void HumanMoveUnit()
         {
-            Movement m = new Movement(this);
-            m.HumanMoveUnit();
+            //Movement m = new Movement(this);
+            //m.HumanMoveUnit();
 
         }
 
@@ -208,14 +208,8 @@ namespace StishBoard
         */
 
         public override void MakeMove()
-        {
-            while (true)
-            {
-                Console.Clear();
-                board.Render();
-                cursor.Render();
-                cursor.Move(this);
-            }
+        {   
+            cursor.Move(this);
         }
 
 

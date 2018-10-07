@@ -15,5 +15,11 @@ namespace StishBoard
             Console.WriteLine(C);
             return;
         }
+
+        public void GameLoop()
+        {
+            //loops and calls each player's turn function alternatively until a player's base is destroyed
+        }
+
     }
 }
