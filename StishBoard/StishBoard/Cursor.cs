@@ -24,7 +24,7 @@ namespace StishBoard
         detection to discover what surrounds the cursor
         evaluation to tell the user what surrounds the cursor
         render
-        */
+        */      
 
         //the Cursor is a singleton
         private static Cursor instance;
@@ -100,6 +100,22 @@ namespace StishBoard
             Console.SetCursorPosition(4 * 13, 0);
             Console.WriteLine("{0}'s Turn", Cont.GetPlayerNum);
             Console.ResetColor();
+
+            uint Bcost = 0;
+
+            for (uint y = 0; y < 11; y++)
+            {
+                for (uint x = 0; x < 11; x++)
+                {
+                    if ((board.getSquare(x, y).Dep.DepType == "Barracks" || board.getSquare(x, y).Dep.DepType == "Base") && board.getSquare(x, y).Dep.OwnedBy == ConPlayer)
+                    {
+                        Bcost++;
+                    }
+                }
+            }
+            Console.SetCursorPosition(0, 0);
+            Console.WriteLine("Player1 has: {0} Coins", player1.Balance);
+            Console.WriteLine("Player2 has: {0} Coins", player2.Balance);
 
             uint[,] CardinalDir = new uint[1, 5];
             uint[,] Coord = new uint[5, 2];
