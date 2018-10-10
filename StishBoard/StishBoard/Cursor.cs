@@ -89,33 +89,18 @@ namespace StishBoard
         }
 
 
-        //this is purely cosmetic and helps describe the squares surrounding the cursor
-        //it is not done yet
-        public enum SquareType { Empty, Edge, FUnit, EUnit, FBarracks, EBarracks, FBase, EBase};                   
+        //this is purely cosmetic and helps describe the squares surrounding the cursor       
 
         public void Cardinal(uint Xc, uint Yc, uint Xu, uint Yu, uint Xr, uint Yr, uint Xd, uint Yd, uint Xl, uint Yl, Player Cont)
         {
 
             System.Console.ForegroundColor = Cont.GetRenderColour();
-            Console.SetCursorPosition(4 * 13, 0);
+            Console.SetCursorPosition(4 * 17, 0);
             Console.WriteLine("{0}'s Turn", Cont.GetPlayerNum);
-            Console.ResetColor();
-
-            uint Bcost = 0;
-
-            for (uint y = 0; y < 11; y++)
-            {
-                for (uint x = 0; x < 11; x++)
-                {
-                    if ((board.getSquare(x, y).Dep.DepType == "Barracks" || board.getSquare(x, y).Dep.DepType == "Base") && board.getSquare(x, y).Dep.OwnedBy == ConPlayer)
-                    {
-                        Bcost++;
-                    }
-                }
-            }
+            Console.ResetColor();           
+            
             Console.SetCursorPosition(0, 0);
-            Console.WriteLine("Player1 has: {0} Coins", player1.Balance);
-            Console.WriteLine("Player2 has: {0} Coins", player2.Balance);
+            
 
             uint[,] CardinalDir = new uint[1, 5];
             uint[,] Coord = new uint[5, 2];
@@ -161,7 +146,7 @@ namespace StishBoard
                     //there is definately a better way to do this using for loops
                     //repeat for all cardinal directions
                     //add movement points
-                    Console.SetCursorPosition(4 * 13, (card + 2));
+                    Console.SetCursorPosition(4 * 17, (card + 2));
                     Console.WriteLine("{0} has: {1} Health, it is contains: {2} , belongs to: {3} and has {4} Movement Points", CardinalString[card],Check.Dep.Health.ToString(), CheckType, CheckOwner, Check.Dep.MP.ToString());
                 }
 
@@ -237,47 +222,51 @@ namespace StishBoard
                 Square Attacker = board.getSquare(FromX, FromY);
                 Square Defender = board.getSquare(CheckX, CheckY);
                 
-                //checks who wins the combat: attacker or defender
-                //attacker wins
-                if(Attacker.Dep.Health > Defender.Dep.Health)
+                //attacker must have more some MP to attack to prevent spawn attacking
+                if (Attacker.Dep.MP > 0)
                 {
-                    Attacker.Dep.Health -= Defender.Dep.Health;
-                    //Barracks are a special case
-                    if (CheckDep == "Barracks")
+                    //checks who wins the combat: attacker or defender
+                    //attacker wins
+                    if (Attacker.Dep.Health > Defender.Dep.Health)
                     {
-                        board.getSquare(CheckX, CheckY).Dep.OwnedBy = MyPlayer;
-                        board.getSquare(CheckX, CheckY).Owner = MyPlayer;
+                        Attacker.Dep.Health -= Defender.Dep.Health;
+                        //Barracks are a special case
+                        if (CheckDep == "Barracks")
+                        {
+                            board.getSquare(CheckX, CheckY).Dep.OwnedBy = MyPlayer;
+                            board.getSquare(CheckX, CheckY).Owner = MyPlayer;
+                        }
+                        else
+                        {
+                            Defender.Dep = new Empty();
+                        }
+
                     }
-                    else
-                    {                       
-                        Defender.Dep = new Empty();
-                    }
-                    
-                }
-                //defender wins
-                else if (Attacker.Dep.Health < Defender.Dep.Health)
-                {
-                    Defender.Dep.Health -= Attacker.Dep.Health;
-                    Attacker.Dep = new Empty();
-                    mode = Mode.free;
-                }
-                //both have equal health
-                else
-                {
-                    if (CheckDep == "Barracks")
+                    //defender wins
+                    else if (Attacker.Dep.Health < Defender.Dep.Health)
                     {
-                        board.getSquare(CheckX, CheckY).Dep.OwnedBy = MyPlayer;
-                        board.getSquare(CheckX, CheckY).Owner = MyPlayer;
+                        Defender.Dep.Health -= Attacker.Dep.Health;
+                        Attacker.Dep = new Empty();
+                        mode = Mode.free;
                     }
+                    //both have equal health
                     else
                     {
-                        Defender.Dep = new Empty();
+                        if (CheckDep == "Barracks")
+                        {
+                            board.getSquare(CheckX, CheckY).Dep.OwnedBy = MyPlayer;
+                            board.getSquare(CheckX, CheckY).Owner = MyPlayer;
+                        }
+                        else
+                        {
+                            Defender.Dep = new Empty();
+                        }
+                        Attacker.Dep = new Empty();
+                        mode = Mode.free;
                     }
-                    Attacker.Dep = new Empty();                  
-                    mode = Mode.free;
                 }
             }
-
+              
             return Moved;
         }
 
@@ -333,10 +322,10 @@ namespace StishBoard
                         }
                     }
 
-                    if(ConPlayer.Balance >= 5 * multiply)
+                    if(ConPlayer.Balance >= 3 * multiply)
                     {
                         board.getSquare(XPur, YPur).Dep = new Barracks(board.getSquare(XPur, YPur).Owner, board.getSquare(XPur, YPur), 5);
-                        ConPlayer.Balance -= 5 * multiply;
+                        ConPlayer.Balance -= 3 * multiply;
                     }
                     
                 }

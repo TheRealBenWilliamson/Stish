@@ -86,9 +86,35 @@ namespace StishBoard
         //not sure if this change is right (stolen from the arguments of Render() ) ...   int x, int y    
         public void Render()
         {
-            Console.SetCursorPosition(0, 0);
-            Console.WriteLine("Player1 has: {0} Coins" , player1.Balance);
-            Console.WriteLine("Player2 has: {0} Coins" , player2.Balance);
+            for (int look = 0; look < 2; look++)
+            {
+                Player LookPlayer;
+                if(look == 0)
+                {
+                    LookPlayer = Player1;
+                }
+                else
+                {
+                    LookPlayer = Player2;
+                }
+                        
+
+                uint Bcost = 0;
+
+                for (uint y = 0; y < 11; y++)
+                {
+                    for (uint x = 0; x < 11; x++)
+                    {
+                        if ((this.getSquare(x, y).Dep.DepType == "Barracks" || this.getSquare(x, y).Dep.DepType == "Base") && this.getSquare(x, y).Dep.OwnedBy == LookPlayer)
+                        {
+                            Bcost++;
+                        }
+                    }
+                }
+
+                Console.WriteLine("{0} has: {1} Coins. Their next Barracks will cost: {2} Coins", LookPlayer.GetPlayerNum ,LookPlayer.Balance, (Bcost * 3));
+            }
+
             for (int y = 0; y < 11; y++)
             {
                 for (int x = 0; x < 11; x++)

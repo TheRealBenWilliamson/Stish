@@ -24,8 +24,8 @@ namespace StishBoard
         protected PlayerNumber playerNumber;
         protected uint balance;
 
-        public uint CursorX = 0;
-        public uint Cursory = 0;
+        public uint CursorX = 5;
+        public uint Cursory = 5;
 
         protected Base homeBase;
 
@@ -33,32 +33,32 @@ namespace StishBoard
         {
             playerNumber = PN;
             //balance can be changed for testing and balancing
-            balance = 9;
+            balance = 5;
 
             //homeBase = new Base();
             if (playerNumber == PlayerNumber.Player1)
             {
                 new Base(this,board.getSquare(5, 9), 20);
-                board.getSquare(4, 10).Owner = this;
-                board.getSquare(4, 9).Owner = this;
-                board.getSquare(4, 8).Owner = this;
-                board.getSquare(5, 10).Owner = this;
-                board.getSquare(5, 8).Owner = this;
-                board.getSquare(6, 10).Owner = this;              
-                board.getSquare(6, 9).Owner = this;
-                board.getSquare(6, 8).Owner = this;
+                for (uint y = 8; y < 11; y++)
+                {
+                    for (uint x = 4; x < 7; x++)
+                    {
+                        board.getSquare(x, y).Owner = this;
+                    }
+                }
+                
+                
             }
             else
             {
                 new Base(this, board.getSquare(5, 1), 20);
-                board.getSquare(4, 0).Owner = this;
-                board.getSquare(4, 1).Owner = this;
-                board.getSquare(4, 2).Owner = this;
-                board.getSquare(5, 0).Owner = this;
-                board.getSquare(5, 2).Owner = this;
-                board.getSquare(6, 0).Owner = this;
-                board.getSquare(6, 1).Owner = this;
-                board.getSquare(6, 2).Owner = this;
+                for (uint y = 0; y < 3; y++)
+                {
+                    for (uint x = 4; x < 7; x++)
+                    {
+                        board.getSquare(x, y).Owner = this;
+                    }
+                }                
             }
         }
 

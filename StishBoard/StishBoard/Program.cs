@@ -17,7 +17,7 @@ namespace StishBoard
             StishBoard board = StishBoard.Instance;
             Cursor cursor = Cursor.Instance;
 
-            Console.SetWindowSize(150, 25);
+            Console.SetWindowSize(170, 25);
 
             Player P1;
             P1 = Player.PlayerFactory(Player.PlayerNumber.Player1, Player.PlayerType.Human);
