@@ -194,8 +194,43 @@ namespace StishBoard
             To.Dep = From.Dep;
             From.Dep = new Empty();
         }
-            
-
+        
+        public void TerritoryDeaths()
+        {                                     
+            for (int look = 0; look < 2; look++)
+            {    
+                Player LookPlayer;
+                Square[,] ToCheck;
+                Square[,] Checked;
+                uint investX = 5;
+                uint investY;
+                
+                if(look == 0)
+                {
+                    LookPlayer = Player1;
+                    investY = 9;
+                }
+                else
+                {
+                    LookPlayer = Player2;
+                    investY = 1;
+                }
+                
+                Square invest = board.getSquare(investX,investY);    
+                ToCheck.Add(invest);
+                //Checking Invest
+                for( i in ToCheck)
+                {
+                    ToCheck.Remove(invest);
+                    Checked.Add(invest);
+                }
+                
+                
+                
+                
+            }
+        }
+        
         public bool Action(uint FromX, uint FromY, uint CheckX, uint CheckY , Player MyPlayer)
         {
             //the bool output lets the caller know if the unit moved
