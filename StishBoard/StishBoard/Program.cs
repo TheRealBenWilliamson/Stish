@@ -28,6 +28,9 @@ namespace StishBoard
             board.Player1 = P1;
             board.Player2 = P2;
 
+            board.getSquare(1, 5).Dep = new Barracks(null, board.getSquare(1, 5), 0);
+            board.getSquare(9, 5).Dep = new Barracks(null, board.getSquare(9, 5), 0);
+
             Console.Clear();
             board.Render();
 

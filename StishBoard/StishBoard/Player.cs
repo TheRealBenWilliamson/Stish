@@ -41,7 +41,7 @@ namespace StishBoard
                 new Base(this,board.getSquare(5, 9), 20);
                 for (uint y = 8; y < 11; y++)
                 {
-                    for (uint x = 4; x < 7; x++)
+                    for (uint x = 3; x < 8; x++)
                     {
                         board.getSquare(x, y).Owner = this;
                     }
@@ -54,7 +54,7 @@ namespace StishBoard
                 new Base(this, board.getSquare(5, 1), 20);
                 for (uint y = 0; y < 3; y++)
                 {
-                    for (uint x = 4; x < 7; x++)
+                    for (uint x = 3; x < 8; x++)
                     {
                         board.getSquare(x, y).Owner = this;
                     }

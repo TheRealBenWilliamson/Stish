@@ -48,7 +48,7 @@ namespace StishBoard
         private uint Yco = 0;
         public enum Mode { free, locked };
         private Mode mode = Mode.free;
-        public enum Purchase { Barracks, Unit };
+        public enum Purchase { Barracks, Unit, Burst };
         private Purchase purchase;
 
         public Mode CursorMode
@@ -358,7 +358,7 @@ namespace StishBoard
                         //Barracks are a special case
                         if (CheckDep == "Barracks")
                         {
-                            board.getSquare(CheckX, CheckY).Dep.OwnedBy = MyPlayer;
+                            board.getSquare(CheckX, CheckY).Dep = new Barracks(MyPlayer, board.getSquare(CheckX, CheckY), 5);
                             board.getSquare(CheckX, CheckY).Owner = MyPlayer;
                         }
                         else
@@ -379,7 +379,7 @@ namespace StishBoard
                     {
                         if (CheckDep == "Barracks")
                         {
-                            board.getSquare(CheckX, CheckY).Dep.OwnedBy = MyPlayer;
+                            board.getSquare(CheckX, CheckY).Dep = new Barracks(MyPlayer, board.getSquare(CheckX, CheckY), 5);
                             board.getSquare(CheckX, CheckY).Owner = MyPlayer;
                         }
                         else
@@ -464,7 +464,39 @@ namespace StishBoard
                         ConPlayer.Balance = 0;
                     }
                     
+                }               
+            }
+
+            if (purchase == Purchase.Burst)
+            {
+                //spend the entire player balance 
+                if (ConPlayer.Balance >= 5)
+                {
+                    uint min = 0, max = 0;
+                    if(ConPlayer == board.Player1)
+                    {
+                        min = 8;
+                        max = 11;
+                    }
+                    else
+                    {
+                        min = 0;
+                        max = 3;
+                    }
+
+                    for (uint y = min; y < max; y++)
+                    {
+                        for (uint x = 4; x < 7; x++)
+                        {
+                            if(board.getSquare(x,y).Dep.DepType == "Empty")
+                            {
+                                board.getSquare(x, y).Owner = ConPlayer;
+                            }                         
+                        }
+                    }
+                    ConPlayer.Balance -= 5;
                 }
+
             }
         }
 
@@ -519,6 +551,12 @@ namespace StishBoard
             {
                 //buy unit
                 purchase = Purchase.Unit;
+                BuyDep(ChangeX, ChangeY, ConPlayer);
+            }
+            else if (input == "R")
+            {
+                //buy unit
+                purchase = Purchase.Burst;
                 BuyDep(ChangeX, ChangeY, ConPlayer);
             }
             else if (input == "_")
