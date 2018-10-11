@@ -194,40 +194,130 @@ namespace StishBoard
             To.Dep = From.Dep;
             From.Dep = new Empty();
         }
-        
+
+        private void SearchAndPlace(uint valueX, uint valueY, List<uint> SlistX, List<uint> SlistY, List<uint> PlistX, List<uint> PlistY)
+        {
+            bool found = false;
+            for (int index = 0; index < SlistX.Count; index++)
+            {
+                if ((SlistX[index] == valueX) && (SlistY[index] == valueY))
+                {
+                    found = true;
+                }
+            }
+            if (found == false)
+            {
+                PlistX.Add(valueX);
+                PlistY.Add(valueY);
+            }
+        }
+
+        private bool Search(uint valueX, uint valueY, List<uint> SlistX, List<uint> SlistY)
+        {
+            bool found = false;
+            for (int index = 0; index < SlistX.Count; index++)
+            {
+                if ((SlistX[index] == valueX) && (SlistY[index] == valueY))
+                {
+                    found = true;
+                }
+            }
+            return found;
+        }
+
+
         public void TerritoryDeaths()
-        {                                     
+        {
             for (int look = 0; look < 2; look++)
-            {    
+            {
                 Player LookPlayer;
-                Square[,] ToCheck;
-                Square[,] Checked;
+                //lists as we dont want a limit that would be given by an array
+                List<uint> ToCheckX = new List<uint>();
+                List<uint> ToCheckY = new List<uint>();
+                List<uint> CheckedX = new List<uint>();
+                List<uint> CheckedY = new List<uint>();
                 uint investX = 5;
                 uint investY;
                 
                 if(look == 0)
                 {
-                    LookPlayer = Player1;
+                    LookPlayer = board.Player1;
                     investY = 9;
                 }
                 else
                 {
-                    LookPlayer = Player2;
+                    LookPlayer = board.Player2;
                     investY = 1;
                 }
-                
-                Square invest = board.getSquare(investX,investY);    
-                ToCheck.Add(invest);
+               
+                ToCheckX.Add(investX);
+                ToCheckY.Add(investY);
                 //Checking Invest
-                for( i in ToCheck)
+                while(ToCheckX.Count != 0)
                 {
-                    ToCheck.Remove(invest);
-                    Checked.Add(invest);
+                    investX = ToCheckX[0];
+                    investY = ToCheckY[0];
+
+                    ToCheckX.Remove(investX);
+                    ToCheckY.Remove(investY);
+                    CheckedX.Add(investX);
+                    CheckedY.Add(investY);
+                    if (board.getSquare((investX - 1), investY) != null)
+                    {
+                        //left
+                        if (board.getSquare((investX - 1), investY).Owner == LookPlayer)
+                        {
+                            SearchAndPlace(investX - 1, investY, CheckedX, CheckedY, ToCheckX, ToCheckY);
+                        }
+                    }
+                    if (board.getSquare(investX, (investY - 1)) != null)
+                    {
+                        //up
+                        if (board.getSquare(investX, (investY - 1)).Owner == LookPlayer)
+                        {
+                            SearchAndPlace(investX, investY - 1, CheckedX, CheckedY, ToCheckX, ToCheckY);
+                        }
+                    }
+                    if (board.getSquare((investX + 1), investY) != null)
+                    {
+                        //right
+                        if (board.getSquare((investX + 1), investY).Owner == LookPlayer)
+                        {
+                            SearchAndPlace(investX + 1, investY, CheckedX, CheckedY, ToCheckX, ToCheckY);
+                        }
+                    }
+                    if (board.getSquare(investX, (investY + 1)) != null)
+                    {
+                        //down
+                        if (board.getSquare(investX, (investY + 1)).Owner == LookPlayer)
+                        {
+                            SearchAndPlace(investX, investY + 1, CheckedX, CheckedY, ToCheckX, ToCheckY);
+                        }
+                    }                                                       
                 }
-                
-                
-                
-                
+
+                for (uint y = 0; y < 11; y++)
+                {
+                    for (uint x = 0; x < 11; x++)
+                    {
+                        if ((board.getSquare(x,y).Owner == LookPlayer) && (Search(x,y,CheckedX,CheckedY) == false))
+                        {
+                            if(board.getSquare(x,y).Dep.DepType == "Barracks")
+                            {
+                                board.getSquare(x, y).Dep.OwnedBy = null;
+                                board.getSquare(x, y).Dep.Health = 0;
+                            }
+                            else
+                            {
+                                board.getSquare(x, y).Dep = new Empty();
+                            }
+                            board.getSquare(x, y).Owner = null;
+                        }
+                        
+                    }
+                }
+
+
             }
         }
         
@@ -301,7 +391,8 @@ namespace StishBoard
                     }
                 }
             }
-              
+
+            TerritoryDeaths();
             return Moved;
         }
 
