@@ -320,6 +320,40 @@ namespace StishBoard
 
             }
         }
+
+        public void BaseSquares()
+        {
+            for (int look = 0; look < 2; look++)
+            {
+                Player LookPlayer;
+                uint min = 0, max = 0;
+                if (look == 0)
+                {
+                    LookPlayer = board.Player1;
+                    min = 8;
+                    max = 11;
+                }
+                else
+                {
+                    LookPlayer = board.Player2;
+                    min = 0;
+                    max = 3;
+                }
+              
+
+                for (uint y = min; y < max; y++)
+                {
+                    for (uint x = 4; x < 7; x++)
+                    {
+                        if (board.getSquare(x, y).Owner == null)
+                        {
+                            board.getSquare(x, y).Owner = LookPlayer;
+                        }
+                    }
+                }
+
+            }
+        }
         
         public bool Action(uint FromX, uint FromY, uint CheckX, uint CheckY , Player MyPlayer)
         {
@@ -393,6 +427,7 @@ namespace StishBoard
             }
 
             TerritoryDeaths();
+            BaseSquares();
             return Moved;
         }
 
@@ -466,38 +501,6 @@ namespace StishBoard
                     
                 }               
             }
-
-            if (purchase == Purchase.Burst)
-            {
-                //spend the entire player balance 
-                if (ConPlayer.Balance >= 5)
-                {
-                    uint min = 0, max = 0;
-                    if(ConPlayer == board.Player1)
-                    {
-                        min = 8;
-                        max = 11;
-                    }
-                    else
-                    {
-                        min = 0;
-                        max = 3;
-                    }
-
-                    for (uint y = min; y < max; y++)
-                    {
-                        for (uint x = 4; x < 7; x++)
-                        {
-                            if(board.getSquare(x,y).Dep.DepType == "Empty")
-                            {
-                                board.getSquare(x, y).Owner = ConPlayer;
-                            }                         
-                        }
-                    }
-                    ConPlayer.Balance -= 5;
-                }
-
-            }
         }
 
         public void Move(Player ConPlayer, string input)
@@ -551,12 +554,6 @@ namespace StishBoard
             {
                 //buy unit
                 purchase = Purchase.Unit;
-                BuyDep(ChangeX, ChangeY, ConPlayer);
-            }
-            else if (input == "R")
-            {
-                //buy unit
-                purchase = Purchase.Burst;
                 BuyDep(ChangeX, ChangeY, ConPlayer);
             }
             else if (input == "_")

@@ -64,10 +64,6 @@ namespace StishBoard
                 {
                     output = "E";
                 }
-                else if (put == ConsoleKey.R)
-                {
-                    output = "R";
-                }
                 else if (put == ConsoleKey.Enter)
                 {
                     EndTurn = true;
