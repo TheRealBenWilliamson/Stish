@@ -26,6 +26,32 @@ namespace StishBoard
 
         public uint CursorX = 5;
         public uint Cursory = 5;
+        private uint baseX = 0;
+        private uint baseY = 0;
+
+        public uint BaseX
+        {
+            get
+            {
+                return baseX;
+            }
+            set
+            {
+                baseX = value;
+            }
+        }
+
+        public uint BaseY
+        {
+            get
+            {
+                return baseY;
+            }
+            set
+            {
+                baseY = value;
+            }
+        }
 
         protected Base homeBase;
 
@@ -38,29 +64,23 @@ namespace StishBoard
             //homeBase = new Base();
             if (playerNumber == PlayerNumber.Player1)
             {
-                new Base(this,board.getSquare(5, 9), 20);
-                for (uint y = 8; y < 11; y++)
-                {
-                    for (uint x = 3; x < 8; x++)
-                    {
-                        board.getSquare(x, y).Owner = this;
-                    }
-                }
-                
-                
+                BaseX = (board.BoardSize) / 2;
+                BaseY = board.BoardSize - 2;                                      
             }
             else
             {
-                new Base(this, board.getSquare(5, 1), 20);
-                for (uint y = 0; y < 3; y++)
-                {
-                    for (uint x = 3; x < 8; x++)
-                    {
-                        board.getSquare(x, y).Owner = this;
-                    }
-                }                
+                BaseX = (board.BoardSize) / 2;
+                BaseY = 1;                          
             }
-        }
+            new Base(this, board.getSquare(BaseX, BaseY), 20);
+            for (uint y = BaseY - 1; y < BaseY + 2; y++)
+            {
+                for (uint x = BaseX - 1; x < BaseX + 2; x++)
+                {
+                    board.getSquare(x, y).Owner = this;
+                }
+            }
+        }        
 
         public string GetPlayerNum
         {
@@ -128,9 +148,9 @@ namespace StishBoard
 
         public void TurnBalance()
         {
-            for (uint y = 0; y < 11; y++)
+            for (uint y = 0; y < board.BoardSize; y++)
             {
-                for (uint x = 0; x < 11; x++)
+                for (uint x = 0; x < board.BoardSize; x++)
                 {
                     if((board.getSquare(x, y).Dep.DepType == "Barracks" || board.getSquare(x, y).Dep.DepType == "Base") && board.getSquare(x, y).Dep.OwnedBy == this)
                     {
@@ -145,15 +165,15 @@ namespace StishBoard
         {
             //this fuction is run at the start of a turn and sets all units that belong to this player to the max MP.
 
-            for (uint y = 0; y < 11; y++)
+            for (uint y = 0; y < board.BoardSize; y++)
             {
-                for (uint x = 0; x < 11; x++)
+                for (uint x = 0; x < board.BoardSize; x++)
                 {
                     Square ThisSquare = board.getSquare(x, y);
                     if ((ThisSquare.Owner == this) && (ThisSquare.Dep.DepType == "Unit"))
                     {
                         //This number is subject to change throughout testing and balancing
-                        ThisSquare.Dep.MP = 3;
+                        ThisSquare.Dep.MP = 2;
                     }
                 }
             }

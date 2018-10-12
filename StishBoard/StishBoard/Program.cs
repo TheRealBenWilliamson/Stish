@@ -8,7 +8,7 @@ namespace StishBoard
 {
     class Program
     {
-        public enum Lost { Player1, Player2 };
+        public enum Won { Player1, Player2 };
         public enum Turn { Player1, Player2 };
 
         static void Main(string[] args)
@@ -28,31 +28,28 @@ namespace StishBoard
             board.Player1 = P1;
             board.Player2 = P2;
 
-            board.getSquare(1, 5).Dep = new Barracks(null, board.getSquare(1, 5), 0);
-            board.getSquare(9, 5).Dep = new Barracks(null, board.getSquare(9, 5), 0);
-
             Console.Clear();
             board.Render();
 
             //game loop takes place here
             bool GameEnd = false;
-            Lost lost = 0;
+            Won won = 0;
             Turn turn = Turn.Player1;
             while (GameEnd == false)
             {
                 //checks if a base has been destroyed. if one has then the other player has won.
                 //if not then alternate player turns
-                if(board.getSquare(5, 9).Dep.Health < 1)
+                if(board.getSquare(P2.BaseX, P2.BaseY).Dep.Health < 1)
                 {
-                    //Player1 has lost
+                    //Player1 has won
                     GameEnd = true;
-                    lost = Lost.Player1;
+                    won = Won.Player1;
                 }
-                else if (board.getSquare(5, 1).Dep.Health < 1)
+                else if (board.getSquare(P1.BaseX, P1.BaseY).Dep.Health < 1)
                 {
-                    //Player2 has lost
+                    //Player2 has won
                     GameEnd = true;
-                    lost = Lost.Player2;
+                    won = Won.Player2;
                 }
                 else
                 {
@@ -80,7 +77,7 @@ namespace StishBoard
 
             }
 
-            Console.WriteLine("{0} HAS WON THE GAME \nPRESS <ENTER> TO KILL THE PROGRAM", lost.ToString());
+            Console.WriteLine("{0} HAS WON THE GAME \nPRESS <ENTER> TO KILL THE PROGRAM", won.ToString());
             Console.ReadLine();
 
             

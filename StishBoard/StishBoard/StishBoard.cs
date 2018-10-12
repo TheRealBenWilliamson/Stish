@@ -15,6 +15,8 @@ namespace StishBoard
         private Player player1;
         private Player player2;
 
+        private uint boardSize;
+
         public Player Player1
         {
             get
@@ -39,15 +41,30 @@ namespace StishBoard
             }
         }
 
-        //creates an array called "array" capable of holding square objects in the orientation of 11 by 11. the square objects have not been created.
-        public Square[,] array = new Square[11,11];
+        public uint BoardSize
+        {
+            get
+            {
+                return boardSize;
+            }
+            set
+            {
+                boardSize = value;
+            }
+        }
 
-        //default constructor: creates the square objects in "array", assigning each to a position in the 11 by 11 grid.
+        //creates an array called "array" capable of holding square objects in the orientation of BoardSize by BoardSize. the square objects have not been created.
+        public Square[,] array;
+
+        //default constructor: creates the square objects in "array", assigning each to a position in the BoardSize by BoardSize grid.
         private StishBoard()
         {
-            for (int row = 0; row < 11; row ++)
+            //board size may change
+            BoardSize = 9;
+            array = new Square[BoardSize, BoardSize];
+            for (int row = 0; row < BoardSize; row ++)
             {
-                for (int col = 0; col < 11; col++)
+                for (int col = 0; col < BoardSize; col++)
                 {
                     array[row, col] = new Square();
                 }
@@ -101,9 +118,9 @@ namespace StishBoard
 
                 uint Bcost = 0;
 
-                for (uint y = 0; y < 11; y++)
+                for (uint y = 0; y < BoardSize; y++)
                 {
-                    for (uint x = 0; x < 11; x++)
+                    for (uint x = 0; x < BoardSize; x++)
                     {
                         if ((this.getSquare(x, y).Dep.DepType == "Barracks" || this.getSquare(x, y).Dep.DepType == "Base") && this.getSquare(x, y).Dep.OwnedBy == LookPlayer)
                         {
@@ -115,9 +132,9 @@ namespace StishBoard
                 Console.WriteLine("{0} has: {1} Coins. Their next Barracks will cost: {2} Coins", LookPlayer.GetPlayerNum ,LookPlayer.Balance, (Bcost * 3));
             }
 
-            for (int y = 0; y < 11; y++)
+            for (int y = 0; y < BoardSize; y++)
             {
-                for (int x = 0; x < 11; x++)
+                for (int x = 0; x < BoardSize; x++)
                 {
                     array[x, y].Render(x, y);
                 }

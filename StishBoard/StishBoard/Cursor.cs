@@ -296,9 +296,9 @@ namespace StishBoard
                     }                                                       
                 }
 
-                for (uint y = 0; y < 11; y++)
+                for (uint y = 0; y < board.BoardSize; y++)
                 {
-                    for (uint x = 0; x < 11; x++)
+                    for (uint x = 0; x < board.BoardSize; x++)
                     {
                         if ((board.getSquare(x,y).Owner == LookPlayer) && (Search(x,y,CheckedX,CheckedY) == false))
                         {
@@ -330,20 +330,20 @@ namespace StishBoard
                 if (look == 0)
                 {
                     LookPlayer = board.Player1;
-                    min = 8;
-                    max = 11;
+                    min = board.Player1.BaseY - 1;
+                    max = board.Player1.BaseY + 1;
                 }
                 else
                 {
                     LookPlayer = board.Player2;
-                    min = 0;
-                    max = 3;
+                    min = board.Player2.BaseY - 1;
+                    max = board.Player2.BaseY + 1;
                 }
               
 
                 for (uint y = min; y < max; y++)
                 {
-                    for (uint x = 4; x < 7; x++)
+                    for (uint x = (board.BoardSize/2) - 1; x < (board.BoardSize / 2) + 1; x++)
                     {
                         if (board.getSquare(x, y).Owner == null)
                         {
@@ -472,9 +472,9 @@ namespace StishBoard
                     //check how many barracks the player already has and multiply it buy the cost of one barracks
                     uint multiply = 0;
 
-                    for (uint y = 0; y < 11; y++)
+                    for (uint y = 0; y < board.BoardSize; y++)
                     {
-                        for (uint x = 0; x < 11; x++)
+                        for (uint x = 0; x < board.BoardSize; x++)
                         {
                             if ((board.getSquare(x, y).Dep.DepType == "Barracks" || board.getSquare(x, y).Dep.DepType == "Base") && board.getSquare(x, y).Dep.OwnedBy == ConPlayer)
                             {
