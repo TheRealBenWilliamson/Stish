@@ -148,12 +148,8 @@ namespace StishBoard
                     //add movement points
                     Console.SetCursorPosition(4 * 17, (card + 2));
                     Console.WriteLine("{0} has: {1} Health, it is contains: {2} , belongs to: {3} and has {4} Movement Points", CardinalString[card],Check.Dep.Health.ToString(), CheckType, CheckOwner, Check.Dep.MP.ToString());
-                }
-
-            
-            }
-            
-
+                }         
+            }            
         }
 
         public void Render(Player Cont)
@@ -183,10 +179,10 @@ namespace StishBoard
 
         }
 
-        private void Drag(uint FromX, uint FromY, uint ToX, uint ToY, Player MyPlayer)
+        private void Drag(Coordinate FromCo, Coordinate ToCo, Player MyPlayer)
         {
-            Square From = board.getSquare(FromX, FromY);
-            Square To = board.getSquare(ToX, ToY);
+            Square From = board.getSquare(FromCo.X,FromCo.Y);
+            Square To = board.getSquare(ToCo.X, ToCo.Y);
 
             From.Owner = MyPlayer;
             To.Owner = MyPlayer;
@@ -367,7 +363,7 @@ namespace StishBoard
                 if(board.getSquare(FromX, FromY).Dep.MP > 0)
                 {
                     board.getSquare(FromX, FromY).Dep.MP--;
-                    Drag(Xco, Yco, CheckX, CheckY, MyPlayer);
+                    Drag(new Coordinate(Xco,Yco), new Coordinate(CheckX,CheckY), MyPlayer);
                     Moved = true;
                 }
                 
@@ -504,26 +500,26 @@ namespace StishBoard
         }
 
         public void Move(Player ConPlayer, string input)
-        {            
+        {
 
-            uint ChangeX = Xco;
-            uint ChangeY = Yco;
+            Coordinate CursorCoord = new Coordinate(Xco, Yco);
+            //uint ChangeY = Yco;
 
             if (input == "W")
             {
-                ChangeY -= 1;
+                CursorCoord.MoveUp();
             }
             else if (input == "A")
             {
-                ChangeX -= 1;
+                CursorCoord.MoveLeft();
             }
             else if (input == "S")
             {
-                ChangeY += 1;
+                CursorCoord.MoveDown();
             }
             else if (input == "D")
             {
-                ChangeX += 1;
+                CursorCoord.MoveRight();
             }
             else if (input == " ")
             {
@@ -531,7 +527,7 @@ namespace StishBoard
                 if (mode == Mode.free)
                 {
                     //can only be done on a friendly Unit
-                    if (Land(ChangeX, ChangeY, ConPlayer) == true)
+                    if (Land(CursorCoord.X, CursorCoord.Y, ConPlayer) == true)
                     {
                         mode = Mode.locked;
                     }
@@ -548,35 +544,35 @@ namespace StishBoard
             {
                 //buy barracks
                 purchase = Purchase.Barracks;
-                BuyDep(ChangeX, ChangeY, ConPlayer);
+                BuyDep(CursorCoord.X, CursorCoord.Y, ConPlayer);
             }
             else if (input == "E")
             {
                 //buy unit
                 purchase = Purchase.Unit;
-                BuyDep(ChangeX, ChangeY, ConPlayer);
+                BuyDep(CursorCoord.X, CursorCoord.Y, ConPlayer);
             }
             else if (input == "_")
             {
                 //enter has to be done in the human/computer override
             }
 
-            if (OnBoard(ChangeX, ChangeY) == true)
+            if (OnBoard(CursorCoord.X, CursorCoord.Y) == true)
             {
                 //free
                 if (CursorMode == Mode.free)
                 {
-                    Xco = ChangeX;
-                    Yco = ChangeY;
+                    Xco = CursorCoord.X;
+                    Yco = CursorCoord.Y;
                 }
 
                 //locked
                 if (CursorMode == Mode.locked)
                 {
-                    if (Action(Xco, Yco, ChangeX, ChangeY, ConPlayer) == true)
+                    if (Action(Xco, Yco, CursorCoord.X, CursorCoord.Y, ConPlayer) == true)
                     {
-                        Xco = ChangeX;
-                        Yco = ChangeY;
+                        Xco = CursorCoord.X;
+                        Yco = CursorCoord.Y;
                     }
                 }
 

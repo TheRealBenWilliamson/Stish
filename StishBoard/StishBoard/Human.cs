@@ -14,7 +14,6 @@ namespace StishBoard
         }
 
         //Option helps use enums for the player making number corrosponding branching choices
-        public enum Option { opt0, opt1, opt2, opt3 };
         public enum Action { MoveUnit, BuyUnit, BuyBarracks, EndTurn};
 
         //by now a board should already have been created. StishBoard.Instance allows us to get a reference to the existing board.
