@@ -27,7 +27,7 @@ namespace StishBoard
         */      
 
         //the Cursor is a singleton
-        private static Cursor instance;
+        private static Cursor instance;            
 
         public static Cursor Instance
         {
@@ -42,10 +42,13 @@ namespace StishBoard
         }
 
         StishBoard board = StishBoard.Instance;
+        GameMaster master = GameMaster.Instance;
+        public Coordinate Pos = new Coordinate();
 
-        //this constructor is behaving wildly and is causing a lot of errors so i have removed it
+        //this constructor is behaving wildly and is causing a lot of errors so i have removed it        
         private uint Xco = 0;
         private uint Yco = 0;
+        
         public enum Mode { free, locked };
         private Mode mode = Mode.free;
         public enum Purchase { Barracks, Unit, Burst };
@@ -68,11 +71,11 @@ namespace StishBoard
         {
             get
             {
-                return Xco;
+                return Pos.X;
             }
             set
             {
-                Xco = value;
+                Pos.X = value;
             }
         }
 
@@ -80,20 +83,27 @@ namespace StishBoard
         {
             get
             {
-                return Yco;
+                return Pos.Y;
             }
             set
             {
-                Yco = value;
+                Pos.Y = value;
             }
         }
 
 
-        //this is purely cosmetic and helps describe the squares surrounding the cursor       
+        //this is purely cosmetic and helps describe the squares surrounding the cursor         
 
-        public void Cardinal(uint Xc, uint Yc, uint Xu, uint Yu, uint Xr, uint Yr, uint Xd, uint Yd, uint Xl, uint Yl, Player Cont)
+        public void Cardinal(Player Cont)
         {
-
+            Coordinate up = new Coordinate(Pos.X, Pos.Y);
+            up.MoveUp();
+            Coordinate right = new Coordinate(Pos.X, Pos.Y);
+            right.MoveRight();
+            Coordinate down = new Coordinate(Pos.X, Pos.Y);
+            down.MoveDown();
+            Coordinate left = new Coordinate(Pos.X, Pos.Y);
+            left.MoveLeft();
             System.Console.ForegroundColor = Cont.GetRenderColour();
             Console.SetCursorPosition(4 * 17, 0);
             Console.WriteLine("{0}'s Turn", Cont.GetPlayerNum);
@@ -101,25 +111,13 @@ namespace StishBoard
             
             Console.SetCursorPosition(0, 0);
             
-
-            uint[,] CardinalDir = new uint[1, 5];
-            uint[,] Coord = new uint[5, 2];
             List<string> CardinalString = new List<string>() { "Centre", "Up", "Right", "Down", "Left" };
-            List<uint> CoordSing = new List<uint>(){ Xc, Yc, Xu, Yu, Xr, Yr, Xd, Yd, Xl, Yl };
-
-            int count = 0;
-            for (uint row = 0; row < 5; row++)
-            {
-                for (uint col = 0; col < 2; col++)
-                {
-                    Coord[row, col] = CoordSing[count];
-                    count++;
-                }
-            }
+            List<Coordinate> Direction = new List<Coordinate>() { Pos, up, right, down, left };
             
             for (int card = 0; card < 5; card++)
             {
-                Square Check = board.getSquare(Coord[card,0], Coord[card, 1]);
+                //Square Check = board.getSquare(Coord[card,0], Coord[card, 1]);
+                Square Check = board.getSquare(Direction[card]);
 
                 if (Check != null)
                 {
@@ -143,19 +141,25 @@ namespace StishBoard
                         CheckOwner = Check.Owner.GetPlayerNum;
                     }
 
-                    //there is definately a better way to do this using for loops
-                    //repeat for all cardinal directions
-                    //add movement points
                     Console.SetCursorPosition(4 * 17, (card + 2));
                     Console.WriteLine("{0} has: {1} Health, it is contains: {2} , belongs to: {3} and has {4} Movement Points", CardinalString[card],Check.Dep.Health.ToString(), CheckType, CheckOwner, Check.Dep.MP.ToString());
                 }         
             }            
         }
 
+
         public void Render(Player Cont)
         {
-            //Info
-            Cardinal(Xco, Yco, Xco, (Yco - 1), (Xco + 1), Yco, Xco, (Yco + 1), (Xco - 1), Yco, Cont);
+            //Info   
+            Coordinate up = new Coordinate(Xco, Yco);
+            up.MoveUp();
+            Coordinate right = new Coordinate(Xco, Yco);
+            right.MoveRight();
+            Coordinate down = new Coordinate(Xco, Yco);
+            down.MoveDown();
+            Coordinate left = new Coordinate(Xco, Yco);
+            left.MoveLeft();
+            Cardinal(Cont);
         
             //Cursor
             if (CursorMode == Mode.free)
@@ -167,8 +171,8 @@ namespace StishBoard
                 System.Console.ForegroundColor = ConsoleColor.DarkGreen;
             }
             
-            int x = (int)Xco;
-            int y = (int)Yco;
+            int x = (int)Pos.X;
+            int y = (int)Pos.Y;
             x = x * 4;
             Console.SetCursorPosition(x, y + 2);
             Console.WriteLine("[");
@@ -181,8 +185,8 @@ namespace StishBoard
 
         private void Drag(Coordinate FromCo, Coordinate ToCo, Player MyPlayer)
         {
-            Square From = board.getSquare(FromCo.X,FromCo.Y);
-            Square To = board.getSquare(ToCo.X, ToCo.Y);
+            Square From = board.getSquare(FromCo);
+            Square To = board.getSquare(ToCo);
 
             From.Owner = MyPlayer;
             To.Owner = MyPlayer;
@@ -191,6 +195,8 @@ namespace StishBoard
             From.Dep = new Empty();
         }
 
+
+        /*
         private void SearchAndPlace(uint valueX, uint valueY, List<uint> SlistX, List<uint> SlistY, List<uint> PlistX, List<uint> PlistY)
         {
             bool found = false;
@@ -221,7 +227,7 @@ namespace StishBoard
             return found;
         }
 
-
+        
         public void TerritoryDeaths()
         {
             for (int look = 0; look < 2; look++)
@@ -316,6 +322,7 @@ namespace StishBoard
 
             }
         }
+        
 
         public void BaseSquares()
         {
@@ -350,20 +357,21 @@ namespace StishBoard
 
             }
         }
+        */
         
-        public bool Action(uint FromX, uint FromY, uint CheckX, uint CheckY , Player MyPlayer)
+        public bool Action(Coordinate From, Coordinate Check , Player MyPlayer)
         {
             //the bool output lets the caller know if the unit moved
             bool Moved = false;
-            String CheckDep = board.getSquare(CheckX, CheckY).Dep.DepType;
-            Player Owner = board.getSquare(CheckX, CheckY).Dep.OwnedBy;
-            if ((CheckDep == "Empty") || (CheckDep == "Barracks" && Owner == MyPlayer))
+            String CheckDep = board.getSquare(Check).Dep.DepType;
+            Player Owner = board.getSquare(Check).Dep.OwnedBy;
+            if (((CheckDep == "Empty") || (CheckDep == "Barracks") && Owner == MyPlayer))
             {
                 //drag or destroys a friendly barracks
-                if(board.getSquare(FromX, FromY).Dep.MP > 0)
+                if(board.getSquare(From).Dep.MP > 0)
                 {
-                    board.getSquare(FromX, FromY).Dep.MP--;
-                    Drag(new Coordinate(Xco,Yco), new Coordinate(CheckX,CheckY), MyPlayer);
+                    board.getSquare(From).Dep.MP--;
+                    Drag(new Coordinate(Pos.X,Pos.Y), new Coordinate(Check.X,Check.Y), MyPlayer);
                     Moved = true;
                 }
                 
@@ -374,8 +382,8 @@ namespace StishBoard
                 //adjust health and then if the attacking unit won, use the drag function
                 //i dont know if i want to use the drag function on an attack. i will wait until i test it to decide
                 //i dont have to redefine these squares but i think it helps the code read better
-                Square Attacker = board.getSquare(FromX, FromY);
-                Square Defender = board.getSquare(CheckX, CheckY);
+                Square Attacker = board.getSquare(From);
+                Square Defender = board.getSquare(Check);
                 
                 //attacker must have more some MP to attack to prevent spawn attacking
                 if (Attacker.Dep.MP > 0)
@@ -388,8 +396,8 @@ namespace StishBoard
                         //Barracks are a special case
                         if (CheckDep == "Barracks")
                         {
-                            board.getSquare(CheckX, CheckY).Dep = new Barracks(MyPlayer, board.getSquare(CheckX, CheckY), 5);
-                            board.getSquare(CheckX, CheckY).Owner = MyPlayer;
+                            board.getSquare(Check).Dep = new Barracks(MyPlayer, board.getSquare(Check), 5);
+                            board.getSquare(Check).Owner = MyPlayer;
                         }
                         else
                         {
@@ -409,8 +417,8 @@ namespace StishBoard
                     {
                         if (CheckDep == "Barracks")
                         {
-                            board.getSquare(CheckX, CheckY).Dep = new Barracks(MyPlayer, board.getSquare(CheckX, CheckY), 5);
-                            board.getSquare(CheckX, CheckY).Owner = MyPlayer;
+                            board.getSquare(Check).Dep = new Barracks(MyPlayer, board.getSquare(Check), 5);
+                            board.getSquare(Check).Owner = MyPlayer;
                         }
                         else
                         {
@@ -422,57 +430,38 @@ namespace StishBoard
                 }
             }
 
-            TerritoryDeaths();
-            BaseSquares();
+            //TerritoryDeaths();
+            //BaseSquares();
             return Moved;
         }
 
-        public bool Land(uint XCheck, uint YCheck, Player MyPlayer)
+        public bool Land(Coordinate Check, Player MyPlayer)
         {
-            if (board.getSquare(XCheck, YCheck).Dep.DepType == "Unit" && board.getSquare(XCheck, YCheck).Dep.OwnedBy == MyPlayer)
+            if (board.getSquare(Check).Dep.DepType == "Unit" && board.getSquare(Check).Dep.OwnedBy == MyPlayer)
             {
                 return true;
             }
             else return false;
-        }
+        }       
 
-        //coordinates are uints so anything less than 0 will overflow
-        public bool OnBoard(uint numX, uint numY)
+        private void BuyDep(Coordinate Pur,Player ConPlayer)
         {
-            try
-            {
-                Square Check = board.getSquare(numX, numY);
-                if(Check != null)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-                
-            }
-            catch
-            {
-                return false;
-            }
-        }
-
-        private void BuyDep(uint XPur,uint YPur,Player ConPlayer)
-        {
-            if((board.getSquare(XPur,YPur) != null) && (board.getSquare(XPur, YPur).Dep.DepType == "Empty") && (board.getSquare(XPur, YPur).Owner == ConPlayer))
+            if((board.getSquare(Pur) != null) && (board.getSquare(Pur).Dep.DepType == "Empty") && (board.getSquare(Pur).Owner == ConPlayer))
             {
                 //purchase is acceptable
                 if (purchase == Purchase.Barracks)
                 {
                     //check how many barracks the player already has and multiply it buy the cost of one barracks
                     uint multiply = 0;
+                    Coordinate See = new Coordinate();
 
                     for (uint y = 0; y < board.BoardSize; y++)
                     {
                         for (uint x = 0; x < board.BoardSize; x++)
                         {
-                            if ((board.getSquare(x, y).Dep.DepType == "Barracks" || board.getSquare(x, y).Dep.DepType == "Base") && board.getSquare(x, y).Dep.OwnedBy == ConPlayer)
+                            See.X = x;
+                            See.Y = y;
+                            if ((board.getSquare(See).Dep.DepType == "Barracks" || board.getSquare(See).Dep.DepType == "Base") && board.getSquare(See).Dep.OwnedBy == ConPlayer)
                             {
                                 multiply++;
                             }
@@ -481,7 +470,7 @@ namespace StishBoard
 
                     if(ConPlayer.Balance >= 3 * multiply)
                     {
-                        board.getSquare(XPur, YPur).Dep = new Barracks(board.getSquare(XPur, YPur).Owner, board.getSquare(XPur, YPur), 5);
+                        board.getSquare(Pur).Dep = new Barracks(board.getSquare(Pur).Owner, board.getSquare(Pur), 5);
                         ConPlayer.Balance -= 3 * multiply;
                     }
                     
@@ -491,7 +480,7 @@ namespace StishBoard
                     //spend the entire player balance 
                     if(ConPlayer.Balance > 0)
                     {
-                        board.getSquare(XPur, YPur).Dep = new Unit(board.getSquare(XPur, YPur).Owner, board.getSquare(XPur, YPur), ConPlayer.Balance);
+                        board.getSquare(Pur).Dep = new Unit(board.getSquare(Pur).Owner, board.getSquare(Pur), ConPlayer.Balance);
                         ConPlayer.Balance = 0;
                     }
                     
@@ -502,7 +491,7 @@ namespace StishBoard
         public void Move(Player ConPlayer, string input)
         {
 
-            Coordinate CursorCoord = new Coordinate(Xco, Yco);
+            Coordinate CursorCoord = new Coordinate(Pos.X, Pos.Y);
             //uint ChangeY = Yco;
 
             if (input == "W")
@@ -527,7 +516,7 @@ namespace StishBoard
                 if (mode == Mode.free)
                 {
                     //can only be done on a friendly Unit
-                    if (Land(CursorCoord.X, CursorCoord.Y, ConPlayer) == true)
+                    if (Land(CursorCoord, ConPlayer) == true)
                     {
                         mode = Mode.locked;
                     }
@@ -544,35 +533,35 @@ namespace StishBoard
             {
                 //buy barracks
                 purchase = Purchase.Barracks;
-                BuyDep(CursorCoord.X, CursorCoord.Y, ConPlayer);
+                BuyDep(CursorCoord, ConPlayer);
             }
             else if (input == "E")
             {
                 //buy unit
                 purchase = Purchase.Unit;
-                BuyDep(CursorCoord.X, CursorCoord.Y, ConPlayer);
+                BuyDep(CursorCoord, ConPlayer);
             }
             else if (input == "_")
             {
                 //enter has to be done in the human/computer override
             }
 
-            if (OnBoard(CursorCoord.X, CursorCoord.Y) == true)
+            if (master.OnBoard(CursorCoord) == true)
             {
                 //free
                 if (CursorMode == Mode.free)
                 {
-                    Xco = CursorCoord.X;
-                    Yco = CursorCoord.Y;
+                    Pos.X = CursorCoord.X;
+                    Pos.Y = CursorCoord.Y;
                 }
 
                 //locked
                 if (CursorMode == Mode.locked)
                 {
-                    if (Action(Xco, Yco, CursorCoord.X, CursorCoord.Y, ConPlayer) == true)
+                    if (Action(Pos, CursorCoord, ConPlayer) == true)
                     {
-                        Xco = CursorCoord.X;
-                        Yco = CursorCoord.Y;
+                        Pos.X = CursorCoord.X;
+                        Pos.Y = CursorCoord.Y;
                     }
                 }
 

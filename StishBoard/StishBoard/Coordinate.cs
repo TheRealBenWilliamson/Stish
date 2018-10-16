@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace StishBoard
 {
-    class Coordinate
+    public class Coordinate
     {
         private uint Xco;
         private uint Yco;
@@ -41,10 +41,10 @@ namespace StishBoard
             Yco = 0;
         }
 
-        public Coordinate(uint X, uint Y)
+        public Coordinate(uint CalledX, uint CalledY)
         {
-            Xco = X;
-            Yco = Y;
+            Xco = CalledX;
+            Yco = CalledY;
         }
 
         public void MoveLeft()

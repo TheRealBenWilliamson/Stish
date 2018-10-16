@@ -39,13 +39,15 @@ namespace StishBoard
             {
                 //checks if a base has been destroyed. if one has then the other player has won.
                 //if not then alternate player turns
-                if(board.getSquare(P2.BaseX, P2.BaseY).Dep.Health < 1)
+                Coordinate P1Base = new Coordinate(P1.BaseX, P1.BaseY);
+                Coordinate P2Base = new Coordinate(P2.BaseX, P2.BaseY);
+                if (board.getSquare(P2Base).Dep.Health < 1)
                 {
                     //Player1 has won
                     GameEnd = true;
                     won = Won.Player1;
                 }
-                else if (board.getSquare(P1.BaseX, P1.BaseY).Dep.Health < 1)
+                else if (board.getSquare(P1Base).Dep.Health < 1)
                 {
                     //Player2 has won
                     GameEnd = true;

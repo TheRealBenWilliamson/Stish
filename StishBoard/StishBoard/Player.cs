@@ -72,12 +72,15 @@ namespace StishBoard
                 BaseX = (board.BoardSize) / 2;
                 BaseY = 1;                          
             }
-            new Base(this, board.getSquare(BaseX, BaseY), 20);
+            Coordinate ThisCo = new Coordinate(BaseX, BaseY);
+            new Base(this, board.getSquare(ThisCo), 20);
             for (uint y = BaseY - 1; y < BaseY + 2; y++)
             {
                 for (uint x = BaseX - 1; x < BaseX + 2; x++)
                 {
-                    board.getSquare(x, y).Owner = this;
+                    ThisCo.X = x;
+                    ThisCo.Y = y;
+                    board.getSquare(ThisCo).Owner = this;
                 }
             }
         }        
@@ -148,11 +151,14 @@ namespace StishBoard
 
         public void TurnBalance()
         {
+            Coordinate ThisCo = new Coordinate();
             for (uint y = 0; y < board.BoardSize; y++)
             {
                 for (uint x = 0; x < board.BoardSize; x++)
                 {
-                    if((board.getSquare(x, y).Dep.DepType == "Barracks" || board.getSquare(x, y).Dep.DepType == "Base") && board.getSquare(x, y).Dep.OwnedBy == this)
+                    ThisCo.X = x;
+                    ThisCo.Y = y;
+                    if((board.getSquare(ThisCo).Dep.DepType == "Barracks" || board.getSquare(ThisCo).Dep.DepType == "Base") && board.getSquare(ThisCo).Dep.OwnedBy == this)
                     {
                         balance ++ ;
                     }           
@@ -164,12 +170,14 @@ namespace StishBoard
         public void MaxMP()
         {
             //this fuction is run at the start of a turn and sets all units that belong to this player to the max MP.
-
+            Coordinate ThisCo = new Coordinate();
             for (uint y = 0; y < board.BoardSize; y++)
             {
                 for (uint x = 0; x < board.BoardSize; x++)
                 {
-                    Square ThisSquare = board.getSquare(x, y);
+                    ThisCo.X = x;
+                    ThisCo.Y = y;
+                    Square ThisSquare = board.getSquare(ThisCo);
                     if ((ThisSquare.Owner == this) && (ThisSquare.Dep.DepType == "Unit"))
                     {
                         //This number is subject to change throughout testing and balancing

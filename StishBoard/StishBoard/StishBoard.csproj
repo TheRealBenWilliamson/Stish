@@ -49,6 +49,7 @@
     <Compile Include="Cursor.cs" />
     <Compile Include="Deployment.cs" />
     <Compile Include="Empty.cs" />
+    <Compile Include="GameMaster.cs" />
     <Compile Include="Helper.cs" />
     <Compile Include="Human.cs" />
     <Compile Include="Player.cs" />

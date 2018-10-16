@@ -85,12 +85,12 @@ namespace StishBoard
         }
 
         //creates a public function called "getSquare", it will return the reference to the square object that sits in the position in "array" that is asked for in the arguments.
-        public Square getSquare(uint row, uint col)
+        public Square getSquare(Coordinate Find)
         {
             //TO DO: add error handling of arguments that are out of range of the array.
             try
             {
-                return array[row, col];
+                return array[Find.X, Find.Y];
             }
             catch
             {
@@ -117,12 +117,14 @@ namespace StishBoard
                         
 
                 uint Bcost = 0;
-
+                Coordinate ThisCo = new Coordinate();
                 for (uint y = 0; y < BoardSize; y++)
                 {
                     for (uint x = 0; x < BoardSize; x++)
                     {
-                        if ((this.getSquare(x, y).Dep.DepType == "Barracks" || this.getSquare(x, y).Dep.DepType == "Base") && this.getSquare(x, y).Dep.OwnedBy == LookPlayer)
+                        ThisCo.X = x;
+                        ThisCo.Y = y;
+                        if ((this.getSquare(ThisCo).Dep.DepType == "Barracks" || this.getSquare(ThisCo).Dep.DepType == "Base") && this.getSquare(ThisCo).Dep.OwnedBy == LookPlayer)
                         {
                             Bcost++;
                         }
