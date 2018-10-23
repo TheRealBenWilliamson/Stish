@@ -42,7 +42,10 @@ namespace StishBoard
         }
 
         StishBoard board = StishBoard.Instance;
-        GameMaster master = GameMaster.Instance;
+        private Cursor()
+        {
+        }
+
         public Coordinate Pos = new Coordinate();
 
         //this constructor is behaving wildly and is causing a lot of errors so i have removed it        
@@ -238,19 +241,19 @@ namespace StishBoard
             else if (input == "Q")
             {
                 //buy barracks
-                master.BuyBarracks(CursorCoord, ConPlayer);
+                GameMaster.Instance.BuyBarracks(CursorCoord, ConPlayer);
             }
             else if (input == "E")
             {
                 //buy unit
-                master.BuyUnit(CursorCoord, ConPlayer);
+                GameMaster.Instance.BuyUnit(CursorCoord, ConPlayer);
             }
             else if (input == "_")
             {
                 //enter has to be done in the human/computer override
             }
 
-            if (master.OnBoard(CursorCoord) == true)
+            if (GameMaster.Instance.OnBoard(CursorCoord) == true)
             {
                 //free
                 if (CursorMode == Mode.free)
@@ -262,7 +265,7 @@ namespace StishBoard
                 //locked
                 if (CursorMode == Mode.locked)
                 {
-                    if (master.Action(Pos, CursorCoord, ConPlayer) == true)
+                    if (GameMaster.Instance.Action(Pos, CursorCoord, ConPlayer) == true)
                     {
                         Pos.X = CursorCoord.X;
                         Pos.Y = CursorCoord.Y;

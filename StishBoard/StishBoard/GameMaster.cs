@@ -10,7 +10,7 @@ namespace StishBoard
     {
         //the gamemaster controls the rules of stish and is what the players can call to make stuff happen
         //singleton class-object
-        private static GameMaster instance;
+        private static GameMaster instance;       
 
         public static GameMaster Instance
         {
@@ -23,9 +23,18 @@ namespace StishBoard
                 return instance;
             }
         }
+        
+        ~GameMaster()
+        {
+
+        }
 
         StishBoard board = StishBoard.Instance;
-        Cursor cursor = Cursor.Instance;
+
+        private GameMaster()
+        {
+
+        }
 
         //coordinates are uints so anything less than 0 will overflow
         public bool OnBoard(Coordinate num)
@@ -139,7 +148,7 @@ namespace StishBoard
                 {
                     Defender.Dep.Health -= Attacker.Dep.Health;
                     Attacker.Dep = new Empty();
-                    cursor.CursorMode = Cursor.Mode.free;
+                    Cursor.Instance.CursorMode = Cursor.Mode.free;
                 }
                 //both have equal health
                 else
@@ -154,7 +163,7 @@ namespace StishBoard
                         Defender.Dep = new Empty();
                     }
                     Attacker.Dep = new Empty();
-                    cursor.CursorMode = Cursor.Mode.free;
+                    Cursor.Instance.CursorMode = Cursor.Mode.free;
                 }
             }
         }

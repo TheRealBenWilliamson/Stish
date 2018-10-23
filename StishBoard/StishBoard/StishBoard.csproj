@@ -52,11 +52,13 @@
     <Compile Include="GameMaster.cs" />
     <Compile Include="Helper.cs" />
     <Compile Include="Human.cs" />
+    <Compile Include="NamedTreeNode.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Square.cs" />
     <Compile Include="StishBoard.cs" />
+    <Compile Include="TreeNode.cs" />
     <Compile Include="Unit.cs" />
   </ItemGroup>
   <ItemGroup>

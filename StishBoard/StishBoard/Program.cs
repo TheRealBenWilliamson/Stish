@@ -13,9 +13,28 @@ namespace StishBoard
 
         static void Main(string[] args)
         {
+
+            TreeNode RootNode = new TreeNode();
+            NamedTreeNode Child1 = new NamedTreeNode("Child1",RootNode);
+            NamedTreeNode Child2 = new NamedTreeNode("Child2");
+            Child1.AddChild(Child2);
+            NamedTreeNode Child3 = new NamedTreeNode("Child3",Child1);
+            NamedTreeNode Child4 = new NamedTreeNode("Child4",Child1);
+
+            TreeNode inspect = Child4;
+            while (inspect != null)
+            {
+                inspect = inspect.GetParent();
+            }
+
+            Child4.Remove();
+
+
+
             //creates a board from the StishBoard class called "board" by calling the public 'Instance' method.
             StishBoard board = StishBoard.Instance;
             Cursor cursor = Cursor.Instance;
+            GameMaster gameMaster = GameMaster.Instance;
 
             Console.SetWindowSize(170, 25);
 
