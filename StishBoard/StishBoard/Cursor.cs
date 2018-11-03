@@ -11,8 +11,8 @@ namespace StishBoard
         //the cursor is not a deployment type calss as it has no owner, health, or icon.
         //cursor can be controlled by the player on their turn.
         //the cursor is always in one of two modes, free or locked.
-        //the free cursor will be yellow and can be moved about the board freely, it does not change any game elements and is used to "land" the Locked cursor and show the information of squares beneath it.
-        //the locked cursor will be green and is used to depict which square on the board is being munipulated. the static cursor can only be ontop of a friendly unit.
+        //the free cursor will be yellow and can be moved about the StishBoard.Instance freely, it does not change any game elements and is used to "land" the Locked cursor and show the information of squares beneath it.
+        //the locked cursor will be green and is used to depict which square on the StishBoard.Instance is being munipulated. the static cursor can only be ontop of a friendly unit.
         //the cursor can only be toggled above friendly territory.
 
         //the locked cursor will detect information about it's surroundings and display them to the user. it will also be the driving force of movement and tell the underlying unit where to go.
@@ -41,7 +41,6 @@ namespace StishBoard
             }
         }
 
-        StishBoard board = StishBoard.Instance;
         private Cursor()
         {
         }
@@ -117,8 +116,8 @@ namespace StishBoard
             
             for (int card = 0; card < 5; card++)
             {
-                //Square Check = board.getSquare(Coord[card,0], Coord[card, 1]);
-                Square Check = board.getSquare(Direction[card]);
+                //Square Check = StishBoard.Instance.getSquare(Coord[card,0], Coord[card, 1]);
+                Square Check = StishBoard.Instance.getSquare(Direction[card]);
 
                 if (Check != null)
                 {
@@ -188,7 +187,7 @@ namespace StishBoard
         
         public bool Land(Coordinate Check, Player MyPlayer)
         {
-            if (board.getSquare(Check).Dep.DepType == "Unit" && board.getSquare(Check).Dep.OwnedBy == MyPlayer)
+            if (StishBoard.Instance.getSquare(Check).Dep.DepType == "Unit" && StishBoard.Instance.getSquare(Check).Dep.OwnedBy == MyPlayer)
             {
                 return true;
             }
@@ -279,7 +278,7 @@ namespace StishBoard
             }
 
             Console.Clear();
-            board.Render();
+            StishBoard.Instance.Render();
             Render(ConPlayer);
 
             //at the end of a turn the cursor is set to free so that the other player cannot control enemy units

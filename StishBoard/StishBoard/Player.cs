@@ -13,8 +13,7 @@ namespace StishBoard
         //private static Player Player2Instance;
         //dont know where to use these
 
-        //by now a board should already have been created. StishBoard.Instance allows us to get a reference to the existing board.
-        StishBoard board = StishBoard.Instance;
+        //by now a StishBoard.Instance should already have been created. StishBoard.Instance allows us to get a reference to the existing StishBoard.Instance.
 
         //using enums because it is an easy way to show exclusive possible properties of something. eg an enum for the day of the week would be appropriate because there are seven set possibilities yet the day could only be one of them at once.
         //why didnt we use enums for deployemnt?
@@ -64,23 +63,23 @@ namespace StishBoard
             //homeBase = new Base();
             if (playerNumber == PlayerNumber.Player1)
             {
-                BaseX = (board.BoardSize) / 2;
-                BaseY = board.BoardSize - 2;                                      
+                BaseX = (StishBoard.Instance.BoardSize) / 2;
+                BaseY = StishBoard.Instance.BoardSize - 2;                                      
             }
             else
             {
-                BaseX = (board.BoardSize) / 2;
+                BaseX = (StishBoard.Instance.BoardSize) / 2;
                 BaseY = 1;                          
             }
             Coordinate ThisCo = new Coordinate(BaseX, BaseY);
-            new Base(this, board.getSquare(ThisCo), 20);
+            new Base(this, StishBoard.Instance.getSquare(ThisCo), 20);
             for (uint y = BaseY - 1; y < BaseY + 2; y++)
             {
                 for (uint x = BaseX - 1; x < BaseX + 2; x++)
                 {
                     ThisCo.X = x;
                     ThisCo.Y = y;
-                    board.getSquare(ThisCo).Owner = this;
+                    StishBoard.Instance.getSquare(ThisCo).Owner = this;
                 }
             }
         }        
@@ -152,13 +151,13 @@ namespace StishBoard
         public void TurnBalance()
         {
             Coordinate ThisCo = new Coordinate();
-            for (uint y = 0; y < board.BoardSize; y++)
+            for (uint y = 0; y < StishBoard.Instance.BoardSize; y++)
             {
-                for (uint x = 0; x < board.BoardSize; x++)
+                for (uint x = 0; x < StishBoard.Instance.BoardSize; x++)
                 {
                     ThisCo.X = x;
                     ThisCo.Y = y;
-                    if((board.getSquare(ThisCo).Dep.DepType == "Barracks" || board.getSquare(ThisCo).Dep.DepType == "Base") && board.getSquare(ThisCo).Dep.OwnedBy == this)
+                    if((StishBoard.Instance.getSquare(ThisCo).Dep.DepType == "Barracks" || StishBoard.Instance.getSquare(ThisCo).Dep.DepType == "Base") && StishBoard.Instance.getSquare(ThisCo).Dep.OwnedBy == this)
                     {
                         balance ++ ;
                     }           
@@ -171,17 +170,18 @@ namespace StishBoard
         {
             //this fuction is run at the start of a turn and sets all units that belong to this player to the max MP.
             Coordinate ThisCo = new Coordinate();
-            for (uint y = 0; y < board.BoardSize; y++)
+            for (uint y = 0; y < StishBoard.Instance.BoardSize; y++)
             {
-                for (uint x = 0; x < board.BoardSize; x++)
+                for (uint x = 0; x < StishBoard.Instance.BoardSize; x++)
                 {
                     ThisCo.X = x;
                     ThisCo.Y = y;
-                    Square ThisSquare = board.getSquare(ThisCo);
+                    Square ThisSquare = StishBoard.Instance.getSquare(ThisCo);
                     if ((ThisSquare.Owner == this) && (ThisSquare.Dep.DepType == "Unit"))
                     {
                         //This number is subject to change throughout testing and balancing
                         ThisSquare.Dep.MP = 2;
+                        ThisSquare.Dep.JustCreated = false;
                     }
                 }
             }

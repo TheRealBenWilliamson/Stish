@@ -22,14 +22,7 @@ namespace StishBoard
                 }
                 return instance;
             }
-        }
-        
-        ~GameMaster()
-        {
-
-        }
-
-        StishBoard board = StishBoard.Instance;
+        }                     
 
         private GameMaster()
         {
@@ -41,7 +34,7 @@ namespace StishBoard
         {
             try
             {
-                Square Check = board.getSquare(num);
+                Square Check = StishBoard.Instance.getSquare(num);
                 if (Check != null)
                 {
                     return true;
@@ -60,19 +53,19 @@ namespace StishBoard
 
         public void BuyBarracks(Coordinate Pur, Player ConPlayer)
         {
-            if ((board.getSquare(Pur) != null) && (board.getSquare(Pur).Dep.DepType == "Empty") && (board.getSquare(Pur).Owner == ConPlayer))
+            if ((StishBoard.Instance.getSquare(Pur) != null) && (StishBoard.Instance.getSquare(Pur).Dep.DepType == "Empty") && (StishBoard.Instance.getSquare(Pur).Owner == ConPlayer))
             {
                 //check how many barracks the player already has and multiply it buy the cost of one barracks
                 uint multiply = 0;
                 Coordinate See = new Coordinate();
 
-                for (uint y = 0; y < board.BoardSize; y++)
+                for (uint y = 0; y < StishBoard.Instance.BoardSize; y++)
                 {
-                    for (uint x = 0; x < board.BoardSize; x++)
+                    for (uint x = 0; x < StishBoard.Instance.BoardSize; x++)
                     {
                         See.X = x;
                         See.Y = y;
-                        if ((board.getSquare(See).Dep.DepType == "Barracks" || board.getSquare(See).Dep.DepType == "Base") && board.getSquare(See).Dep.OwnedBy == ConPlayer)
+                        if ((StishBoard.Instance.getSquare(See).Dep.DepType == "Barracks" || StishBoard.Instance.getSquare(See).Dep.DepType == "Base") && StishBoard.Instance.getSquare(See).Dep.OwnedBy == ConPlayer)
                         {
                             multiply++;
                         }
@@ -81,7 +74,7 @@ namespace StishBoard
 
                 if (ConPlayer.Balance >= 3 * multiply)
                 {
-                    board.getSquare(Pur).Dep = new Barracks(board.getSquare(Pur).Owner, board.getSquare(Pur), 5);
+                    StishBoard.Instance.getSquare(Pur).Dep = new Barracks(StishBoard.Instance.getSquare(Pur).Owner, StishBoard.Instance.getSquare(Pur), 5);
                     ConPlayer.Balance -= 3 * multiply;
                 }
             }
@@ -89,12 +82,12 @@ namespace StishBoard
 
         public void BuyUnit(Coordinate Pur, Player ConPlayer)
         {
-            if ((board.getSquare(Pur) != null) && (board.getSquare(Pur).Dep.DepType == "Empty") && (board.getSquare(Pur).Owner == ConPlayer))                
+            if ((StishBoard.Instance.getSquare(Pur) != null) && (StishBoard.Instance.getSquare(Pur).Dep.DepType == "Empty") && (StishBoard.Instance.getSquare(Pur).Owner == ConPlayer))                
             {
                 //spend the entire player balance 
                 if (ConPlayer.Balance > 0)
                 {
-                    board.getSquare(Pur).Dep = new Unit(board.getSquare(Pur).Owner, board.getSquare(Pur), ConPlayer.Balance);
+                    StishBoard.Instance.getSquare(Pur).Dep = new Unit(StishBoard.Instance.getSquare(Pur).Owner, StishBoard.Instance.getSquare(Pur), ConPlayer.Balance);
                     ConPlayer.Balance = 0;
                 }                 
             }
@@ -102,8 +95,8 @@ namespace StishBoard
 
         private void Drag(Coordinate FromCo, Coordinate ToCo, Player MyPlayer)
         {
-            Square From = board.getSquare(FromCo);
-            Square To = board.getSquare(ToCo);
+            Square From = StishBoard.Instance.getSquare(FromCo);
+            Square To = StishBoard.Instance.getSquare(ToCo);
 
             From.Owner = MyPlayer;
             To.Owner = MyPlayer;
@@ -118,13 +111,13 @@ namespace StishBoard
             //adjust health and then if the attacking unit won, use the drag function
             //i dont know if i want to use the drag function on an attack. i will wait until i test it to decide
             //i dont have to redefine these squares but i think it helps the code read better
-            Square Attacker = board.getSquare(From);
-            Square Defender = board.getSquare(Check);
-            String CheckDep = board.getSquare(Check).Dep.DepType;
-            Player Owner = board.getSquare(Check).Dep.OwnedBy;
+            Square Attacker = StishBoard.Instance.getSquare(From);
+            Square Defender = StishBoard.Instance.getSquare(Check);
+            String CheckDep = StishBoard.Instance.getSquare(Check).Dep.DepType;
+            Player Owner = StishBoard.Instance.getSquare(Check).Dep.OwnedBy;
 
             //attacker must have more some MP to attack to prevent spawn attacking
-            if (Attacker.Dep.MP > 0)
+            if (Attacker.Dep.JustCreated == false)
             {
                 //checks who wins the combat: attacker or defender
                 //attacker wins
@@ -134,8 +127,8 @@ namespace StishBoard
                     //Barracks are a special case
                     if (CheckDep == "Barracks")
                     {
-                        board.getSquare(Check).Dep = new Barracks(MyPlayer, board.getSquare(Check), 5);
-                        board.getSquare(Check).Owner = MyPlayer;
+                        StishBoard.Instance.getSquare(Check).Dep = new Barracks(MyPlayer, StishBoard.Instance.getSquare(Check), 5);
+                        StishBoard.Instance.getSquare(Check).Owner = MyPlayer;
                     }
                     else
                     {
@@ -155,8 +148,8 @@ namespace StishBoard
                 {
                     if (CheckDep == "Barracks")
                     {
-                        board.getSquare(Check).Dep = new Barracks(MyPlayer, board.getSquare(Check), 5);
-                        board.getSquare(Check).Owner = MyPlayer;
+                        StishBoard.Instance.getSquare(Check).Dep = new Barracks(MyPlayer, StishBoard.Instance.getSquare(Check), 5);
+                        StishBoard.Instance.getSquare(Check).Owner = MyPlayer;
                     }
                     else
                     {
@@ -172,14 +165,14 @@ namespace StishBoard
         {
             //the bool output lets the caller know if the unit moved
             bool Moved = false;
-            String CheckDep = board.getSquare(Check).Dep.DepType;
-            Player Owner = board.getSquare(Check).Dep.OwnedBy;
+            String CheckDep = StishBoard.Instance.getSquare(Check).Dep.DepType;
+            Player Owner = StishBoard.Instance.getSquare(Check).Dep.OwnedBy;
             if (((CheckDep == "Empty") || (CheckDep == "Barracks") && Owner == MyPlayer))
             {
                 //drag or destroys a friendly barracks
-                if (board.getSquare(From).Dep.MP > 0)
+                if (StishBoard.Instance.getSquare(From).Dep.MP > 0)
                 {
-                    board.getSquare(From).Dep.MP--;
+                    StishBoard.Instance.getSquare(From).Dep.MP--;
                     Drag(new Coordinate(From.X, From.Y), new Coordinate(Check.X, Check.Y), MyPlayer);
                     Moved = true;
                 }

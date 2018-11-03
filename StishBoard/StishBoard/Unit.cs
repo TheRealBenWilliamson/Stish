@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace StishBoard
 {
     public class Unit : Deployment
-    {
+    {      
 
         //constructor: gives the new object it's variable values to represent that it contains a unit
         public Unit()
@@ -16,6 +16,7 @@ namespace StishBoard
             depType = "Unit";
             Icon = "U";
             ownedBy = null;
+            m_JustCreated = true;
         }
 
         //units will have to have another argument in the constructor that gives them a value for their health
@@ -30,7 +31,7 @@ namespace StishBoard
             square.Owner = player;
             MP = 0;
             Health = CalledHealth;
-
+            m_JustCreated = true;
         }
 
         

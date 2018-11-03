@@ -29,13 +29,6 @@ namespace StishBoard
 
             Child4.Remove();
 
-
-
-            //creates a board from the StishBoard class called "board" by calling the public 'Instance' method.
-            StishBoard board = StishBoard.Instance;
-            Cursor cursor = Cursor.Instance;
-            GameMaster gameMaster = GameMaster.Instance;
-
             Console.SetWindowSize(170, 25);
 
             Player P1;
@@ -44,11 +37,11 @@ namespace StishBoard
             Player P2;
             P2 = Player.PlayerFactory(Player.PlayerNumber.Player2, Player.PlayerType.Human);
 
-            board.Player1 = P1;
-            board.Player2 = P2;
+            StishBoard.Instance.Player1 = P1;
+            StishBoard.Instance.Player2 = P2;
 
             Console.Clear();
-            board.Render();
+            StishBoard.Instance.Render();
 
             //game loop takes place here
             bool GameEnd = false;
@@ -60,13 +53,13 @@ namespace StishBoard
                 //if not then alternate player turns
                 Coordinate P1Base = new Coordinate(P1.BaseX, P1.BaseY);
                 Coordinate P2Base = new Coordinate(P2.BaseX, P2.BaseY);
-                if (board.getSquare(P2Base).Dep.Health < 1)
+                if (StishBoard.Instance.getSquare(P2Base).Dep.Health < 1)
                 {
                     //Player1 has won
                     GameEnd = true;
                     won = Won.Player1;
                 }
-                else if (board.getSquare(P1Base).Dep.Health < 1)
+                else if (StishBoard.Instance.getSquare(P1Base).Dep.Health < 1)
                 {
                     //Player2 has won
                     GameEnd = true;
@@ -79,8 +72,8 @@ namespace StishBoard
                     {
                         P1.TurnBalance();
                         P1.MaxMP();
-                        cursor.FindX = P1.CursorX;
-                        cursor.FindY = P1.Cursory;
+                        Cursor.Instance.FindX = P1.CursorX;
+                        Cursor.Instance.FindY = P1.Cursory;
                         P1.MakeMove();
                         turn++;
                     }
@@ -88,8 +81,8 @@ namespace StishBoard
                     {
                         P2.TurnBalance();
                         P2.MaxMP();
-                        cursor.FindX = P2.CursorX;
-                        cursor.FindY = P2.Cursory;
+                        Cursor.Instance.FindX = P2.CursorX;
+                        Cursor.Instance.FindY = P2.Cursory;
                         P2.MakeMove();
                         turn--;
                     }

@@ -16,9 +16,7 @@ namespace StishBoard
         //Option helps use enums for the player making number corrosponding branching choices
         public enum Action { MoveUnit, BuyUnit, BuyBarracks, EndTurn};
 
-        //by now a board should already have been created. StishBoard.Instance allows us to get a reference to the existing board.
-        StishBoard board = StishBoard.Instance;
-        Cursor cursor = Cursor.Instance;
+        //by now a StishBoard.Instance should already have been created. StishBoard.Instance allows us to get a reference to the existing StishBoard.Instance.
 
         //define methods for the player's move
 
@@ -26,8 +24,8 @@ namespace StishBoard
         public override void MakeMove()
         {
             Console.Clear();
-            board.Render();
-            cursor.Render(this);
+            StishBoard.Instance.Render();
+            Cursor.Instance.Render(this);
 
             bool EndTurn = false;
             do
@@ -66,12 +64,12 @@ namespace StishBoard
                 else if (put == ConsoleKey.Enter)
                 {
                     EndTurn = true;
-                    cursor.CursorMode = Cursor.Mode.free;
-                    CursorX = cursor.FindX;
-                    Cursory = cursor.FindY;
+                    Cursor.Instance.CursorMode = Cursor.Mode.free;
+                    CursorX = Cursor.Instance.FindX;
+                    Cursory = Cursor.Instance.FindY;
                 }
 
-                cursor.Move(this, output);
+                Cursor.Instance.Move(this, output);
             } while (EndTurn == false);
             
         }
@@ -105,7 +103,7 @@ namespace StishBoard
                         Console.WriteLine(" Y co-ordinate:");
                         uint placeY = UInt32.Parse(Console.ReadLine());
 
-                        Square Place = board.getSquare(placeX, placeY);
+                        Square Place = StishBoard.Instance.getSquare(placeX, placeY);
 
 
                         //events on moving a unit
@@ -116,8 +114,8 @@ namespace StishBoard
 
                         if ((placeX < 0 || placeX > 11) || (placeY < 0 || placeY > 11))
                         {
-                            //cannot be placed. position does not exist on the board
-                            Console.WriteLine("Please Enter co-ordinates that are on the board \nPress [ENTER] to continue");
+                            //cannot be placed. position does not exist on the StishBoard.Instance
+                            Console.WriteLine("Please Enter co-ordinates that are on the StishBoard.Instance \nPress [ENTER] to continue");
                             Console.ReadLine();
                         }
                         else if (Place.Dep.DepType != "Empty")
@@ -136,7 +134,7 @@ namespace StishBoard
                         {
                             //is placed
                             Balance = Balance - cost;
-                            new Unit(this, board.getSquare(placeX, placeY));
+                            new Unit(this, StishBoard.Instance.getSquare(placeX, placeY));
 
                             Console.WriteLine("a new Unit has been placed \nPress [ENTER] to continue");
                             Console.ReadLine();
@@ -204,12 +202,12 @@ namespace StishBoard
                             Console.WriteLine(" Y co-ordinate:");
                             uint placeY = UInt32.Parse(Console.ReadLine());
 
-                            Square Place = board.getSquare(placeX, placeY);
+                            Square Place = StishBoard.Instance.getSquare(placeX, placeY);
 
                             if ((placeX < 0 || placeX > 11) || (placeY < 0 || placeY > 11))
                             {
-                                //cannot be placed. position does not exist on the board
-                                Console.WriteLine("Please Enter co-ordinates that are on the board \nPress [ENTER] to continue");
+                                //cannot be placed. position does not exist on the StishBoard.Instance
+                                Console.WriteLine("Please Enter co-ordinates that are on the StishBoard.Instance \nPress [ENTER] to continue");
                                 Console.ReadLine();
                             }
                             else if (Place.Dep.DepType != "Empty")
@@ -228,7 +226,7 @@ namespace StishBoard
                             {
                                 //is placed
                                 Balance -= 5;
-                                new Barracks(this, board.getSquare(placeX, placeY));
+                                new Barracks(this, StishBoard.Instance.getSquare(placeX, placeY));
 
                                 Console.WriteLine("a new Barracks has been placed \nPress [ENTER] to continue");
                                 Console.ReadLine();
@@ -269,7 +267,7 @@ namespace StishBoard
                 //console is cleared so a render can take place
                 Console.Clear();
 
-                board.Render();
+                StishBoard.Instance.Render();
                 
                 Console.WriteLine("\nPress the Corrosponding number to act: \n 1. Move a unit \n 2. Buy a unit \n 3. Buy a barracks \n 4. End your turn");
 
@@ -284,7 +282,7 @@ namespace StishBoard
                             break;
                         case Action.BuyUnit:
                             //buy a unit (and place it)
-                            //as long as one friendly unit is on the board
+                            //as long as one friendly unit is on the StishBoard.Instance
                             BuyUnit();
                             break;
                         case Action.BuyBarracks:
@@ -320,10 +318,10 @@ namespace StishBoard
 
         protected void PlayerCrane(uint FromX, uint FromY, uint ToX, uint ToY)
         {
-            //this method will be used by any object derived from the player class. it will allow a player to munipulate deployment positions on the board hence letting them move move a unit or buy/place a deployment.
+            //this method will be used by any object derived from the player class. it will allow a player to munipulate deployment positions on the StishBoard.Instance hence letting them move move a unit or buy/place a deployment.
 
-            Square From = board.getSquare(FromX, FromY);
-            Square To = board.getSquare(ToX, ToY);
+            Square From = StishBoard.Instance.getSquare(FromX, FromY);
+            Square To = StishBoard.Instance.getSquare(ToX, ToY);
 
             From.Owner = player;
             To.Owner = player;
@@ -347,7 +345,7 @@ namespace StishBoard
                 {
                     for (uint x = FromX; x <= ToX; x++)
                     {
-                        NewTerritory = board.getSquare(x, y);
+                        NewTerritory = StishBoard.Instance.getSquare(x, y);
                         NewTerritory.Owner = player;
                     }
                 }
@@ -359,7 +357,7 @@ namespace StishBoard
                 {
                     for (uint x = FromX; x >= ToX; x--)
                     {
-                        NewTerritory = board.getSquare(x, y);
+                        NewTerritory = StishBoard.Instance.getSquare(x, y);
                         NewTerritory.Owner = player;
                     }
                 }
@@ -383,7 +381,7 @@ namespace StishBoard
                     //x value has changed
                     for (uint x = FromX + 1; x < ToX; x++)
                     {
-                        if (board.getSquare(x, FromY).Dep.DepType != "Empty")
+                        if (StishBoard.Instance.getSquare(x, FromY).Dep.DepType != "Empty")
                         {
                             obstructed = true;
                         }
@@ -394,7 +392,7 @@ namespace StishBoard
                     //y value has changed
                     for (uint y = FromY + 1; y < ToY; y++)
                     {
-                        if (board.getSquare(FromX, y).Dep.DepType != "Empty")
+                        if (StishBoard.Instance.getSquare(FromX, y).Dep.DepType != "Empty")
                         {
                             obstructed = true;
                         }
@@ -409,7 +407,7 @@ namespace StishBoard
                     //x value has changed
                     for (uint x = FromX - 1; x > ToX; x--)
                     {
-                        if (board.getSquare(x, FromY).Dep.DepType != "Empty")
+                        if (StishBoard.Instance.getSquare(x, FromY).Dep.DepType != "Empty")
                         {
                             obstructed = true;
                         }
@@ -420,7 +418,7 @@ namespace StishBoard
                     //y value has changed
                     for (uint y = FromY - 1; y > ToY; y--)
                     {
-                        if (board.getSquare(FromX, y).Dep.DepType != "Empty")
+                        if (StishBoard.Instance.getSquare(FromX, y).Dep.DepType != "Empty")
                         {
                             obstructed = true;
                         }

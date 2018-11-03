@@ -26,6 +26,9 @@ namespace StishBoard
         //all Deps can die except Empty
         protected uint health;
 
+        //this is only used by the units to stop them attacking on the turn that they are bought
+        protected bool m_JustCreated;
+
         //ownedby Enums would be better than using strings to identify which player owns a square
         //public enum Owner { Null, Player1, Player2 };
         //protected Owner ownedby;
@@ -86,6 +89,17 @@ namespace StishBoard
             }
         }
 
+        public bool JustCreated
+        {
+            get
+            {
+                return m_JustCreated;
+            }
+            set
+            {
+                m_JustCreated = value;
+            }
+        }
 
         //creates a render method called "Render" which draws the icon of this deployment type to the console.
         public void Render(int x, int y)
