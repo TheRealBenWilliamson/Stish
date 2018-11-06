@@ -28,8 +28,10 @@ namespace StishBoard
             }
 
             Child4.Remove();
-
-            Console.SetWindowSize(170, 25);
+            
+            //home value: 170, 25
+            //school value: 150 , 25
+            Console.SetWindowSize(150, 25);
 
             Player P1;
             P1 = Player.PlayerFactory(Player.PlayerNumber.Player1, Player.PlayerType.Human);
