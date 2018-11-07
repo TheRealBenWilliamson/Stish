@@ -89,63 +89,7 @@ namespace StishBoard
             {
                 Pos.Y = value;
             }
-        }
-
-
-        //this is purely cosmetic and helps describe the squares surrounding the cursor         
-
-        public void Cardinal(Player Cont)
-        {
-            Coordinate up = new Coordinate(Pos.X, Pos.Y);
-            up.MoveUp();
-            Coordinate right = new Coordinate(Pos.X, Pos.Y);
-            right.MoveRight();
-            Coordinate down = new Coordinate(Pos.X, Pos.Y);
-            down.MoveDown();
-            Coordinate left = new Coordinate(Pos.X, Pos.Y);
-            left.MoveLeft();
-            System.Console.ForegroundColor = Cont.GetRenderColour();
-            Console.SetCursorPosition(4 * 17, 0);
-            Console.WriteLine("{0}'s Turn", Cont.GetPlayerNum);
-            Console.ResetColor();           
-            
-            Console.SetCursorPosition(0, 0);
-            
-            List<string> CardinalString = new List<string>() { "Centre", "Up", "Right", "Down", "Left" };
-            List<Coordinate> Direction = new List<Coordinate>() { Pos, up, right, down, left };
-            
-            for (int card = 0; card < 5; card++)
-            {
-                //Square Check = StishBoard.Instance.getSquare(Coord[card,0], Coord[card, 1]);
-                Square Check = StishBoard.Instance.getSquare(Direction[card]);
-
-                if (Check != null)
-                {
-                    string CheckType;
-                    if (Check.Dep.DepType == null)
-                    {
-                        CheckType = "Nothing";
-                    }
-                    else
-                    {
-                        CheckType = Check.Dep.DepType;
-                    }
-
-                    string CheckOwner;
-                    if (Check.Owner == null)
-                    {
-                        CheckOwner = "No One";
-                    }
-                    else
-                    {
-                        CheckOwner = Check.Owner.GetPlayerNum;
-                    }
-
-                    Console.SetCursorPosition(4 * 17, (card + 2));
-                    Console.WriteLine("{0} has: {1} Health, it is contains: {2} , belongs to: {3} and has {4} Movement Points", CardinalString[card],Check.Dep.Health.ToString(), CheckType, CheckOwner, Check.Dep.MP.ToString());
-                }         
-            }            
-        }
+        }      
 
 
         public void Render(Player Cont)
@@ -159,7 +103,7 @@ namespace StishBoard
             down.MoveDown();
             Coordinate left = new Coordinate(Xco, Yco);
             left.MoveLeft();
-            Cardinal(Cont);
+            Analytics.Cardinal(Cont, Pos);
         
             //Cursor
             if (CursorMode == Mode.free)

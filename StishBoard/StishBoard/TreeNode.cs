@@ -37,7 +37,7 @@ namespace StishBoard
         {
             m_ChildrenNodes.Add(ChildNode);
             ChildNode.Parent = this;
-        } 
+        }
 
         public TreeNode GetParent()
         {
@@ -50,12 +50,21 @@ namespace StishBoard
 
         private void RemoveChild(TreeNode KillChild)
         {
-            m_ChildrenNodes.Remove(KillChild);            
+            m_ChildrenNodes.Remove(KillChild);
         }
         public void Remove()
         {
             m_ParentNode.RemoveChild(this);
             m_ParentNode = null;
+        }
+
+
+        public static void AssignAll()
+        {
+            //uses alpha-beta pruning to help make the minimal amount of calls to the Assign function in the ValuedTreeNode class
+            //only assign leaf nodes?
+            //this should give a small variety of valued nodes
+
         }
     }
 }

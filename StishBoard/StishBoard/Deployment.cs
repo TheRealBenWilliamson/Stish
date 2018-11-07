@@ -110,7 +110,7 @@ namespace StishBoard
                 System.Console.ForegroundColor = ownedBy.GetRenderColour();
             }            
 
-            Helper.StishWrite(x, y, Icon);
+            Analytics.StishWrite(x, y, Icon);
             Console.ResetColor();
             return;
         }

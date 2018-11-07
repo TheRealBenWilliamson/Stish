@@ -42,6 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Analytics.cs" />
     <Compile Include="Barracks.cs" />
     <Compile Include="Base.cs" />
     <Compile Include="Computer.cs" />
@@ -50,7 +51,6 @@
     <Compile Include="Deployment.cs" />
     <Compile Include="Empty.cs" />
     <Compile Include="GameMaster.cs" />
-    <Compile Include="Helper.cs" />
     <Compile Include="Human.cs" />
     <Compile Include="NamedTreeNode.cs" />
     <Compile Include="Player.cs" />
@@ -60,6 +60,7 @@
     <Compile Include="StishBoard.cs" />
     <Compile Include="TreeNode.cs" />
     <Compile Include="Unit.cs" />
+    <Compile Include="ValuedTreeNode.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
