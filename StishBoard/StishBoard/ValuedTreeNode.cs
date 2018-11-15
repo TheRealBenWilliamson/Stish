@@ -8,26 +8,20 @@ namespace StishBoard
 {
     class ValuedTreeNode : TreeNode
     {
-        private int Alpha;
-        private int Beta;
+        protected int Alpha;
+        protected int Beta;
+        protected int Value;
 
-        public ValuedTreeNode(int CalledAlpha, int CalledBeta, TreeNode Parent) : base(Parent)
+        public ValuedTreeNode(TreeNode Parent) : base(Parent)
         {
-            Alpha = CalledAlpha;
-            Beta = CalledBeta;
-        }
+            Alpha = int.MinValue;
+            Beta = int.MaxValue;
+        }       
 
-        public List<TreeNode> PathNodes()
+        public void AlphaBeta()
         {
-            //runs up the tree until the rootnode (a node with no parent) is found, adding all pathnodes to a list
-            List<TreeNode> MyPath = new List<TreeNode>();
-            return MyPath;
-        }
-
-        public void Assign()
-        {
-            //calls the PathNode function to find a list with the reverse chronological order of turns taken from the present to this node. this should be a leaf node
-            //this function will assign alpha and beta values to......
+            //starts at the root node and begins using Alpha-Beta pruning to decide which leaf nodes need to have the Evaluate() function called on them
+            //WOULD (there is an error) will call the CheckChildren() function on the root node to begin a chain of other nodes also calling this function
         }
 
     }

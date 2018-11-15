@@ -58,13 +58,23 @@ namespace StishBoard
             m_ParentNode = null;
         }
 
-
-        public static void AssignAll()
+        public int CountChildren()
         {
-            //uses alpha-beta pruning to help make the minimal amount of calls to the Assign function in the ValuedTreeNode class
-            //only assign leaf nodes?
-            //this should give a small variety of valued nodes
-
+            return m_ChildrenNodes.Count;
         }
+
+        public List<TreeNode> PathNodes()
+        {
+            //runs up the tree until the rootnode (a node with no parent) is found, adding all pathnodes to a list
+            List<TreeNode> MyPath = new List<TreeNode>();
+            TreeNode inspect = this;
+            while (inspect != null)
+            {
+                MyPath.Add(inspect);
+                inspect = inspect.GetParent();
+            }
+            return MyPath;
+        }
+
     }
 }
