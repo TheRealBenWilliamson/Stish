@@ -21,6 +21,13 @@ namespace StishBoard
             owner = null;
             dep = new Empty();
         }
+            
+        //this is a copy constructor
+        public Square(Square Original)
+        {
+            owner = Original.owner;
+            dep = Original.dep;
+        }
         
         //this is the accessor for the deployment type of the square. it allows another client to find what a particular square contains or to set what a particular square contains.
         public Deployment Dep

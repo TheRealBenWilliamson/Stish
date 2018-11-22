@@ -34,7 +34,6 @@ namespace StishBoard
             m_JustCreated = true;
         }
 
-        
 
     }
 }

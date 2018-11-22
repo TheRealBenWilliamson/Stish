@@ -6,11 +6,14 @@ using System.Threading.Tasks;
 
 namespace StishBoard
 {
-    class MaxNode : ValuedTreeNode
+    class MiniMaxNode : ValuedTreeNode
     {
-        MaxNode(TreeNode Parent) : base(Parent)
-        {
+        private BoardState m_boardState;
 
+        //need to re-work the arguments as we cant just pass through the current state, we need to add the next possible states.
+        MiniMaxNode(TreeNode Parent, StishBoard CurrentBoard) : base(Parent)
+        {
+            m_boardState = CurrentBoard.GetBoardState();
         }
 
         public void CheckChildren()

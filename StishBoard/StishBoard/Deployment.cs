@@ -43,6 +43,17 @@ namespace StishBoard
             //Health is already passed through by the calling function
         }
 
+        //this is the copy constructor
+        public Deployment(Deployment Original)
+        {
+            depType = String.Copy(Original.depType);
+            Icon = String.Copy(Original.Icon);
+            ownedBy = Original.ownedBy;
+            MovementPoints = Original.MovementPoints;
+            health = Original.health;
+            m_JustCreated = Original.m_JustCreated;
+        }
+
         //an accessor so that a client can find what type of deployment this particular object is.
         public string DepType
         {

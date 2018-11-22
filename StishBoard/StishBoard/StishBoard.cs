@@ -54,7 +54,20 @@ namespace StishBoard
         }
 
         //creates an array called "array" capable of holding square objects in the orientation of BoardSize by BoardSize. the square objects have not been created.
-        public Square[,] array;
+        private Square[,] array;
+
+        public Square[,] Array
+        {
+            get
+            {
+                return array;
+            }
+        }
+
+        public BoardState GetBoardState()
+        {
+            return new BoardState(this);
+        }
 
         //default constructor: creates the square objects in "array", assigning each to a position in the BoardSize by BoardSize grid.
         private StishBoard()

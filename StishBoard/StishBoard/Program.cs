@@ -77,6 +77,7 @@ namespace StishBoard
                         Cursor.Instance.FindX = P1.CursorX;
                         Cursor.Instance.FindY = P1.Cursory;
                         P1.MakeMove();
+                        BoardState test = StishBoard.Instance.GetBoardState();
                         turn++;
                     }
                     else if (turn == Turn.Player2)

@@ -42,7 +42,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MaxNode.cs" />
+    <Compile Include="BoardState.cs" />
+    <Compile Include="MiniMaxNode.cs" />
     <Compile Include="Analytics.cs" />
     <Compile Include="Barracks.cs" />
     <Compile Include="Base.cs" />
