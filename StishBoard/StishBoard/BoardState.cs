@@ -28,5 +28,8 @@ namespace StishBoard
             
         }
 
+        //barracks, base health
+
+
     }
 }

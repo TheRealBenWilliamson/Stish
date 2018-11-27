@@ -8,20 +8,28 @@ namespace StishBoard
 {
     class ValuedTreeNode : TreeNode
     {
-        protected int Alpha;
-        protected int Beta;
-        protected int Value;
+        protected int m_Alpha;
+        protected int m_Beta;
+        protected int m_Value;
 
         public ValuedTreeNode(TreeNode Parent) : base(Parent)
         {
-            Alpha = int.MinValue;
-            Beta = int.MaxValue;
+            m_Alpha = int.MinValue;
+            m_Beta = int.MaxValue;
         }       
 
         public void AlphaBeta()
         {
             //starts at the root node and begins using Alpha-Beta pruning to decide which leaf nodes need to have the Evaluate() function called on them
             //WOULD (there is an error) will call the CheckChildren() function on the root node to begin a chain of other nodes also calling this function
+        }
+
+        public int Value
+        {
+            get
+            {
+                return m_Value;
+            }
         }
 
     }
