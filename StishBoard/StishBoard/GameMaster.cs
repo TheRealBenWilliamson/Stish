@@ -51,8 +51,9 @@ namespace StishBoard
             }
         }
 
-        public void BuyBarracks(Coordinate Pur, Player ConPlayer)
+        public bool BuyBarracks(Coordinate Pur, Player ConPlayer)
         {
+            bool bought = false;
             if ((StishBoard.Instance.getSquare(Pur) != null) && (StishBoard.Instance.getSquare(Pur).Dep.DepType == "Empty") && (StishBoard.Instance.getSquare(Pur).Owner == ConPlayer))
             {
                 //check how many barracks the player already has and multiply it buy the cost of one barracks
@@ -76,12 +77,15 @@ namespace StishBoard
                 {
                     StishBoard.Instance.getSquare(Pur).Dep = new Barracks(StishBoard.Instance.getSquare(Pur).Owner, StishBoard.Instance.getSquare(Pur), 5);
                     ConPlayer.Balance -= 3 * multiply;
+                    bought = true;
                 }
             }
+            return bought;
         }
 
-        public void BuyUnit(Coordinate Pur, Player ConPlayer)
+        public bool BuyUnit(Coordinate Pur, Player ConPlayer)
         {
+            bool bought = false;
             if ((StishBoard.Instance.getSquare(Pur) != null) && (StishBoard.Instance.getSquare(Pur).Dep.DepType == "Empty") && (StishBoard.Instance.getSquare(Pur).Owner == ConPlayer))                
             {
                 //spend the entire player balance 
@@ -89,8 +93,10 @@ namespace StishBoard
                 {
                     StishBoard.Instance.getSquare(Pur).Dep = new Unit(StishBoard.Instance.getSquare(Pur).Owner, StishBoard.Instance.getSquare(Pur), ConPlayer.Balance);
                     ConPlayer.Balance = 0;
+                    bought = true;
                 }                 
             }
+            return bought;
         }
 
         private void Drag(Coordinate FromCo, Coordinate ToCo, Player MyPlayer)

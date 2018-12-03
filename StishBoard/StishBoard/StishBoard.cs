@@ -15,7 +15,9 @@ namespace StishBoard
         private Player player1;
         private Player player2;
 
-        private uint boardSize;
+        private uint boardSize = 9;
+
+        private uint m_GameMP = 2;
 
         public Player Player1
         {
@@ -62,6 +64,18 @@ namespace StishBoard
             {
                 return array;
             }
+        }       
+
+        public uint GameMP
+        {
+            get
+            {
+                return GameMP;
+            }
+            set
+            {
+                GameMP = value;
+            }
         }
 
         public BoardState GetBoardState()
@@ -73,7 +87,6 @@ namespace StishBoard
         private StishBoard()
         {
             //board size may change
-            BoardSize = 9;
             array = new Square[BoardSize, BoardSize];
             for (int row = 0; row < BoardSize; row ++)
             {

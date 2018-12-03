@@ -63,13 +63,19 @@ namespace StishBoard
                 }
                 else if (put == ConsoleKey.Enter)
                 {
-                    EndTurn = true;
+                    output = "_";
+                }
+
+                EndTurn = Cursor.Instance.Move(this, output);
+
+                if (EndTurn == true)
+                {
                     Cursor.Instance.CursorMode = Cursor.Mode.free;
                     CursorX = Cursor.Instance.FindX;
                     Cursory = Cursor.Instance.FindY;
+                    Cursor.Instance.SpaceEnds = false;
                 }
-
-                Cursor.Instance.Move(this, output);
+                
             } while (EndTurn == false);
             
         }

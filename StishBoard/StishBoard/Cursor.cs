@@ -54,6 +54,8 @@ namespace StishBoard
         public enum Mode { free, locked };
         private Mode mode = Mode.free;
 
+        private bool m_SpaceEnds = false;
+
         public Mode CursorMode
         {
             get
@@ -89,7 +91,19 @@ namespace StishBoard
             {
                 Pos.Y = value;
             }
-        }      
+        }
+
+        public bool SpaceEnds
+        {
+            get
+            {
+                return m_SpaceEnds;
+            }
+            set
+            {
+                m_SpaceEnds = value;
+            }
+        }
 
 
         public void Render(Player Cont)
@@ -138,15 +152,16 @@ namespace StishBoard
             else return false;
         }       
 
-        
-
-        public void Move(Player ConPlayer, string input)
+        public bool Move(Player ConPlayer, string input)
         {
-
+            bool End = false;
             Coordinate CursorCoord = new Coordinate(Pos.X, Pos.Y);
-            //uint ChangeY = Yco;
 
-            if (input == "W")
+            if ((input == "_") || ((input == " ") && (SpaceEnds == true)))
+            {
+                End = true;
+            }
+            else if (input == "W")
             {
                 CursorCoord.MoveUp();
             }
@@ -184,17 +199,13 @@ namespace StishBoard
             else if (input == "Q")
             {
                 //buy barracks
-                GameMaster.Instance.BuyBarracks(CursorCoord, ConPlayer);
+                End = GameMaster.Instance.BuyBarracks(CursorCoord, ConPlayer);
             }
             else if (input == "E")
             {
                 //buy unit
-                GameMaster.Instance.BuyUnit(CursorCoord, ConPlayer);
-            }
-            else if (input == "_")
-            {
-                //enter has to be done in the human/computer override
-            }
+                End = GameMaster.Instance.BuyUnit(CursorCoord, ConPlayer);
+            }           
 
             if (GameMaster.Instance.OnBoard(CursorCoord) == true)
             {
@@ -208,10 +219,12 @@ namespace StishBoard
                 //locked
                 if (CursorMode == Mode.locked)
                 {
+                    //action is true if the cursor moved. this helps distinguish if the cursor should move after attacking.
                     if (GameMaster.Instance.Action(Pos, CursorCoord, ConPlayer) == true)
                     {
                         Pos.X = CursorCoord.X;
                         Pos.Y = CursorCoord.Y;
+                        SpaceEnds = true;
                     }
                 }
 
@@ -224,7 +237,7 @@ namespace StishBoard
             Console.Clear();
             StishBoard.Instance.Render();
             Render(ConPlayer);
-
+            return End;
             //at the end of a turn the cursor is set to free so that the other player cannot control enemy units
 
 

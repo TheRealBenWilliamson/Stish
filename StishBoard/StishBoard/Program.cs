@@ -27,8 +27,7 @@ namespace StishBoard
                 inspect = inspect.GetParent();
             }
 
-            Child4.Remove();
-            
+            Child4.Remove();           
 
             //GAME STARTS HERE
             Console.SetWindowSize(130, 25);
@@ -44,6 +43,12 @@ namespace StishBoard
 
             Console.Clear();
             StishBoard.Instance.Render();
+
+            /*
+            ForeSight test = new ForeSight();
+            Coordinate testCo = new Coordinate(4, 4);
+            test.Sweep(testCo, P1);
+            */
 
             //game loop takes place here
             bool GameEnd = false;
@@ -77,7 +82,6 @@ namespace StishBoard
                         Cursor.Instance.FindX = P1.CursorX;
                         Cursor.Instance.FindY = P1.Cursory;
                         P1.MakeMove();
-                        BoardState test = StishBoard.Instance.GetBoardState();
                         turn++;
                     }
                     else if (turn == Turn.Player2)

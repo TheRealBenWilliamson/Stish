@@ -9,7 +9,34 @@ namespace StishBoard
     class StishMiniMaxNode : MiniMaxNode
     {
         private BoardState m_BoardState;
-        private int m_Value;
+
+        //Alligiance is used to show whos turn this node is representing
+        private Player m_Allegiance;
+
+        BoardState AssignBoardState
+        {
+            set
+            {
+                m_BoardState = value;
+            }
+        }
+
+        Player Allegiance
+        {
+            get
+            {
+                return m_Allegiance;
+            }
+            set
+            {
+                m_Allegiance = value;
+            }
+        }
+
+        public StishMiniMaxNode(TreeNode Parent, Player PlayersTurn) : base(Parent)
+        {
+            Allegiance = PlayersTurn;
+        }
 
         private int P1BarracksHealth;
         private int P1UnitHealth;
@@ -21,19 +48,7 @@ namespace StishBoard
         private int P2UnitHealth;
         private int P2BaseHealth;
         private int P2BarracksNumber;
-        private int P2Balance;
-
-        public int StishValue
-        {
-            get
-            {
-                return m_Value;
-            }
-            set
-            {
-                m_Value = value;
-            }
-        }
+        private int P2Balance;       
 
         public void FindValue(TreeNode Parent, BoardState PassedBoardState)
         {
@@ -50,7 +65,7 @@ namespace StishBoard
             P2UnitHealth = (int)PassedBoardState.Counting("Unit", PassedBoardState.Player2, false);           
             P2Balance = (int)PassedBoardState.Player2.Balance;
 
-            StishValue = (1 * (P1BarracksNumber - P2BarracksNumber)) + (1 * (P1BarracksHealth - P2BarracksHealth)) + (1 * (P1UnitHealth - P2UnitHealth)) + (1 * (P1BaseHealth - P2BaseHealth)) + (1 * (P1Balance - P2Balance));
+            Value = (1 * (P1BarracksNumber - P2BarracksNumber)) + (1 * (P1BarracksHealth - P2BarracksHealth)) + (1 * (P1UnitHealth - P2UnitHealth)) + (1 * (P1BaseHealth - P2BaseHealth)) + (1 * (P1Balance - P2Balance));
         }
 
         StishMiniMaxNode(TreeNode Parent, BoardState PassedBoardState) : base(Parent)

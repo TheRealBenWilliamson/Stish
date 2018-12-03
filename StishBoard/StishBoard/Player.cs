@@ -26,7 +26,7 @@ namespace StishBoard
         public uint CursorX = 5;
         public uint Cursory = 5;
         private uint baseX = 0;
-        private uint baseY = 0;
+        private uint baseY = 0;        
 
         public uint BaseX
         {
@@ -180,7 +180,7 @@ namespace StishBoard
                     if ((ThisSquare.Owner == this) && (ThisSquare.Dep.DepType == "Unit"))
                     {
                         //This number is subject to change throughout testing and balancing
-                        ThisSquare.Dep.MP = 2;
+                        ThisSquare.Dep.MP = StishBoard.Instance.GameMP;
                         ThisSquare.Dep.JustCreated = false;
                     }
                 }

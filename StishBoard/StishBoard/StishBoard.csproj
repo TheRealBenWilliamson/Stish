@@ -43,6 +43,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BoardState.cs" />
+    <Compile Include="ForeSight.cs" />
     <Compile Include="MiniMaxNode.cs" />
     <Compile Include="Analytics.cs" />
     <Compile Include="Barracks.cs" />

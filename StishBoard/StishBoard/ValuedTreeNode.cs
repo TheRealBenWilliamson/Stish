@@ -30,6 +30,10 @@ namespace StishBoard
             {
                 return m_Value;
             }
+            set
+            {
+                m_Value = value;
+            }
         }
 
     }
