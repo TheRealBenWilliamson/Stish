@@ -44,11 +44,11 @@ namespace StishBoard
             Console.Clear();
             StishBoard.Instance.Render();
 
-            /*
+            
             ForeSight test = new ForeSight();
             Coordinate testCo = new Coordinate(4, 4);
             test.Sweep(testCo, P1);
-            */
+            
 
             //game loop takes place here
             bool GameEnd = false;

@@ -63,5 +63,13 @@ namespace StishBoard
         {
             Yco++;
         }
+
+        public int Get2DDistance(Coordinate Where)
+        {
+            int DeltaX = Math.Abs((int)Where.X - (int)X);
+            int DeltaY = Math.Abs((int)Where.Y - (int)Y);
+
+            return (DeltaX + DeltaY);
+        }
     }
 }
