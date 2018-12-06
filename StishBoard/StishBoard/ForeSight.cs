@@ -13,7 +13,7 @@ namespace StishBoard
 
         //predict will take a boardstate argument and then create a new board state and node for each possible future move
         
-
+        //this may not need to be void however i dont yet know if or what the output will be (currently just counts)
         public void Sweep(Coordinate Check, Player Side)
         {
             int count = 0;
@@ -25,14 +25,53 @@ namespace StishBoard
                 {
                     look.X = x;
                     look.Y = y;
-                    if(Check.Get2DDistance(look) <= 3)
+                    if(Check.Get2DDistance(look) <= StishBoard.Instance.GameMP)
                     {
-                        //possible square to move unit to
-                        count++;
+                        //general squares around unit within range
+                        if((StishBoard.Instance.getSquare(look) != null) && !((StishBoard.Instance.getSquare(look).Dep.OwnedBy) == Side && ((StishBoard.Instance.getSquare(look).Dep.DepType == "Unit") || (StishBoard.Instance.getSquare(look).Dep.DepType == "Base"))))
+                        {
+                            //the unit can legallymove to any of these positions however the events of this action are not distinugished
+                            count++;
+                        }
+                        
                     }
                 }
             }         
         }
+
+        public void BuyPossibility(Player Side)
+        {
+            int count = 0;
+            int multiply = 1;
+
+            Coordinate look = new Coordinate();
+            for (uint x = 0; x < StishBoard.Instance.BoardSize; x++)
+            {
+                for (uint y = 0; y < StishBoard.Instance.BoardSize; y++)
+                {
+                    look.X = x;
+                    look.Y = y;
+
+                    if ((StishBoard.Instance.getSquare(look).Dep.OwnedBy == Side) && (StishBoard.Instance.getSquare(look).Dep.DepType == "Barracks"))
+                    {
+                        multiply++;
+                    }
+
+                    if ((StishBoard.Instance.getSquare(look).Dep.OwnedBy == Side) && (StishBoard.Instance.getSquare(look).Dep.DepType == "Empty"))
+                    {   
+                        if(Side.Balance > 0)
+                        {
+                            count++;
+                        }                        
+                        if (Side.Balance >= 3 * multiply)
+                        {
+                            count++;
+                        }
+                    }
+                }
+            }
+        }
+
 
         public void Predict(BoardState ParentBoard, Player Side)
         {

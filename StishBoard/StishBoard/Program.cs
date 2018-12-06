@@ -44,10 +44,10 @@ namespace StishBoard
             Console.Clear();
             StishBoard.Instance.Render();
 
-            
+            //TEST PURPOSES
             ForeSight test = new ForeSight();
-            Coordinate testCo = new Coordinate(4, 4);
-            test.Sweep(testCo, P1);
+            Coordinate testCo = new Coordinate(4, 5);
+            
             
 
             //game loop takes place here
@@ -83,6 +83,10 @@ namespace StishBoard
                         Cursor.Instance.FindY = P1.Cursory;
                         P1.MakeMove();
                         turn++;
+
+                        //TEST PURPOSES REMOVE WHEN DONE
+                        test.Sweep(testCo, P1);
+                        test.BuyPossibility(P1);
                     }
                     else if (turn == Turn.Player2)
                     {
@@ -92,7 +96,7 @@ namespace StishBoard
                         Cursor.Instance.FindY = P2.Cursory;
                         P2.MakeMove();
                         turn--;
-                    }
+                    }                   
                 }
                 
 

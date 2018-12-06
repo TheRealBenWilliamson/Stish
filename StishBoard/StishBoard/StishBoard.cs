@@ -70,11 +70,11 @@ namespace StishBoard
         {
             get
             {
-                return GameMP;
+                return m_GameMP;
             }
             set
             {
-                GameMP = value;
+                m_GameMP = value;
             }
         }
 
