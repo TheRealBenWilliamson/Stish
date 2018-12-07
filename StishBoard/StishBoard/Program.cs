@@ -46,9 +46,10 @@ namespace StishBoard
 
             //TEST PURPOSES
             ForeSight test = new ForeSight();
-            Coordinate testCo = new Coordinate(4, 5);
-            
-            
+            Coordinate testCo = new Coordinate(5, 5);
+            Coordinate testCo2 = new Coordinate(3, 5);
+
+
 
             //game loop takes place here
             bool GameEnd = false;
