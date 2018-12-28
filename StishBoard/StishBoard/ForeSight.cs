@@ -8,12 +8,28 @@ namespace StishBoard
 {
     class ForeSight
     {
+        //singleton
+
+        private static ForeSight instance;
+
+        public static ForeSight Instance
+        {
+            get
+            {
+                if (instance == null)
+                {
+                    instance = new ForeSight();
+                }
+                return instance;
+            }
+        }
+
         //the foresight class helps us build new nodes by predicting all possible moves from a node
         //these functions will be called by the node objects in order to tell the nodes, how to configure their children
 
         //predict will take a boardstate argument and then create a new board state and node for each possible future move
 
-        public bool Connected(Coordinate MoveFrom, Coordinate MoveTo)
+        public bool Connected(BoardState Now, Coordinate MoveFrom, Coordinate MoveTo)
         {
             //go from "MoveTo" to "MoveFrom"
             //use a similar path finding algorithm to the territory bursts but incentivise a direction.
@@ -41,19 +57,19 @@ namespace StishBoard
                 Coordinate Left = new Coordinate(Search.X - 1, Search.Y);
                 
 
-                if ((StishBoard.Instance.getSquare(Up) != null) && (StishBoard.Instance.getSquare(Up).Dep.DepType == "Empty"))
+                if ((Now.getSquare(Up) != null) && (Now.getSquare(Up).Dep.DepType == "Empty"))
                 {
                     ToCheck.Add(Up);
                 }
-                if ((StishBoard.Instance.getSquare(Right) != null) && (StishBoard.Instance.getSquare(Right).Dep.DepType == "Empty"))
+                if ((Now.getSquare(Right) != null) && (Now.getSquare(Right).Dep.DepType == "Empty"))
                 {
                     ToCheck.Add(Right);
                 }
-                if ((StishBoard.Instance.getSquare(Down) != null) && (StishBoard.Instance.getSquare(Down).Dep.DepType == "Empty"))
+                if ((Now.getSquare(Down) != null) && (Now.getSquare(Down).Dep.DepType == "Empty"))
                 {
                     ToCheck.Add(Down);
                 }
-                if ((StishBoard.Instance.getSquare(Left) != null) && (StishBoard.Instance.getSquare(Left).Dep.DepType == "Empty"))
+                if ((Now.getSquare(Left) != null) && (Now.getSquare(Left).Dep.DepType == "Empty"))
                 {
                     ToCheck.Add(Left);
                 }
@@ -65,7 +81,7 @@ namespace StishBoard
         }
 
 
-        public bool Route(Coordinate From, Coordinate To)
+        public bool CheckObstruction(BoardState Now, Coordinate From, Coordinate To)
         {
             //the temp and final lists are used to record which path was used to get to the unit.
             //this route function will make sure there are no obstructions and an appropriate territory path will follow an AIs unit as it moves.
@@ -80,23 +96,25 @@ namespace StishBoard
         }
 
         //this may not need to be void however i dont yet know if or what the output will be (currently just counts)
-        public void Sweep(Coordinate Check, Player Side)
+        public void Sweep(BoardState Now, Coordinate Check, Player Side)
         {
             int count = 0;
 
             Coordinate look = new Coordinate();
-            for(uint x = 0; x < StishBoard.Instance.BoardSize; x++)
+            for(uint x = 0; x < Now.BoardSize; x++)
             {
-                for(uint y = 0; y < StishBoard.Instance.BoardSize; y++)
+                for(uint y = 0; y < Now.BoardSize; y++)
                 {
                     look.X = x;
                     look.Y = y;
+                    //stishboard.instance is okay here as this variable is global and is not dependant on a particular state
                     if(Check.Get2DDistance(look) <= StishBoard.Instance.GameMP)
                     {
                         //general squares around unit within range
-                        if((StishBoard.Instance.getSquare(look) != null) && !((StishBoard.Instance.getSquare(look).Dep.OwnedBy) == Side && ((StishBoard.Instance.getSquare(look).Dep.DepType == "Unit") || (StishBoard.Instance.getSquare(look).Dep.DepType == "Base"))))
+                        if((Now.getSquare(look) != null) && !((Now.getSquare(look).Dep.OwnedBy) == Side && ((Now.getSquare(look).Dep.DepType == "Unit") || (Now.getSquare(look).Dep.DepType == "Base"))))
                         {
-                            //the unit can legallymove to any of these positions however the events of this action are not distinugished
+                            //the unit can legally move to any of these positions however the events of this action are not distinguished
+                            //obstructions are not accounted for
                             count++;
                         }
                         
@@ -105,33 +123,63 @@ namespace StishBoard
             }         
         }
 
-        public void BuyPossibility(Player Side)
+        public int PlayerBudget(BoardState Now, Player Side)
         {
-            int count = 0;
+            //finds if the player can afford a barracks
             int multiply = 1;
 
             Coordinate look = new Coordinate();
-            for (uint x = 0; x < StishBoard.Instance.BoardSize; x++)
+            for (uint x = 0; x < Now.BoardSize; x++)
             {
-                for (uint y = 0; y < StishBoard.Instance.BoardSize; y++)
+                for (uint y = 0; y < Now.BoardSize; y++)
                 {
                     look.X = x;
                     look.Y = y;
 
-                    if ((StishBoard.Instance.getSquare(look).Dep.OwnedBy == Side) && (StishBoard.Instance.getSquare(look).Dep.DepType == "Barracks"))
+                    if ((Now.getSquare(look).Dep.OwnedBy == Side) && (Now.getSquare(look).Dep.DepType == "Barracks"))
                     {
                         multiply++;
                     }
+                }
+            }
+            return (3 * multiply);
+        }
 
-                    if ((StishBoard.Instance.getSquare(look).Dep.OwnedBy == Side) && (StishBoard.Instance.getSquare(look).Dep.DepType == "Empty"))
-                    {   
-                        if(Side.Balance > 0)
+        public void BuyPossibility(BoardState Now, Player Side)
+        {
+            //count will not be returned as it is just a place holder for the munipulating function
+            int count = 0;
+            int cost = PlayerBudget(Now, Side);
+
+            Coordinate look = new Coordinate();
+            for (uint x = 0; x < Now.BoardSize; x++)
+            {
+                for (uint y = 0; y < Now.BoardSize; y++)
+                {
+                    look.X = x;
+                    look.Y = y;
+
+                    if ((Now.getSquare(look).Dep.OwnedBy == Side) && (Now.getSquare(look).Dep.DepType == "Empty"))
+                    {                      
+                        if (Side.Balance > 0)
                         {
+                            //can afford a unit
                             count++;
-                        }                        
-                        if (Side.Balance >= 3 * multiply)
+
+                            //BoardState UnitBoardState = new BoardState(Now);
+                            //UnitBoardState.getSquare(look).Dep = new Barracks(Side, Now.getSquare(look), 5);
+                            //GeneratedBoardState. PLAYER .balance -= cost;
+                        }
+                        if (Side.Balance >= cost)
                         {
+                            //can afford a barracks
                             count++;
+
+                            //BoardState BarracksBoardState = new BoardState(Now);
+                            //BarracksBoardState.getSquare(look).Dep = new Barracks(Side, Now.getSquare(look), 5);
+                            //GeneratedBoardState. PLAYER .balance -= cost;
+
+                            //this takes a player from one boardstate and needs to substract the cost of this purchase in the new boardstate's player. the player is ambiguous so i dont know whether to call the get/set of "player1" or "player2"
                         }
                     }
                 }
@@ -139,20 +187,20 @@ namespace StishBoard
         }
 
 
-        public void Predict(BoardState ParentBoard, Player Side)
+        public void Predict(BoardState Now, BoardState ParentBoard, Player Side)
         {
-            //side correlates to Allegiance but i dont want to call them the smae thing in order to avoid confusion
+            //side correlates to Allegiance but i dont want to call them the same thing in order to avoid confusion
             //things that determine a next turn: all positions around a unit (done once for each unit), buying a unit in any currently owned territory, buying a unit in any currently owned territory, absolutely nothing.
             //movement about a unit can be found using the "diamond" technique or the "jail bars" technique
 
             Coordinate look = new Coordinate();
-            for (uint y = 0; y < StishBoard.Instance.BoardSize; y++)
+            for (uint y = 0; y < Now.BoardSize; y++)
             {
-                for (uint x = 0; x < StishBoard.Instance.BoardSize; x++)
+                for (uint x = 0; x < Now.BoardSize; x++)
                 {
                     look.Y = y;
                     look.X = x;
-                    Sweep(look, Side);
+                    Sweep(Now, look, Side);
                 }
             }
             

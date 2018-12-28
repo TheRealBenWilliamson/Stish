@@ -31,7 +31,26 @@ namespace StishBoard
                     
             }
             
-        }       
+        }
+
+        public BoardState(BoardState CurrentBoard)
+        {
+            player1 = CurrentBoard.Player1;
+            player2 = CurrentBoard.Player2;
+            m_BoardState = new Square[CurrentBoard.BoardSize, CurrentBoard.BoardSize];
+            Coordinate Here = new Coordinate();
+            for (uint y = 0; y < CurrentBoard.BoardSize; y++)
+            {
+                for (uint x = 0; x < CurrentBoard.BoardSize; x++)
+                {
+                    Here.Y = y;
+                    Here.X = x;
+                    m_BoardState[x, y] = new Square(CurrentBoard.getSquare(Here));
+                }
+
+            }
+
+        }
 
         public Player Player1
         {
