@@ -18,5 +18,9 @@ namespace StishBoard
             
         }
 
+        public Computer(Computer Cpu) : base(Cpu)
+        {
+
+        }
     }
 }

@@ -74,7 +74,7 @@ namespace StishBoard
                         P1.TurnBalance();
                         P1.MaxMP();
                         Cursor.Instance.FindX = P1.CursorX;
-                        Cursor.Instance.FindY = P1.Cursory;
+                        Cursor.Instance.FindY = P1.CursorY;
                         P1.MakeMove();
                         turn++;
 
@@ -84,7 +84,7 @@ namespace StishBoard
                         P2.TurnBalance();
                         P2.MaxMP();
                         Cursor.Instance.FindX = P2.CursorX;
-                        Cursor.Instance.FindY = P2.Cursory;
+                        Cursor.Instance.FindY = P2.CursorY;
                         P2.MakeMove();
                         turn--;
                     }                   

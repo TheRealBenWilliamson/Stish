@@ -122,7 +122,7 @@ namespace StishBoard
             String CheckDep = StishBoard.Instance.getSquare(Check).Dep.DepType;
             Player Owner = StishBoard.Instance.getSquare(Check).Dep.OwnedBy;
 
-            //attacker must have more some MP to attack to prevent spawn attacking
+            //attacker must be more than 1 turn old in order to attack
             if (Attacker.Dep.JustCreated == false)
             {
                 //checks who wins the combat: attacker or defender

@@ -16,8 +16,9 @@ namespace StishBoard
 
         public BoardState(StishBoard CurrentBoard)
         {
-            player1 = CurrentBoard.Player1;
-            player2 = CurrentBoard.Player2;
+            //ONLY WORKS WITH HUMANS
+            player1 = new Human(CurrentBoard.Player1);
+            player2 = new Human(CurrentBoard.Player2);
             m_BoardState = new Square[CurrentBoard.BoardSize, CurrentBoard.BoardSize];
             Coordinate Here = new Coordinate();
             for (uint y = 0; y < CurrentBoard.BoardSize; y++)
@@ -35,8 +36,8 @@ namespace StishBoard
 
         public BoardState(BoardState CurrentBoard)
         {
-            player1 = CurrentBoard.Player1;
-            player2 = CurrentBoard.Player2;
+            player1 = new Human(CurrentBoard.Player1);
+            player2 = new Human(CurrentBoard.Player2);
             m_BoardState = new Square[CurrentBoard.BoardSize, CurrentBoard.BoardSize];
             Coordinate Here = new Coordinate();
             for (uint y = 0; y < CurrentBoard.BoardSize; y++)

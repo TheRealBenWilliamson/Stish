@@ -24,7 +24,7 @@ namespace StishBoard
         protected uint balance;
 
         public uint CursorX = 5;
-        public uint Cursory = 5;
+        public uint CursorY = 5;
         private uint baseX = 0;
         private uint baseY = 0;        
 
@@ -82,7 +82,17 @@ namespace StishBoard
                     StishBoard.Instance.getSquare(ThisCo).Owner = this;
                 }
             }
-        }        
+        }      
+        
+        public Player(Player CopyFrom)
+        {
+            playerNumber = CopyFrom.playerNumber;
+            balance = CopyFrom.balance;
+            CursorX = CopyFrom.CursorX;
+            CursorY = CopyFrom.CursorY;
+            baseX = CopyFrom.baseX;
+            baseY = CopyFrom.baseY;
+        }
 
         public string GetPlayerNum
         {

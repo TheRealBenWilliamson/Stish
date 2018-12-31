@@ -13,6 +13,11 @@ namespace StishBoard
 
         }
 
+        public Human(Player Hu) : base(Hu)
+        {
+
+        }
+
         //Option helps use enums for the player making number corrosponding branching choices
         public enum Action { MoveUnit, BuyUnit, BuyBarracks, EndTurn};
 
@@ -72,7 +77,7 @@ namespace StishBoard
                 {
                     Cursor.Instance.CursorMode = Cursor.Mode.free;
                     CursorX = Cursor.Instance.FindX;
-                    Cursory = Cursor.Instance.FindY;
+                    CursorY = Cursor.Instance.FindY;
                     Cursor.Instance.SpaceEnds = false;
                 }
                 

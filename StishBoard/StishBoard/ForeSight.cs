@@ -123,7 +123,7 @@ namespace StishBoard
             }         
         }
 
-        public int PlayerBudget(BoardState Now, Player Side)
+        public int BarracksCost(BoardState Now, Player Side)
         {
             //finds if the player can afford a barracks
             int multiply = 1;
@@ -149,7 +149,7 @@ namespace StishBoard
         {
             //count will not be returned as it is just a place holder for the munipulating function
             int count = 0;
-            int cost = PlayerBudget(Now, Side);
+            int cost = BarracksCost(Now, Side);
 
             Coordinate look = new Coordinate();
             for (uint x = 0; x < Now.BoardSize; x++)
@@ -166,9 +166,13 @@ namespace StishBoard
                             //can afford a unit
                             count++;
 
-                            //BoardState UnitBoardState = new BoardState(Now);
-                            //UnitBoardState.getSquare(look).Dep = new Barracks(Side, Now.getSquare(look), 5);
-                            //GeneratedBoardState. PLAYER .balance -= cost;
+                            BoardState UnitBoardState = new BoardState(Now);
+                            UnitBoardState.getSquare(look).Dep = new Unit(Side, Now.getSquare(look), Side.Balance);
+                            if(Side.GetPlayerNum == "Player1")
+                            {
+
+                            }
+                            //UnitBoardState. PLAYER .balance -= cost;
                         }
                         if (Side.Balance >= cost)
                         {
@@ -205,5 +209,20 @@ namespace StishBoard
             }
             
         }
+
+        /*belongs to the player: either empty or has a unit
+        belongs to player and is empty: 
+            buy a unit
+                they have enough money (greater than 0)
+                    NEW BOARDSTATE WITH UNIT ON THIS SQUARE
+            buy a barracks
+                they have enough money (greater than or equal to the barracks cost function)
+                    NEW BOARDSTATE WITH BARRACKS ON THIS SQUARE
+        any square
+            is there a unit in range of this square?
+                yes. 
+                    if empty then NEW BOARDSTATE WITH UNIT ON THIS SQUARE
+        
+        */
     }
 }
