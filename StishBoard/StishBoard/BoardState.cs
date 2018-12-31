@@ -107,6 +107,7 @@ namespace StishBoard
 
         public uint Counting(String Type, Player ThisPlayer, bool CheckNumber)
         {
+            //check number switches the function to wither count the total health of deployment or just the amount of the deployment
             uint counted = 0;
             Coordinate Here = new Coordinate();
             for (uint y = 0; y < this.BoardSize; y++)

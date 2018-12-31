@@ -13,7 +13,7 @@ namespace StishBoard
         //Alligiance is used to show whos turn this node is representing
         private Player m_Allegiance;
 
-        BoardState NodeBoardState
+        public BoardState NodeBoardState
         {
             set
             {
@@ -25,7 +25,7 @@ namespace StishBoard
             }
         }
 
-        Player Allegiance
+        public Player Allegiance
         {
             get
             {
