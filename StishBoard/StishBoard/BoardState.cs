@@ -8,11 +8,15 @@ namespace StishBoard
 {
     class BoardState
     {
-        private Square[,] m_BoardState;
-        private uint boardSize;
-        private Player player1;
-        private Player player2;
+        protected Square[,] m_BoardState;
+        protected uint boardSize;
+        protected Player player1;
+        protected Player player2;
 
+        protected BoardState()
+        {
+
+        }
 
         public BoardState(StishBoard CurrentBoard)
         {
@@ -89,6 +93,7 @@ namespace StishBoard
             }
         }
 
+        //creates a public function called "getSquare", it will return the reference to the square object that sits in the position in "array" that is asked for in the arguments.
         public Square getSquare(Coordinate Find)
         {
             //TO DO: add error handling of arguments that are out of range of the array.

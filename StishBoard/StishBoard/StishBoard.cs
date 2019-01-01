@@ -7,64 +7,12 @@ using System.Threading.Tasks;
 
 namespace StishBoard
 {
-    class StishBoard
+    class StishBoard : BoardState
     {
         //creates a reference to the single instance of this singleton object of type StishBoard called "instance".
         private static StishBoard instance;
 
-        private Player player1;
-        private Player player2;
-
-        private uint boardSize = 9;
-
-        private uint m_GameMP = 2;
-
-        public Player Player1
-        {
-            get
-            {
-                return player1;
-            }
-            set
-            {
-                player1 = value;
-            }
-        }
-
-        public Player Player2
-        {
-            get
-            {
-                return player2;
-            }
-            set
-            {
-                player2 = value;
-            }
-        }
-
-        public uint BoardSize
-        {
-            get
-            {
-                return boardSize;
-            }
-            set
-            {
-                boardSize = value;
-            }
-        }
-
-        //creates an array called "array" capable of holding square objects in the orientation of BoardSize by BoardSize. the square objects have not been created.
-        private Square[,] array;
-
-        public Square[,] Array
-        {
-            get
-            {
-                return array;
-            }
-        }       
+        private uint m_GameMP = 2;  
 
         public uint GameMP
         {
@@ -78,21 +26,23 @@ namespace StishBoard
             }
         }
 
+        //essentially clones the StishBoard in a BoardState object
         public BoardState GetBoardState()
         {
             return new BoardState(this);
         }
 
         //default constructor: creates the square objects in "array", assigning each to a position in the BoardSize by BoardSize grid.
-        private StishBoard()
+        private StishBoard() : base()
         {
             //board size may change
-            array = new Square[BoardSize, BoardSize];
+            boardSize = 9;
+            m_BoardState = new Square[BoardSize, BoardSize];
             for (int row = 0; row < BoardSize; row ++)
             {
                 for (int col = 0; col < BoardSize; col++)
                 {
-                    array[row, col] = new Square();
+                    m_BoardState[row, col] = new Square();
                 }
             }
         }
@@ -108,21 +58,6 @@ namespace StishBoard
                 }
                 return instance;
             }
-        }
-
-        //creates a public function called "getSquare", it will return the reference to the square object that sits in the position in "array" that is asked for in the arguments.
-        public Square getSquare(Coordinate Find)
-        {
-            //TO DO: add error handling of arguments that are out of range of the array.
-            try
-            {
-                return array[Find.X, Find.Y];
-            }
-            catch
-            {
-                return null;
-            }
-                       
         }
 
         //creates a public render method called "Render" to render each of the squares to the console. it calls a Render method on each of the square objects held within 'array'.
@@ -164,7 +99,7 @@ namespace StishBoard
             {
                 for (int x = 0; x < BoardSize; x++)
                 {
-                    array[x, y].Render(x, y);
+                    m_BoardState[x, y].Render(x, y);
                 }
             }
 
