@@ -199,15 +199,15 @@ namespace StishBoard
             else if (input == "Q")
             {
                 //buy barracks
-                End = GameMaster.Instance.BuyBarracks(CursorCoord, ConPlayer);
+                End = GameMaster.Instance.BuyBarracks(CursorCoord, ConPlayer, StishBoard.Instance);
             }
             else if (input == "E")
             {
                 //buy unit
-                End = GameMaster.Instance.BuyUnit(CursorCoord, ConPlayer);
+                End = GameMaster.Instance.BuyUnit(CursorCoord, ConPlayer, StishBoard.Instance);
             }           
 
-            if (GameMaster.Instance.OnBoard(CursorCoord) == true)
+            if (GameMaster.Instance.OnBoard(CursorCoord, StishBoard.Instance) == true)
             {
                 //free
                 if (CursorMode == Mode.free)
@@ -220,7 +220,7 @@ namespace StishBoard
                 if (CursorMode == Mode.locked)
                 {
                     //action is true if the cursor moved. this helps distinguish if the cursor should move after attacking.
-                    if (GameMaster.Instance.Action(Pos, CursorCoord, ConPlayer) == true)
+                    if (GameMaster.Instance.Action(Pos, CursorCoord, ConPlayer, StishBoard.Instance) == true)
                     {
                         Pos.X = CursorCoord.X;
                         Pos.Y = CursorCoord.Y;

@@ -42,6 +42,13 @@ namespace StishBoard
             Allegiance = PlayersTurn;
         }
 
+        public StishMiniMaxNode(TreeNode Parent, Player PlayersTurn, BoardState PassedBoardState) : base(Parent)
+        {
+            m_BoardState = PassedBoardState;
+            FindValue(Parent, PassedBoardState);
+            Allegiance = PlayersTurn;
+        }
+
         private uint P1BarracksHealth;
         private uint P1UnitHealth;
         private uint P1BaseHealth;
@@ -72,12 +79,7 @@ namespace StishBoard
             Value = (1 * ((int)P1BarracksNumber - (int)P2BarracksNumber)) + (1 * ((int)P1BarracksHealth - (int)P2BarracksHealth)) + (1 * ((int)P1UnitHealth - (int)P2UnitHealth)) + (1 * ((int)P1BaseHealth - (int)P2BaseHealth)) + (1 * ((int)P1Balance - (int)P2Balance));
         }
 
-        StishMiniMaxNode(TreeNode Parent, BoardState PassedBoardState) : base(Parent)
-        {
-            m_BoardState = PassedBoardState;
-            FindValue(Parent, PassedBoardState);
-            
-        }
+        
 
         
     }
