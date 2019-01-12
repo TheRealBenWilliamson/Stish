@@ -27,6 +27,141 @@ namespace StishBoard
         //the foresight class helps us build new nodes by predicting all possible moves from a node
         //these functions will be called by the node objects in order to tell the nodes, how to configure their children
 
+        public void CreatePathNode(List<PathNode> ToCheck, PathNode Parent, uint Cost, uint Health, BoardState World, Coordinate Invest)
+        {           
+            PathNode Generate = new PathNode(Parent, Cost, Health, World, Invest);
+            ToCheck.Add(Generate);
+        }
+
+        private bool SearchForPathNode(PathNode Value, List<PathNode> Search)
+        {
+            //searches a list of path nodes and determines if there was a match
+            bool found = false;
+            for (int index = 0; index < Search.Count; index++)
+            {
+                if ((Search[index].Cost == Value.Cost) && (Search[index].Health == Value.Health) && (Search[index].Position == Value.Position))
+                {
+                    found = true;
+                }
+            }
+            return found;
+        }
+
+        public List<PathNode> FollowParents(PathNode Youngest)
+        {
+            List<PathNode> YoungestToOldest = new List<PathNode>();
+
+            PathNode Invest = Youngest;
+            while(Invest != null)
+            {
+                YoungestToOldest.Add(Invest);
+                Invest = Invest.getParent();
+            }
+
+
+            return YoungestToOldest;
+        }
+
+        //not void! returns a list of Pathnodes
+        public void FindPath(Coordinate From, Coordinate To, BoardState board)
+        {
+            //lists as we dont want a limit that would be given by an array
+            List<PathNode> ToCheck = new List<PathNode>();
+            List<PathNode> Checked = new List<PathNode>();
+            Coordinate Invest = new Coordinate();
+            Coordinate Twitch = new Coordinate();
+            uint MoveCost;
+            uint MoveHealth = board.getSquare(To).Dep.Health;
+            Player Cont = board.getSquare(From).Dep.OwnedBy;
+            //MoveHealth must remain above 0 and MoveCost must remain below the maximum unit move distance
+
+            //Start at To and end at From
+            Invest.X = To.X;
+            Invest.Y = To.Y;
+            MoveCost = 0;
+
+            //has to be cast here as the parent has to be given as null
+            CreatePathNode(ToCheck, null, MoveCost, MoveHealth, board, Invest);
+
+            //Spreading from Invest
+            while (ToCheck.Count != 0)
+            {
+                Invest = ToCheck[0].Position;
+                MoveCost = ToCheck[0].Cost;
+                MoveHealth = ToCheck[0].Health;                               
+
+                for (int dir = 0; dir < 4; dir++)
+                {
+                    Twitch.X = Invest.X;
+                    Twitch.Y = Invest.Y;
+
+                    if (dir == 0)
+                    {
+                        //up
+                        Twitch.MoveUp();
+                    }
+                    else if (dir == 1)
+                    {
+                        //right
+                        Twitch.MoveRight();
+                    }
+                    else if (dir == 2)
+                    {
+                        //down
+                        Twitch.MoveDown();
+                    }
+                    else if (dir == 4)
+                    {
+                        //left
+                        Twitch.MoveLeft();
+                    }
+
+                    if (board.getSquare(Twitch) != null)
+                    {
+                        //make changes to Movecost and MoveHealth here
+                        MoveCost++;
+                        if ((board.getSquare(Twitch).Dep.OwnedBy != Cont) && (board.getSquare(Twitch).Dep.DepType == "Unit" || board.getSquare(Twitch).Dep.DepType == "Barracks" || board.getSquare(Twitch).Dep.DepType == "Base"))
+                        {
+                            //if an enemy dep type that can remove health
+                            //this prevents underflow errors as Health is a Uint
+                            if (MoveHealth >= board.getSquare(Twitch).Dep.Health)
+                            {
+                                MoveHealth -= board.getSquare(Twitch).Dep.Health;
+                            }
+                            else
+                            {
+                                MoveHealth = 0;
+                            }
+                        }
+
+                        //parameter for being a path member in the if statement
+                        //within range (an allowed cost) and positive health
+                        if ((MoveCost <= StishBoard.Instance.GameMP) && (MoveHealth > 0))
+                        {
+                            //suitable to be created as a new node but not checked for suitability for the list system
+                            PathNode NodeToTest = new PathNode(ToCheck[0], MoveCost, MoveHealth, board, Twitch);
+                            
+                            if (SearchForPathNode(NodeToTest,Checked) == false)
+                            {
+                                //not already searched. note, this method allows there to be more than one node per square as long as the path is not 'essentially the same' which is a nice unintended consequence of this method.
+                                CreatePathNode(ToCheck, ToCheck[0], MoveCost, MoveHealth, board, Twitch);
+
+                                //is this the destination?
+                                if((Twitch.X == From.X) && (Twitch.Y == From.Y))
+                                {
+                                    //recursion to create a list of PathNode Parents
+                                }
+                            }
+                        }                                       
+                    }
+                }
+
+                Checked.Add(ToCheck[0]);
+                ToCheck.Remove(ToCheck[0]);
+
+            }
+        }
+
         public void UnitBasedMovement(StishMiniMaxNode Parent, BoardState Now, Coordinate From, Player Side, Coordinate To)
         {
             //this will check what is on the destination square and then use the game master function.
@@ -52,9 +187,14 @@ namespace StishBoard
             Coordinate Upper = new Coordinate();
             Coordinate Lower = new Coordinate();
             Coordinate Look = new Coordinate();
-            //checking if too close to an edge of the board
 
             //upper refers to the upper left corner (lower coordinate values)
+            //assigns full values to the bounds and then changes them if they are inappropriate
+            Upper.X = Check.X - StishBoard.Instance.GameMP;
+            Upper.Y = Check.Y - StishBoard.Instance.GameMP;
+            Lower.X = Check.X + StishBoard.Instance.GameMP;
+            Lower.Y = Check.Y + StishBoard.Instance.GameMP;
+            
             if (Check.X < StishBoard.Instance.GameMP)
             {
                 Upper.X = 0;

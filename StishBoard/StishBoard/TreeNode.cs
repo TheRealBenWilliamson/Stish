@@ -11,7 +11,10 @@ namespace StishBoard
         private TreeNode m_ParentNode;
         private List<TreeNode> m_ChildrenNodes = new List<TreeNode>();
 
-        private TreeNode Parent
+        //Alligiance is used to show whos turn this node is representing
+        private Player m_Allegiance;
+       
+        protected TreeNode Parent
         {
             get
             {
@@ -31,6 +34,18 @@ namespace StishBoard
         {
             m_ParentNode = ParentNode;
             ParentNode.AddChild(this);
+        }
+
+        public Player Allegiance
+        {
+            get
+            {
+                return m_Allegiance;
+            }
+            set
+            {
+                m_Allegiance = value;
+            }
         }
 
         public void AddChild(TreeNode ChildNode)

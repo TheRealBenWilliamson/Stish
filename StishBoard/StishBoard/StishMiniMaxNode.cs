@@ -8,10 +8,7 @@ namespace StishBoard
 {
     class StishMiniMaxNode : MiniMaxNode
     {
-        private BoardState m_BoardState;
-
-        //Alligiance is used to show whos turn this node is representing
-        private Player m_Allegiance;
+        private BoardState m_BoardState;     
 
         public BoardState NodeBoardState
         {
@@ -23,19 +20,7 @@ namespace StishBoard
             {
                 return m_BoardState;
             }
-        }
-
-        public Player Allegiance
-        {
-            get
-            {
-                return m_Allegiance;
-            }
-            set
-            {
-                m_Allegiance = value;
-            }
-        }
+        }    
 
         public StishMiniMaxNode(TreeNode Parent, Player PlayersTurn) : base(Parent)
         {
