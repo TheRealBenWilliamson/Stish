@@ -47,25 +47,28 @@ namespace StishBoard
             return found;
         }
 
-        public List<PathNode> FollowParents(PathNode Youngest)
+        public List<Coordinate> FollowParents(PathNode Youngest)
         {
-            List<PathNode> YoungestToOldest = new List<PathNode>();
+            List<Coordinate> OldestToYoungest = new List<Coordinate>();
 
+            //finds youngest to oldest and then reverses the list
             PathNode Invest = Youngest;
             while(Invest != null)
             {
-                YoungestToOldest.Add(Invest);
-                Invest = Invest.getParent();
+                OldestToYoungest.Add(Invest.Position);
+                Invest = (PathNode)Invest.Parent;
             }
 
+            OldestToYoungest.Reverse();
 
-            return YoungestToOldest;
+            return OldestToYoungest;
         }
 
         //not void! returns a list of Pathnodes
-        public void FindPath(Coordinate From, Coordinate To, BoardState board)
+        public List<Coordinate> FindPath(Coordinate From, Coordinate To, BoardState board)
         {
             //lists as we dont want a limit that would be given by an array
+            List<Coordinate> Path = new List<Coordinate>();
             List<PathNode> ToCheck = new List<PathNode>();
             List<PathNode> Checked = new List<PathNode>();
             Coordinate Invest = new Coordinate();
@@ -150,6 +153,9 @@ namespace StishBoard
                                 if((Twitch.X == From.X) && (Twitch.Y == From.Y))
                                 {
                                     //recursion to create a list of PathNode Parents
+                                    Path = FollowParents(NodeToTest);
+                                    //returns a list of coordinates 'From --> To' for each individual step
+                                    return Path;
                                 }
                             }
                         }                                       
@@ -160,6 +166,8 @@ namespace StishBoard
                 ToCheck.Remove(ToCheck[0]);
 
             }
+            //there is no connection
+            return null;
         }
 
         public void UnitBasedMovement(StishMiniMaxNode Parent, BoardState Now, Coordinate From, Player Side, Coordinate To)
@@ -179,6 +187,8 @@ namespace StishBoard
                 NextTurn = UnitMovedChild.Player1;
             }
             StishMiniMaxNode UnitCaseNode = new StishMiniMaxNode(Parent, NextTurn, UnitMovedChild);
+
+            //changes to the boardstate are made here using the FindPath function and itterating through the list with the gamemaster functions
         }
 
         //this may not need to be void however i dont yet know if or what the output will be (currently just counts)

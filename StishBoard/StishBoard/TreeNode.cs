@@ -14,7 +14,7 @@ namespace StishBoard
         //Alligiance is used to show whos turn this node is representing
         private Player m_Allegiance;
        
-        protected TreeNode Parent
+        public TreeNode Parent
         {
             get
             {
