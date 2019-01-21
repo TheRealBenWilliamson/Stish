@@ -48,6 +48,17 @@ namespace StishBoard
             bool GameEnd = false;
             Won won = 0;
             Turn turn = Turn.Player1;
+
+
+            //TEST! REMOVE WHEN DONE  ---------------          
+            StishMiniMaxNode StumpParent = new StishMiniMaxNode(P1);
+            StishMiniMaxNode Stump = new StishMiniMaxNode(StumpParent, P1);
+            BoardState GameBoard = new BoardState(StishBoard.Instance);
+            GameBoard.Player1 = P1;
+            GameBoard.Player2 = P2;
+            Stump.NodeBoardState = GameBoard;
+
+
             while (GameEnd == false)
             {
                 //checks if a base has been destroyed. if one has then the other player has won.
@@ -68,6 +79,13 @@ namespace StishBoard
                 }
                 else
                 {
+
+
+                    //TEST! REMOVE WHEN DONE  ---------------                
+                    ForeSight.Instance.GenerateChildren(Stump);
+
+
+
                     //Game Continues
                     if(turn == Turn.Player1)
                     {

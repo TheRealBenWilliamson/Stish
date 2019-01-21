@@ -16,7 +16,13 @@ namespace StishBoard
         {
             m_Alpha = int.MinValue;
             m_Beta = int.MaxValue;
-        }       
+        }
+
+        public ValuedTreeNode()
+        {
+            m_Alpha = int.MinValue;
+            m_Beta = int.MaxValue;
+        }
 
         public void AlphaBeta()
         {

@@ -20,7 +20,12 @@ namespace StishBoard
             {
                 return m_BoardState;
             }
-        }    
+        }
+
+        public StishMiniMaxNode(Player PlayersTurn)
+        {
+            Allegiance = PlayersTurn;
+        }
 
         public StishMiniMaxNode(TreeNode Parent, Player PlayersTurn) : base(Parent)
         {

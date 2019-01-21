@@ -27,6 +27,33 @@ namespace StishBoard
         //the foresight class helps us build new nodes by predicting all possible moves from a node
         //these functions will be called by the node objects in order to tell the nodes, how to configure their children
 
+        public void UnitBasedMovement(StishMiniMaxNode Parent, BoardState Now, List<Coordinate> Path, Player Side)
+        {
+            //this will check what is on the destination square and then use the game master function.
+            //the game master currently only works with the StishBoard. if i make StishBoard a dervived class from the board state, i can generalize the game master functions and use them here
+            BoardState UnitMovedChild = new BoardState(Now);
+
+            for (int index = 0; index < Path.Count - 1; index++)
+            {
+                //from index to the one ahead of it therefore the function finishes one place short of the end
+                GameMaster.Instance.Action(Path[index], Path[index +1], Side, UnitMovedChild);
+            }
+         
+            Player NextTurn;
+            if (Side.GetPlayerNum == "Player1")
+            {
+                //opposite allegiance to it's parent
+                NextTurn = UnitMovedChild.Player2;
+            }
+            else
+            {
+                NextTurn = UnitMovedChild.Player1;
+            }
+            StishMiniMaxNode UnitCaseNode = new StishMiniMaxNode(Parent, NextTurn, UnitMovedChild);
+
+            //changes to the boardstate are made here using the FindPath function and itterating through the list with the gamemaster functions
+        }
+
         public void CreatePathNode(List<PathNode> ToCheck, PathNode Parent, uint Cost, uint Health, BoardState World, Coordinate Invest)
         {           
             PathNode Generate = new PathNode(Parent, Cost, Health, World, Invest);
@@ -39,7 +66,8 @@ namespace StishBoard
             bool found = false;
             for (int index = 0; index < Search.Count; index++)
             {
-                if ((Search[index].Cost == Value.Cost) && (Search[index].Health == Value.Health) && (Search[index].Position == Value.Position))
+                //if this statement is changed to include cost, health and position in an "and" statement, the lowest cost movement could be found. this is not necessary though
+                if (Search[index].Position == Value.Position)
                 {
                     found = true;
                 }
@@ -63,6 +91,50 @@ namespace StishBoard
 
             return OldestToYoungest;
         }
+
+        public List<Coordinate> TrainPath(BoardState board, Coordinate From, Coordinate Twitch, uint MoveCost, uint MoveHealth, Player Cont, List<PathNode> ToCheck, List<PathNode> Checked, List<Coordinate> Path)
+        {
+            MoveCost++;
+            if ((board.getSquare(Twitch).Dep.OwnedBy != Cont) && (board.getSquare(Twitch).Dep.DepType == "Unit" || board.getSquare(Twitch).Dep.DepType == "Barracks" || board.getSquare(Twitch).Dep.DepType == "Base"))
+            {
+                //if an enemy dep type that can remove health
+                //this prevents underflow errors as Health is a Uint
+                if (MoveHealth >= board.getSquare(Twitch).Dep.Health)
+                {
+                    MoveHealth -= board.getSquare(Twitch).Dep.Health;
+                }
+                else
+                {
+                    MoveHealth = 0;
+                }
+            }
+
+            //parameter for being a path member in the if statement
+            //within range (an allowed cost) and positive health
+            if ((MoveCost <= StishBoard.Instance.GameMP) && (MoveHealth > 0))
+            {
+                //suitable to be created as a new node but not checked for suitability for the list system
+                PathNode NodeToTest = new PathNode(ToCheck[0], MoveCost, MoveHealth, board, Twitch);
+
+                if (SearchForPathNode(NodeToTest, Checked) == false)
+                {
+                    //not already searched. note, this method allows there to be more than one node per square as long as the path is not 'essentially the same' which is a nice unintended consequence of this method.
+                    CreatePathNode(ToCheck, ToCheck[0], MoveCost, MoveHealth, board, Twitch);
+
+                    //is this the destination?
+                    if ((Twitch.X == From.X) && (Twitch.Y == From.Y))
+                    {
+                        //recursion to create a list of PathNode Parents
+                        Path = FollowParents(NodeToTest);
+                        //returns a list of coordinates 'From --> To' for each individual step
+                        return Path;
+                    }
+                }
+            }
+
+            //nothing of interest
+            return null;
+        }    
 
         //not void! returns a list of Pathnodes
         public List<Coordinate> FindPath(Coordinate From, Coordinate To, BoardState board)
@@ -122,43 +194,10 @@ namespace StishBoard
                     if (board.getSquare(Twitch) != null)
                     {
                         //make changes to Movecost and MoveHealth here
-                        MoveCost++;
-                        if ((board.getSquare(Twitch).Dep.OwnedBy != Cont) && (board.getSquare(Twitch).Dep.DepType == "Unit" || board.getSquare(Twitch).Dep.DepType == "Barracks" || board.getSquare(Twitch).Dep.DepType == "Base"))
+                        if(TrainPath(board, From, Twitch, MoveCost, MoveHealth, Cont, ToCheck, Checked, Path) != null)
                         {
-                            //if an enemy dep type that can remove health
-                            //this prevents underflow errors as Health is a Uint
-                            if (MoveHealth >= board.getSquare(Twitch).Dep.Health)
-                            {
-                                MoveHealth -= board.getSquare(Twitch).Dep.Health;
-                            }
-                            else
-                            {
-                                MoveHealth = 0;
-                            }
-                        }
-
-                        //parameter for being a path member in the if statement
-                        //within range (an allowed cost) and positive health
-                        if ((MoveCost <= StishBoard.Instance.GameMP) && (MoveHealth > 0))
-                        {
-                            //suitable to be created as a new node but not checked for suitability for the list system
-                            PathNode NodeToTest = new PathNode(ToCheck[0], MoveCost, MoveHealth, board, Twitch);
-                            
-                            if (SearchForPathNode(NodeToTest,Checked) == false)
-                            {
-                                //not already searched. note, this method allows there to be more than one node per square as long as the path is not 'essentially the same' which is a nice unintended consequence of this method.
-                                CreatePathNode(ToCheck, ToCheck[0], MoveCost, MoveHealth, board, Twitch);
-
-                                //is this the destination?
-                                if((Twitch.X == From.X) && (Twitch.Y == From.Y))
-                                {
-                                    //recursion to create a list of PathNode Parents
-                                    Path = FollowParents(NodeToTest);
-                                    //returns a list of coordinates 'From --> To' for each individual step
-                                    return Path;
-                                }
-                            }
-                        }                                       
+                            return TrainPath(board, From, Twitch, MoveCost, MoveHealth, Cont, ToCheck, Checked, Path);
+                        }                                                           
                     }
                 }
 
@@ -168,28 +207,7 @@ namespace StishBoard
             }
             //there is no connection
             return null;
-        }
-
-        public void UnitBasedMovement(StishMiniMaxNode Parent, BoardState Now, Coordinate From, Player Side, Coordinate To)
-        {
-            //this will check what is on the destination square and then use the game master function.
-            //the game master currently only works with the StishBoard. if i make StishBoard a dervived class from the board state, i can generalize the game master functions and use them here
-            BoardState UnitMovedChild = new BoardState(Now);
-            GameMaster.Instance.Action(From, To, Side, Now);
-            Player NextTurn;
-            if (Side.GetPlayerNum == "Player1")
-            {
-                //opposite allegiance to it's parent
-                NextTurn = UnitMovedChild.Player2;
-            }
-            else
-            {
-                NextTurn = UnitMovedChild.Player1;
-            }
-            StishMiniMaxNode UnitCaseNode = new StishMiniMaxNode(Parent, NextTurn, UnitMovedChild);
-
-            //changes to the boardstate are made here using the FindPath function and itterating through the list with the gamemaster functions
-        }
+        }      
 
         //this may not need to be void however i dont yet know if or what the output will be (currently just counts)
         public void SweepSearch(StishMiniMaxNode Parent, BoardState Now, Coordinate Check, Player Side)
@@ -205,6 +223,7 @@ namespace StishBoard
             Lower.X = Check.X + StishBoard.Instance.GameMP;
             Lower.Y = Check.Y + StishBoard.Instance.GameMP;
             
+            //checks if the unit is losing movement positions because it is too close to the edge of the board
             if (Check.X < StishBoard.Instance.GameMP)
             {
                 Upper.X = 0;
@@ -222,7 +241,6 @@ namespace StishBoard
                 Lower.Y = Now.BoardSize;
             }
 
-
             for (uint x = Upper.X; x < Lower.X; x++)
             {
                 for (uint y = Upper.Y; y < Lower.Y; y++)
@@ -236,8 +254,13 @@ namespace StishBoard
                         if ((Now.getSquare(Look) != null) && !((Now.getSquare(Look).Dep.OwnedBy) == Side && ((Now.getSquare(Look).Dep.DepType == "Unit") || (Now.getSquare(Look).Dep.DepType == "Base"))))
                         {
                             //the unit can legally move to any of these positions however the events of this action are not distinguished
-                            //obstructions are not accounted for
-                            UnitBasedMovement(Parent, Now, Check, Side, Look);
+                            //obstructions are not accounted for    
+                            List<Coordinate> Path = FindPath(Check, Look, Now);
+                            if (Path != null)
+                            {
+                                UnitBasedMovement(Parent, Now, Path, Side);
+                            }
+                            
                         }
 
                     }
@@ -277,38 +300,38 @@ namespace StishBoard
                 //can afford a unit
 
                 BoardState UnitBoardState = new BoardState(Now);
-                UnitBoardState.getSquare(look).Dep = new Unit(Side, Now.getSquare(look), Side.Balance);
+                GameMaster.Instance.BuyUnit(look, Side, UnitBoardState);
+                Player PlayersTurn;
                 if (Side.GetPlayerNum == "Player1")
                 {
-                    UnitBoardState.Player1.Balance = 0;
                     //opposite allegiance to it's parent
-                    StishMiniMaxNode UnitCaseNode = new StishMiniMaxNode(Parent, UnitBoardState.Player2, UnitBoardState);
+                    PlayersTurn = UnitBoardState.Player2;
                 }
-                else if(Side.GetPlayerNum == "Player2")
+                else
                 {
-                    UnitBoardState.Player2.Balance = 0;
-                    StishMiniMaxNode UnitCaseNode = new StishMiniMaxNode(Parent, UnitBoardState.Player1, UnitBoardState);
+                    PlayersTurn = UnitBoardState.Player1;
                 }
-                
+                StishMiniMaxNode UnitCaseNode = new StishMiniMaxNode(Parent, PlayersTurn, UnitBoardState);
+
             }
             if (Side.Balance >= cost)
             {
                 //can afford a barracks
 
                 BoardState BarracksBoardState = new BoardState(Now);
-                BarracksBoardState.getSquare(look).Dep = new Barracks(Side, Now.getSquare(look), 5);
+                GameMaster.Instance.BuyBarracks(look, Side, BarracksBoardState);
+                Player PlayersTurn;
                 if (Side.GetPlayerNum == "Player1")
                 {
-                    BarracksBoardState.Player1.Balance -= cost;
                     //opposite allegiance to it's parent
-                    StishMiniMaxNode UnitCaseNode = new StishMiniMaxNode(Parent, BarracksBoardState.Player2);
+                    PlayersTurn = BarracksBoardState.Player2;
                 }
-                else if (Side.GetPlayerNum == "Player2")
+                else
                 {
-                    BarracksBoardState.Player2.Balance -= cost;
-                    StishMiniMaxNode UnitCaseNode = new StishMiniMaxNode(Parent, BarracksBoardState.Player1);
+                    PlayersTurn = BarracksBoardState.Player1;
                 }
-               
+                StishMiniMaxNode BarracksCaseNode = new StishMiniMaxNode(Parent, PlayersTurn, BarracksBoardState);
+
             }
 
 
@@ -323,7 +346,7 @@ namespace StishBoard
             }
             else if((Now.getSquare(Invest).Dep.OwnedBy == Side) && (Now.getSquare(Invest).Dep.DepType == "Unit"))
             {
-
+                SweepSearch(Parent,Now,Invest,Side);
             }
 
         }
@@ -333,7 +356,20 @@ namespace StishBoard
         {
             //parent argument will always contain "this" when called.
             Player Allegiance = Parent.Allegiance;
-            BoardState Position = Parent.NodeBoardState;
+
+            //this is the default "nothing happened" boardstate and node
+            BoardState Position = new BoardState(Parent.NodeBoardState);
+            Player NextTurn;
+            if (Parent.Allegiance.GetPlayerNum == "Player1")
+            {
+                //opposite allegiance to it's parent
+                NextTurn = Position.Player2;
+            }
+            else
+            {
+                NextTurn = Position.Player1;
+            }
+            StishMiniMaxNode NothingHappenedNode = new StishMiniMaxNode(Parent, NextTurn, Position);
 
             Coordinate Look = new Coordinate();
             for (uint y = 0; y < Position.BoardSize; y++)

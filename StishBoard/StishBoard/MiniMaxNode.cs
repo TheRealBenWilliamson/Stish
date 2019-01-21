@@ -19,7 +19,11 @@ namespace StishBoard
         {
 
         }
+        protected MiniMaxNode()
+        {
 
-        
+        }
+
+
     }
 }
