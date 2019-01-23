@@ -35,8 +35,23 @@ namespace StishBoard
         public StishMiniMaxNode(TreeNode Parent, Player PlayersTurn, BoardState PassedBoardState) : base(Parent)
         {
             m_BoardState = PassedBoardState;
-            FindValue(Parent, PassedBoardState);
+            //FindValue(Parent, PassedBoardState);
             Allegiance = PlayersTurn;
+        }
+
+        public void Inherit_Allegiance()
+        {
+            if (m_BoardState != null)
+            {
+                if (Allegiance.GetPlayerNum == "Player1")
+                {
+                    Allegiance = m_BoardState.Player1;
+                }
+                else
+                {
+                    Allegiance = m_BoardState.Player2;
+                }
+            }
         }
 
         private uint P1BarracksHealth;

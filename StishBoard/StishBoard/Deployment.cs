@@ -36,7 +36,7 @@ namespace StishBoard
         //default constructor: makes any square assume it is empty and owned by no-one. this can be overwritten by telling the square that it contains something.
         protected Deployment()
         {
-            depType = "empty";
+            depType = "Empty";
             Icon = " ";
             ownedBy = null;
             MovementPoints = 0;

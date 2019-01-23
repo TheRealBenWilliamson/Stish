@@ -33,7 +33,10 @@ namespace StishBoard
         public TreeNode(TreeNode ParentNode)
         {
             m_ParentNode = ParentNode;
-            ParentNode.AddChild(this);
+            if (m_ParentNode != null)
+            {
+                ParentNode.AddChild(this);
+            }          
         }
 
         public Player Allegiance

@@ -22,8 +22,9 @@ namespace StishBoard
         public BoardState(StishBoard CurrentBoard)
         {
             //ONLY WORKS WITH HUMANS
-            CurrentBoard.player1 = new Human(CurrentBoard.Player1);
-            CurrentBoard.player2 = new Human(CurrentBoard.Player2);
+            this.boardSize = CurrentBoard.BoardSize;
+            this.player1 = new Human(CurrentBoard.Player1);
+            this.player2 = new Human(CurrentBoard.Player2);
             m_BoardState = new Square[CurrentBoard.BoardSize, CurrentBoard.BoardSize];
             Coordinate Here = new Coordinate();
             for (uint y = 0; y < CurrentBoard.BoardSize; y++)
@@ -32,7 +33,7 @@ namespace StishBoard
                 {
                     Here.Y = y;
                     Here.X = x;
-                    m_BoardState[x, y] = new Square(CurrentBoard.getSquare(Here));
+                    m_BoardState[x, y] = new Square(CurrentBoard.getSquare(Here), (Human)this.player1, (Human)this.player2);
                 }
                     
             }
@@ -43,8 +44,9 @@ namespace StishBoard
         public BoardState(BoardState CurrentBoard)
         {
             //ONLY WORKS WITH HUMANS
-            CurrentBoard.player1 = new Human(CurrentBoard.Player1);
-            CurrentBoard.player2 = new Human(CurrentBoard.Player2);
+            this.boardSize = CurrentBoard.BoardSize;
+            this.player1 = new Human(CurrentBoard.Player1);
+            this.player2 = new Human(CurrentBoard.Player2);
             m_BoardState = new Square[CurrentBoard.BoardSize, CurrentBoard.BoardSize];
             Coordinate Here = new Coordinate();
             for (uint y = 0; y < CurrentBoard.BoardSize; y++)
@@ -53,7 +55,7 @@ namespace StishBoard
                 {
                     Here.Y = y;
                     Here.X = x;
-                    m_BoardState[x, y] = new Square(CurrentBoard.getSquare(Here));
+                    m_BoardState[x, y] = new Square(CurrentBoard.getSquare(Here), (Human)this.player1, (Human)this.player2);
                 }
 
             }

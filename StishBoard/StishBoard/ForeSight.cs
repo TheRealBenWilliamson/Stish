@@ -339,13 +339,14 @@ namespace StishBoard
 
         private void TestSquare(StishMiniMaxNode Parent, BoardState Now, Player Side, Coordinate Invest)
         {
-            if ((Now.getSquare(Invest).Dep.OwnedBy == Side) && (Now.getSquare(Invest).Dep.DepType == "Empty"))
+            if ((Now.getSquare(Invest).Owner == Side) && (Now.getSquare(Invest).Dep.DepType == "Empty"))
             {
                 //can buy possibly buy
                 BuyPossibility(Parent, Now, Side, Invest);
             }
-            else if((Now.getSquare(Invest).Dep.OwnedBy == Side) && (Now.getSquare(Invest).Dep.DepType == "Unit"))
+            if((Now.getSquare(Invest).Owner == Side) && (Now.getSquare(Invest).Dep.DepType == "Unit"))
             {
+                //sweeps through all possible unit moves
                 SweepSearch(Parent,Now,Invest,Side);
             }
 
@@ -355,6 +356,7 @@ namespace StishBoard
         public void GenerateChildren(StishMiniMaxNode Parent)
         {
             //parent argument will always contain "this" when called.
+
             Player Allegiance = Parent.Allegiance;
 
             //this is the default "nothing happened" boardstate and node
@@ -363,23 +365,23 @@ namespace StishBoard
             if (Parent.Allegiance.GetPlayerNum == "Player1")
             {
                 //opposite allegiance to it's parent
-                NextTurn = Position.Player2;
+                NextTurn = new Human(Position.Player2);
             }
             else
             {
-                NextTurn = Position.Player1;
+                NextTurn = new Human(Position.Player1);
             }
             StishMiniMaxNode NothingHappenedNode = new StishMiniMaxNode(Parent, NextTurn, Position);
 
             Coordinate Look = new Coordinate();
-            for (uint y = 0; y < Position.BoardSize; y++)
+            for (uint y = 0; y < Parent.NodeBoardState.BoardSize; y++)
             {
-                for (uint x = 0; x < Position.BoardSize; x++)
+                for (uint x = 0; x < Parent.NodeBoardState.BoardSize; x++)
                 {
                     Look.Y = y;
                     Look.X = x;
 
-                    TestSquare(Parent, Position, Allegiance, Look);
+                    TestSquare(Parent, Parent.NodeBoardState, Allegiance, Look);
                 }
             }
         }

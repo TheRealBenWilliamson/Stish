@@ -51,12 +51,8 @@ namespace StishBoard
 
 
             //TEST! REMOVE WHEN DONE  ---------------          
-            StishMiniMaxNode StumpParent = new StishMiniMaxNode(P1);
-            StishMiniMaxNode Stump = new StishMiniMaxNode(StumpParent, P1);
-            BoardState GameBoard = new BoardState(StishBoard.Instance);
-            GameBoard.Player1 = P1;
-            GameBoard.Player2 = P2;
-            Stump.NodeBoardState = GameBoard;
+            StishMiniMaxNode Stump = new StishMiniMaxNode(null, P2);
+            
 
 
             while (GameEnd == false)
@@ -79,23 +75,23 @@ namespace StishBoard
                 }
                 else
                 {
-
-
-                    //TEST! REMOVE WHEN DONE  ---------------                
-                    ForeSight.Instance.GenerateChildren(Stump);
-
-
-
                     //Game Continues
                     if(turn == Turn.Player1)
                     {
+
+
+                        //TEST! REMOVE WHEN DONE  ---------------
+                        Stump.NodeBoardState = new BoardState(StishBoard.Instance);
+                        Stump.Inherit_Allegiance();
+                        ForeSight.Instance.GenerateChildren(Stump);
+
+
                         P1.TurnBalance();
                         P1.MaxMP();
                         Cursor.Instance.FindX = P1.CursorX;
                         Cursor.Instance.FindY = P1.CursorY;
                         P1.MakeMove();
                         turn++;
-
                     }
                     else if (turn == Turn.Player2)
                     {

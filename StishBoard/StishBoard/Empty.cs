@@ -15,6 +15,16 @@ namespace StishBoard
             Icon = " ";
             ownedBy = null;
         }
+
+        public Empty(Empty CopyFrom)
+        {
+            depType = CopyFrom.depType;
+            Icon = CopyFrom.Icon;
+            ownedBy = CopyFrom.OwnedBy;
+            MovementPoints = CopyFrom.MovementPoints;
+            health = CopyFrom.Health;
+            m_JustCreated = CopyFrom.JustCreated;
+        }
     }
 }
 

@@ -69,11 +69,11 @@ namespace StishBoard
                 Player LookPlayer;
                 if(look == 0)
                 {
-                    LookPlayer = Player1;
+                    LookPlayer = this.Player1;
                 }
                 else
                 {
-                    LookPlayer = Player2;
+                    LookPlayer = this.Player2;
                 }
                         
 
