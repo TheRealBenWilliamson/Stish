@@ -49,7 +49,7 @@ namespace StishBoard
             {
                 NextTurn = UnitMovedChild.Player1;
             }
-            StishMiniMaxNode UnitCaseNode = new StishMiniMaxNode(Parent, NextTurn, UnitMovedChild);
+            StishMiniMaxNode UnitMoveNode = new StishMiniMaxNode(Parent, NextTurn, UnitMovedChild);
 
             //changes to the boardstate are made here using the FindPath function and itterating through the list with the gamemaster functions
         }
@@ -194,9 +194,10 @@ namespace StishBoard
                     if (board.getSquare(Twitch) != null)
                     {
                         //make changes to Movecost and MoveHealth here
-                        if(TrainPath(board, From, Twitch, MoveCost, MoveHealth, Cont, ToCheck, Checked, Path) != null)
+                        List<Coordinate> Trained = TrainPath(board, From, Twitch, MoveCost, MoveHealth, Cont, ToCheck, Checked, Path);
+                        if(Trained != null)
                         {
-                            return TrainPath(board, From, Twitch, MoveCost, MoveHealth, Cont, ToCheck, Checked, Path);
+                            return Trained;
                         }                                                           
                     }
                 }
@@ -251,7 +252,7 @@ namespace StishBoard
                     if (Check.Get2DDistance(Look) <= StishBoard.Instance.GameMP)
                     {
                         //general squares around unit within range
-                        if ((Now.getSquare(Look) != null) && !((Now.getSquare(Look).Dep.OwnedBy) == Side && ((Now.getSquare(Look).Dep.DepType == "Unit") || (Now.getSquare(Look).Dep.DepType == "Base"))))
+                        if ((Now.getSquare(Look) != null) && !((Now.getSquare(Look).Owner) == Side && ((Now.getSquare(Look).Dep.DepType == "Unit") || (Now.getSquare(Look).Dep.DepType == "Base"))))
                         {
                             //the unit can legally move to any of these positions however the events of this action are not distinguished
                             //obstructions are not accounted for    
@@ -275,14 +276,14 @@ namespace StishBoard
             uint multiply = 1;
 
             Coordinate look = new Coordinate();
-            for (uint x = 0; x < Now.BoardSize; x++)
+            for (uint y = 0; y < Now.BoardSize; y++)
             {
-                for (uint y = 0; y < Now.BoardSize; y++)
+                for (uint x = 0; x < Now.BoardSize; x++)
                 {
                     look.X = x;
                     look.Y = y;
 
-                    if ((Now.getSquare(look).Dep.OwnedBy == Side) && (Now.getSquare(look).Dep.DepType == "Barracks"))
+                    if ((Now.getSquare(look).Owner == Side) && (Now.getSquare(look).Dep.DepType == "Barracks"))
                     {
                         multiply++;
                     }
@@ -291,9 +292,8 @@ namespace StishBoard
             return (3 * multiply);
         }
 
-        public void BuyPossibility(StishMiniMaxNode Parent, BoardState Now, Player Side, Coordinate look)
-        {
-            uint cost = BarracksCost(Now, Side);
+        public void BuyPossibility(StishMiniMaxNode Parent, BoardState Now, Player Side, Coordinate look, uint cost)
+        {          
 
             if (Side.Balance > 0)
             {
@@ -337,17 +337,20 @@ namespace StishBoard
 
         }
 
-        private void TestSquare(StishMiniMaxNode Parent, BoardState Now, Player Side, Coordinate Invest)
+        private void TestSquare(StishMiniMaxNode Parent, BoardState Now, Player Side, Coordinate Invest, uint cost)
         {
             if ((Now.getSquare(Invest).Owner == Side) && (Now.getSquare(Invest).Dep.DepType == "Empty"))
             {
                 //can buy possibly buy
-                BuyPossibility(Parent, Now, Side, Invest);
+                BuyPossibility(Parent, Now, Side, Invest, cost);
             }
             if((Now.getSquare(Invest).Owner == Side) && (Now.getSquare(Invest).Dep.DepType == "Unit"))
             {
                 //sweeps through all possible unit moves
-                SweepSearch(Parent,Now,Invest,Side);
+                if(Now.getSquare(Invest).Dep.JustCreated == false)
+                {
+                    SweepSearch(Parent, Now, Invest, Side);
+                }
             }
 
         }
@@ -373,6 +376,7 @@ namespace StishBoard
             }
             StishMiniMaxNode NothingHappenedNode = new StishMiniMaxNode(Parent, NextTurn, Position);
 
+            uint cost = BarracksCost(Parent.NodeBoardState, Allegiance);
             Coordinate Look = new Coordinate();
             for (uint y = 0; y < Parent.NodeBoardState.BoardSize; y++)
             {
@@ -381,7 +385,7 @@ namespace StishBoard
                     Look.Y = y;
                     Look.X = x;
 
-                    TestSquare(Parent, Parent.NodeBoardState, Allegiance, Look);
+                    TestSquare(Parent, Parent.NodeBoardState, Allegiance, Look, cost);
                 }
             }
         }

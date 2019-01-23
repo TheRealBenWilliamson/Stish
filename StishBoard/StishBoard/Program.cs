@@ -78,14 +78,6 @@ namespace StishBoard
                     //Game Continues
                     if(turn == Turn.Player1)
                     {
-
-
-                        //TEST! REMOVE WHEN DONE  ---------------
-                        Stump.NodeBoardState = new BoardState(StishBoard.Instance);
-                        Stump.Inherit_Allegiance();
-                        ForeSight.Instance.GenerateChildren(Stump);
-
-
                         P1.TurnBalance();
                         P1.MaxMP();
                         Cursor.Instance.FindX = P1.CursorX;
@@ -95,6 +87,13 @@ namespace StishBoard
                     }
                     else if (turn == Turn.Player2)
                     {
+
+                        //TEST! REMOVE WHEN DONE  ---------------
+                        Stump.NodeBoardState = new BoardState(StishBoard.Instance);
+                        Stump.Inherit_Allegiance();
+                        ForeSight.Instance.GenerateChildren(Stump);
+
+
                         P2.TurnBalance();
                         P2.MaxMP();
                         Cursor.Instance.FindX = P2.CursorX;
