@@ -66,7 +66,7 @@ namespace StishBoard
             return m_ChildrenNodes[index];
         }
 
-        private void RemoveChild(TreeNode KillChild)
+        public void RemoveChild(TreeNode KillChild)
         {
             m_ChildrenNodes.Remove(KillChild);
         }

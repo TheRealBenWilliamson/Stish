@@ -132,14 +132,17 @@ namespace StishBoard
                     Coordinate SolidPos = new Coordinate(Twitch);
                     //comment below is no longer true but the changes are possible
                     //not already searched. note, this method allows there to be more than one node per square as long as the path is not 'essentially the same' which is a nice unintended consequence of this method.
-                    PathNode TestedNode = CreatePathNode(ToCheck, ToCheck[0], PersonalMoveCost, PersonalMoveHealth, board, SolidPos);
+                    //PathNode TestedNode = CreatePathNode(ToCheck, ToCheck[0], PersonalMoveCost, PersonalMoveHealth, board, SolidPos);
 
                     //is this the destination?
                     if ((Twitch.X == UnitPos.X) && (Twitch.Y == UnitPos.Y))
                     {
+                        PathNode TestedNode = CreatePathNode(ToCheck, ToCheck[0], PersonalMoveCost, PersonalMoveHealth, board, SolidPos);
                         //recursion to create a list of PathNode Parents
                         Path = FollowParents(TestedNode);
                         //returns a list of coordinates 'UnitPos --> To' for each individual step
+                        ToCheck[0].RemoveChild(TestedNode);
+
                         return Path;
                     }
                 }

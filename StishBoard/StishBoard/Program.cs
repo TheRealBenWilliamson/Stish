@@ -14,21 +14,6 @@ namespace StishBoard
         static void Main(string[] args)
         {
 
-            TreeNode RootNode = new TreeNode();
-            NamedTreeNode Child1 = new NamedTreeNode("Child1",RootNode);
-            NamedTreeNode Child2 = new NamedTreeNode("Child2");
-            Child1.AddChild(Child2);
-            NamedTreeNode Child3 = new NamedTreeNode("Child3",Child1);
-            NamedTreeNode Child4 = new NamedTreeNode("Child4",Child1);
-
-            TreeNode inspect = Child4;
-            while (inspect != null)
-            {
-                inspect = inspect.GetParent();
-            }
-
-            Child4.Remove();           
-
             //GAME STARTS HERE
             Console.SetWindowSize(130, 25);
 
@@ -51,9 +36,15 @@ namespace StishBoard
 
 
             //TEST! REMOVE WHEN DONE  ---------------          
-            StishMiniMaxNode Stump = new StishMiniMaxNode(null, P2);
-            
+            StishMiniMaxNode GameNode = new StishMiniMaxNode(null, P2);
+            GameNode.NodeBoardState = new BoardState(StishBoard.Instance);
+            GameNode.Inherit_Allegiance();
 
+            ForeSight.Instance.GenerateChildren(GameNode);
+            for (int Children = 0; Children < GameNode.CountChildren(); Children++)
+            {
+                ForeSight.Instance.GenerateChildren((StishMiniMaxNode)GameNode.GetChild(Children));
+            }
 
             while (GameEnd == false)
             {
@@ -87,13 +78,6 @@ namespace StishBoard
                     }
                     else if (turn == Turn.Player2)
                     {
-
-                        //TEST! REMOVE WHEN DONE  ---------------
-                        Stump.NodeBoardState = new BoardState(StishBoard.Instance);
-                        Stump.Inherit_Allegiance();
-                        ForeSight.Instance.GenerateChildren(Stump);
-
-
                         P2.TurnBalance();
                         P2.MaxMP();
                         Cursor.Instance.FindX = P2.CursorX;
