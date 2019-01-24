@@ -49,136 +49,7 @@ namespace StishBoard
             {
                 return false;
             }
-        }     
-
-        private void SearchAndPlace(Coordinate Value, List<Coordinate> Search, List<Coordinate> Place)
-        {
-            //searches the search list. if the value is not found in it, the value is added to the Place list
-            bool found = false;
-            for (int index = 0; index < Search.Count; index++)
-            {
-                if (Search[index] == Value)
-                {
-                    found = true;
-                }
-            }
-            if (found == false)
-            {
-                Place.Add(Value);
-            }
-        }
-
-        public List<Coordinate> Path2MP(Coordinate From, Coordinate To, Player Cont, BoardState board)
-        {
-            //2MP in the name of this function refers to the fact that this only works if a unit has 2 Movement points each turn.
-            //finds the path from one square to another and returns a list containing the coordinates of each step.
-            //this path takes into account the health of a unit incase of any attacking done on the path.
-            //returns null if no possible path exists.
-
-            List<Coordinate> Path = new List<Coordinate>();
-            List<Coordinate> Checked = new List<Coordinate>();
-            uint ThisHP = board.getSquare(From).Dep.Health;
-            Coordinate Inspect = From;
-
-            //loop with exceptions incase the route is not possible
-            //stop if inspect determines that the coordinate 'To' is able to be moved onto OR if the path list 
-
-            //only does one of these
-            if(To.Y < Inspect.Y)
-            {
-                //Destination is above the start
-                Inspect.Y--;
-                Checked.Add(Inspect);
-            }
-            else if(To.X > Inspect.X)
-            {
-                //Destination is to the right of the start
-                Inspect.X++;
-            }
-            else if (To.Y > Inspect.Y)
-            {
-                //Destination is below the start
-                Inspect.Y++;
-            }
-            else if (To.X < Inspect.X)
-            {
-                //Destination is to the left of the start
-                Inspect.X--;
-            }
-
-            
-
-
-            return Path;
-        }
-
-        public void Connected(Coordinate From, Coordinate To, Player Cont, BoardState board)
-        {
-            for (int look = 0; look < 2; look++)
-            {
-                //lists as we dont want a limit that would be given by an array
-                List<Coordinate> ToCheck = new List<Coordinate>();
-                List<Coordinate> Checked = new List<Coordinate>();
-                Coordinate Invest = new Coordinate();
-                Coordinate Twitch = new Coordinate();               
-                Invest.X = 5;
-
-                if (Cont.GetPlayerNum == "Player1")
-                {
-                    Invest.Y = 9;
-                }
-                else
-                {
-                    Invest.Y = 1;
-                }
-
-                ToCheck.Add(Invest);
-                //Checking Invest
-                while (ToCheck.Count != 0)
-                {
-                    Invest = ToCheck[0];
-
-                    ToCheck.Remove(Invest);
-                    Checked.Add(Invest);
-
-                    for (int dir = 0; dir < 4; dir++)
-                    {
-                        Twitch.X = Invest.X;
-                        Twitch.Y = Invest.Y;
-
-                        if (dir == 0)
-                        {
-                            //up
-                            Twitch.MoveUp();
-                        }
-                        else if (dir == 1)
-                        {
-                            //right
-                            Twitch.MoveRight();
-                        }
-                        else if (dir == 2)
-                        {
-                            //down
-                            Twitch.MoveDown();
-                        }
-                        else if (dir == 4)
-                        {
-                            //left
-                            Twitch.MoveLeft();
-                        }
-
-                        if (board.getSquare(Twitch) != null)
-                        {
-                            //parameter for being a path member in the if statement
-                            if (board.getSquare((Twitch)).Owner == Cont)
-                            {
-                                SearchAndPlace(Twitch, Checked, ToCheck);
-                            }
-                        }
-                    }
-                }    
-            }
-        }
+        }          
 
         public bool BuyBarracks(Coordinate Pur, Player ConPlayer, BoardState board)
         {
@@ -240,8 +111,11 @@ namespace StishBoard
             From.Dep = new Empty();
         }
 
-        public void Attack(Coordinate From, Coordinate Check, Player MyPlayer, BoardState board)
+        public bool Attack(Coordinate From, Coordinate Check, Player MyPlayer, BoardState board)
         {
+            //returns true if this unit dies
+            bool Died = false;
+
             //attack
             //adjust health and then if the attacking unit won, use the drag function
             //i dont know if i want to use the drag function on an attack. i will wait until i test it to decide
@@ -276,7 +150,8 @@ namespace StishBoard
                 {
                     Defender.Dep.Health -= Attacker.Dep.Health;
                     Attacker.Dep = new Empty();
-                    Cursor.Instance.CursorMode = Cursor.Mode.free;
+                    //Cursor.Instance.CursorMode = Cursor.Mode.free;
+                    Died = true;
                 }
                 //both have equal health
                 else
@@ -291,9 +166,11 @@ namespace StishBoard
                         Defender.Dep = new Empty();
                     }
                     Attacker.Dep = new Empty();
-                    Cursor.Instance.CursorMode = Cursor.Mode.free;
+                    //Cursor.Instance.CursorMode = Cursor.Mode.free;
+                    Died = true;
                 }
             }
+            return Died;
         }
 
         public bool Action(Coordinate From, Coordinate Check, Player MyPlayer, BoardState board)

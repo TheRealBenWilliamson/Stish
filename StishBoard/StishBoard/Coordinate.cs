@@ -47,6 +47,12 @@ namespace StishBoard
             Yco = CalledY;
         }
 
+        public Coordinate(Coordinate CopyFrom)
+        {
+            Xco = CopyFrom.X;
+            Yco = CopyFrom.Y;
+        }
+
         public void MoveLeft()
         {
             Xco--;

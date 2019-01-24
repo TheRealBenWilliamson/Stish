@@ -24,6 +24,15 @@ namespace StishBoard
             }
         }
 
+        private int m_TotalPredictionCount = 0;
+        private int m_TurnPredictionCount = 0;
+
+        public void PredctionCount()
+        {
+            m_TotalPredictionCount++;
+            m_TurnPredictionCount++;
+        }
+
         //the foresight class helps us build new nodes by predicting all possible moves from a node
         //these functions will be called by the node objects in order to tell the nodes, how to configure their children
 
@@ -50,14 +59,16 @@ namespace StishBoard
                 NextTurn = UnitMovedChild.Player1;
             }
             StishMiniMaxNode UnitMoveNode = new StishMiniMaxNode(Parent, NextTurn, UnitMovedChild);
+            PredctionCount();
 
             //changes to the boardstate are made here using the FindPath function and itterating through the list with the gamemaster functions
         }
 
-        public void CreatePathNode(List<PathNode> ToCheck, PathNode Parent, uint Cost, uint Health, BoardState World, Coordinate Invest)
+        public PathNode CreatePathNode(List<PathNode> ToCheck, PathNode Parent, uint Cost, uint Health, BoardState World, Coordinate Invest)
         {           
             PathNode Generate = new PathNode(Parent, Cost, Health, World, Invest);
             ToCheck.Add(Generate);
+            return Generate;
         }
 
         private bool SearchForPathNode(PathNode Value, List<PathNode> Search)
@@ -77,56 +88,58 @@ namespace StishBoard
 
         public List<Coordinate> FollowParents(PathNode Youngest)
         {
-            List<Coordinate> OldestToYoungest = new List<Coordinate>();
+            List<Coordinate> YoungestToOldest = new List<Coordinate>();
 
             //finds youngest to oldest and then reverses the list
             PathNode Invest = Youngest;
             while(Invest != null)
             {
-                OldestToYoungest.Add(Invest.Position);
+                YoungestToOldest.Add(Invest.Position);
                 Invest = (PathNode)Invest.Parent;
             }
 
-            OldestToYoungest.Reverse();
-
-            return OldestToYoungest;
+            return YoungestToOldest;
         }
 
-        public List<Coordinate> TrainPath(BoardState board, Coordinate From, Coordinate Twitch, uint MoveCost, uint MoveHealth, Player Cont, List<PathNode> ToCheck, List<PathNode> Checked, List<Coordinate> Path)
+        public List<Coordinate> TrainPath(BoardState board, Coordinate UnitPos, Coordinate Twitch, uint MoveCost, uint MoveHealth, Player Cont, List<PathNode> ToCheck, List<PathNode> Checked, List<Coordinate> Path)
         {
-            MoveCost++;
+            uint PersonalMoveCost = MoveCost + 1;
+            uint PersonalMoveHealth = MoveHealth;
+
             if ((board.getSquare(Twitch).Dep.OwnedBy != Cont) && (board.getSquare(Twitch).Dep.DepType == "Unit" || board.getSquare(Twitch).Dep.DepType == "Barracks" || board.getSquare(Twitch).Dep.DepType == "Base"))
             {
                 //if an enemy dep type that can remove health
                 //this prevents underflow errors as Health is a Uint
-                if (MoveHealth >= board.getSquare(Twitch).Dep.Health)
+                if (PersonalMoveHealth >= board.getSquare(Twitch).Dep.Health)
                 {
-                    MoveHealth -= board.getSquare(Twitch).Dep.Health;
+                    PersonalMoveHealth -= board.getSquare(Twitch).Dep.Health;
                 }
                 else
                 {
-                    MoveHealth = 0;
+                    PersonalMoveHealth = 0;
                 }
             }
 
             //parameter for being a path member in the if statement
-            //within range (an allowed cost) and positive health
-            if ((MoveCost <= StishBoard.Instance.GameMP) && (MoveHealth > 0))
+            //within range (an allowed cost) and positive health. if drops under zero it will overflow.
+            if ((PersonalMoveCost <= StishBoard.Instance.GameMP) && ((PersonalMoveHealth <= board.getSquare(UnitPos).Dep.Health) && (PersonalMoveHealth != 0)))
             {
                 //suitable to be created as a new node but not checked for suitability for the list system
-                PathNode NodeToTest = new PathNode(ToCheck[0], MoveCost, MoveHealth, board, Twitch);
+                PathNode NodeToTest = new PathNode(null, PersonalMoveCost, PersonalMoveHealth, board, Twitch);
 
                 if (SearchForPathNode(NodeToTest, Checked) == false)
                 {
+                    Coordinate SolidPos = new Coordinate(Twitch);
+                    //comment below is no longer true but the changes are possible
                     //not already searched. note, this method allows there to be more than one node per square as long as the path is not 'essentially the same' which is a nice unintended consequence of this method.
-                    CreatePathNode(ToCheck, ToCheck[0], MoveCost, MoveHealth, board, Twitch);
+                    PathNode TestedNode = CreatePathNode(ToCheck, ToCheck[0], PersonalMoveCost, PersonalMoveHealth, board, SolidPos);
 
                     //is this the destination?
-                    if ((Twitch.X == From.X) && (Twitch.Y == From.Y))
+                    if ((Twitch.X == UnitPos.X) && (Twitch.Y == UnitPos.Y))
                     {
                         //recursion to create a list of PathNode Parents
-                        Path = FollowParents(NodeToTest);
-                        //returns a list of coordinates 'From --> To' for each individual step
+                        Path = FollowParents(TestedNode);
+                        //returns a list of coordinates 'UnitPos --> To' for each individual step
                         return Path;
                     }
                 }
@@ -137,7 +150,7 @@ namespace StishBoard
         }    
 
         //not void! returns a list of Pathnodes
-        public List<Coordinate> FindPath(Coordinate From, Coordinate To, BoardState board)
+        public List<Coordinate> FindPath(Coordinate UnitPos, Coordinate To, BoardState board)
         {
             //lists as we dont want a limit that would be given by an array
             List<Coordinate> Path = new List<Coordinate>();
@@ -146,30 +159,31 @@ namespace StishBoard
             Coordinate Invest = new Coordinate();
             Coordinate Twitch = new Coordinate();
             uint MoveCost;
-            uint MoveHealth = board.getSquare(To).Dep.Health;
-            Player Cont = board.getSquare(From).Dep.OwnedBy;
+            uint MoveHealth = board.getSquare(UnitPos).Dep.Health;
+            Player Cont = board.getSquare(UnitPos).Dep.OwnedBy;
             //MoveHealth must remain above 0 and MoveCost must remain below the maximum unit move distance
 
-            //Start at To and end at From
+            //Start at To and end at UnitPos
             Invest.X = To.X;
             Invest.Y = To.Y;
             MoveCost = 0;
 
             //has to be cast here as the parent has to be given as null
+            //adds this node to the list ToCheck
             CreatePathNode(ToCheck, null, MoveCost, MoveHealth, board, Invest);
 
             //Spreading from Invest
             while (ToCheck.Count != 0)
-            {
-                Invest = ToCheck[0].Position;
-                MoveCost = ToCheck[0].Cost;
-                MoveHealth = ToCheck[0].Health;                               
-
+            {                                         
                 for (int dir = 0; dir < 4; dir++)
                 {
+                    Invest = ToCheck[0].Position;
+                    MoveCost = ToCheck[0].Cost;
+                    MoveHealth = ToCheck[0].Health;
+
                     Twitch.X = Invest.X;
                     Twitch.Y = Invest.Y;
-
+                  
                     if (dir == 0)
                     {
                         //up
@@ -185,7 +199,7 @@ namespace StishBoard
                         //down
                         Twitch.MoveDown();
                     }
-                    else if (dir == 4)
+                    else if (dir == 3)
                     {
                         //left
                         Twitch.MoveLeft();
@@ -193,12 +207,22 @@ namespace StishBoard
 
                     if (board.getSquare(Twitch) != null)
                     {
-                        //make changes to Movecost and MoveHealth here
-                        List<Coordinate> Trained = TrainPath(board, From, Twitch, MoveCost, MoveHealth, Cont, ToCheck, Checked, Path);
-                        if(Trained != null)
+                        //the 2d distance this way around makes a lot of sense and is nicely restricting                       
+                        if(UnitPos.Get2DDistance(Twitch) <= StishBoard.Instance.GameMP)
                         {
-                            return Trained;
-                        }                                                           
+                            //tests to see if twitch is ontop of a friendly deployment but gives an exception for the destination which is the moving unit
+                            if (((Twitch.X == UnitPos.X) && (Twitch.Y == UnitPos.Y))  || !(board.getSquare(Twitch).Owner == board.getSquare(UnitPos).Owner && board.getSquare(Twitch).Dep.DepType != "Empty"))
+                            {
+                                Coordinate SolidPos = new Coordinate(Twitch);
+                                //make changes to Movecost and MoveHealth here
+                                //trained equals true if this node is suitable and lands at the destination
+                                List<Coordinate> Trained = TrainPath(board, UnitPos, SolidPos, MoveCost, MoveHealth, Cont, ToCheck, Checked, Path);
+                                if (Trained != null)
+                                {
+                                    return Trained;
+                                }
+                            }                          
+                        }                                                                                
                     }
                 }
 
@@ -211,7 +235,7 @@ namespace StishBoard
         }      
 
         //this may not need to be void however i dont yet know if or what the output will be (currently just counts)
-        public void SweepSearch(StishMiniMaxNode Parent, BoardState Now, Coordinate Check, Player Side)
+        public void SweepSearch(StishMiniMaxNode Parent, BoardState Now, Coordinate UnitPos, Player Side)
         {
             Coordinate Upper = new Coordinate();
             Coordinate Lower = new Coordinate();
@@ -219,44 +243,44 @@ namespace StishBoard
 
             //upper refers to the upper left corner (lower coordinate values)
             //assigns full values to the bounds and then changes them if they are inappropriate
-            Upper.X = Check.X - StishBoard.Instance.GameMP;
-            Upper.Y = Check.Y - StishBoard.Instance.GameMP;
-            Lower.X = Check.X + StishBoard.Instance.GameMP;
-            Lower.Y = Check.Y + StishBoard.Instance.GameMP;
+            Upper.X = UnitPos.X - StishBoard.Instance.GameMP;
+            Upper.Y = UnitPos.Y - StishBoard.Instance.GameMP;
+            Lower.X = UnitPos.X + StishBoard.Instance.GameMP;
+            Lower.Y = UnitPos.Y + StishBoard.Instance.GameMP;
             
             //checks if the unit is losing movement positions because it is too close to the edge of the board
-            if (Check.X < StishBoard.Instance.GameMP)
+            if (UnitPos.X < StishBoard.Instance.GameMP)
             {
                 Upper.X = 0;
             }
-            if (Check.X > Now.BoardSize - StishBoard.Instance.GameMP)
+            if (UnitPos.X > Now.BoardSize - StishBoard.Instance.GameMP)
             {
                 Lower.X = Now.BoardSize;
             }
-            if (Check.Y < StishBoard.Instance.GameMP)
+            if (UnitPos.Y < StishBoard.Instance.GameMP)
             {
                 Upper.Y = 0;
             }
-            if (Check.Y > Now.BoardSize - StishBoard.Instance.GameMP)
+            if (UnitPos.Y > Now.BoardSize - StishBoard.Instance.GameMP)
             {
                 Lower.Y = Now.BoardSize;
             }
 
-            for (uint x = Upper.X; x < Lower.X; x++)
+            for (uint y = Upper.Y; y <= Lower.Y; y++)
             {
-                for (uint y = Upper.Y; y < Lower.Y; y++)
+                for (uint x = Upper.X; x <= Lower.X; x++)
                 {
                     Look.X = x;
                     Look.Y = y;
                     //stishboard.instance is okay here as this variable is global and is not dependant on a particular state
-                    if (Check.Get2DDistance(Look) <= StishBoard.Instance.GameMP)
+                    if (UnitPos.Get2DDistance(Look) <= StishBoard.Instance.GameMP)
                     {
                         //general squares around unit within range
                         if ((Now.getSquare(Look) != null) && !((Now.getSquare(Look).Owner) == Side && ((Now.getSquare(Look).Dep.DepType == "Unit") || (Now.getSquare(Look).Dep.DepType == "Base"))))
                         {
                             //the unit can legally move to any of these positions however the events of this action are not distinguished
                             //obstructions are not accounted for    
-                            List<Coordinate> Path = FindPath(Check, Look, Now);
+                            List<Coordinate> Path = FindPath(UnitPos, Look, Now);
                             if (Path != null)
                             {
                                 UnitBasedMovement(Parent, Now, Path, Side);
@@ -312,6 +336,7 @@ namespace StishBoard
                     PlayersTurn = UnitBoardState.Player1;
                 }
                 StishMiniMaxNode UnitCaseNode = new StishMiniMaxNode(Parent, PlayersTurn, UnitBoardState);
+                PredctionCount();
 
             }
             if (Side.Balance >= cost)
@@ -331,6 +356,7 @@ namespace StishBoard
                     PlayersTurn = BarracksBoardState.Player1;
                 }
                 StishMiniMaxNode BarracksCaseNode = new StishMiniMaxNode(Parent, PlayersTurn, BarracksBoardState);
+                PredctionCount();
 
             }
 
@@ -359,6 +385,7 @@ namespace StishBoard
         public void GenerateChildren(StishMiniMaxNode Parent)
         {
             //parent argument will always contain "this" when called.
+            m_TurnPredictionCount = 0;
 
             Player Allegiance = Parent.Allegiance;
 
