@@ -43,6 +43,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BoardState.cs" />
+    <Compile Include="MiniMaxMind.cs" />
     <Compile Include="PathNode.cs" />
     <Compile Include="ForeSight.cs" />
     <Compile Include="MiniMaxNode.cs" />
