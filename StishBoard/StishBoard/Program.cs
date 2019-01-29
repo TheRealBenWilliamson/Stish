@@ -32,13 +32,7 @@ namespace StishBoard
             //game loop takes place here
             bool GameEnd = false;
             Won won = 0;
-            Turn turn = Turn.Player1;
-
-
-            //TEST! REMOVE WHEN DONE  ---------------          
-            StishMiniMaxNode GameNode = new StishMiniMaxNode(null, P2);
-                   
-
+            Turn turn = Turn.Player1;                
 
             while (GameEnd == false)
             {
@@ -67,19 +61,35 @@ namespace StishBoard
                         P1.MaxMP();
                         Cursor.Instance.FindX = P1.CursorX;
                         Cursor.Instance.FindY = P1.CursorY;
+
+
+                        //TEST! REMOVE WHEN DONE  ---------------          
+                        StishMiniMaxNode GameNode = new StishMiniMaxNode(null, P1);
+                        GameNode.NodeBoardState = new BoardState(StishBoard.Instance);
+                        GameNode.Inherit_Allegiance();
+                        MiniMaxMind.Instance.RecBuildMMTree(GameNode, 0);
+                        //MiniMaxMind.Instance.BuildMMTree(GameNode, 3);
+
+
                         P1.MakeMove();
                         turn++;
                     }
                     else if (turn == Turn.Player2)
                     {
-                        GameNode.NodeBoardState = new BoardState(StishBoard.Instance);
-                        GameNode.Inherit_Allegiance();
-                        ForeSight.Instance.GenerateChildren(GameNode);
-
                         P2.TurnBalance();
                         P2.MaxMP();
                         Cursor.Instance.FindX = P2.CursorX;
                         Cursor.Instance.FindY = P2.CursorY;
+
+                        /*
+                        //TEST! REMOVE WHEN DONE  ---------------          
+                        StishMiniMaxNode GameNode = new StishMiniMaxNode(null, P2);
+                        GameNode.NodeBoardState = new BoardState(StishBoard.Instance);
+                        GameNode.Inherit_Allegiance();
+                        ForeSight.Instance.GenerateChildren(GameNode);
+                        */
+
+                        
                         P2.MakeMove();
                         turn--;
                     }                   

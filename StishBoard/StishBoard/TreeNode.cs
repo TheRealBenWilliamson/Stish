@@ -81,6 +81,19 @@ namespace StishBoard
             return m_ChildrenNodes.Count;
         }
 
+        public int FindDepth()
+        {
+            //a depth of zero is at the rootnode. addition each layer down
+            int Depth = 0;
+            TreeNode Invest = this;
+            while (Invest.Parent != null)
+            {
+                Invest = Invest.Parent;
+                Depth++;
+            }
+            return Depth;
+        }
+
         public List<TreeNode> PathNodes()
         {
             //runs up the tree until the rootnode (a node with no parent) is found, adding all pathnodes to a list
