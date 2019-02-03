@@ -36,13 +36,14 @@ namespace StishBoard
         private StishBoard() : base()
         {
             //board size may change
-            boardSize = 9;
-            m_BoardState = new Square[BoardSize, BoardSize];
-            for (int row = 0; row < BoardSize; row ++)
+            boardSize.X = 5;
+            boardSize.Y = 9;
+            m_BoardState = new Square[BoardSizeX, BoardSizeY];
+            for (int x = 0; x < BoardSizeX; x ++)
             {
-                for (int col = 0; col < BoardSize; col++)
+                for (int y = 0; y < BoardSizeY; y++)
                 {
-                    m_BoardState[row, col] = new Square();
+                    m_BoardState[x, y] = new Square();
                 }
             }
         }
@@ -79,9 +80,9 @@ namespace StishBoard
 
                 uint Bcost = 0;
                 Coordinate ThisCo = new Coordinate();
-                for (uint y = 0; y < BoardSize; y++)
+                for (uint y = 0; y < BoardSizeY; y++)
                 {
-                    for (uint x = 0; x < BoardSize; x++)
+                    for (uint x = 0; x < BoardSizeX; x++)
                     {
                         ThisCo.X = x;
                         ThisCo.Y = y;
@@ -95,9 +96,9 @@ namespace StishBoard
                 Console.WriteLine("{0} has: {1} Coins. Their next Barracks will cost: {2} Coins", LookPlayer.GetPlayerNum ,LookPlayer.Balance, (Bcost * 3));
             }
 
-            for (int y = 0; y < BoardSize; y++)
+            for (int y = 0; y < BoardSizeY; y++)
             {
-                for (int x = 0; x < BoardSize; x++)
+                for (int x = 0; x < BoardSizeX; x++)
                 {
                     m_BoardState[x, y].Render(x, y);
                 }

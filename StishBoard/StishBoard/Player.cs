@@ -23,8 +23,8 @@ namespace StishBoard
         protected PlayerNumber playerNumber;
         protected uint balance;
 
-        public uint CursorX = 5;
-        public uint CursorY = 5;
+        public uint CursorX = 1;
+        public uint CursorY = 1;
         private uint baseX = 0;
         private uint baseY = 0;        
 
@@ -63,12 +63,12 @@ namespace StishBoard
             //homeBase = new Base();
             if (playerNumber == PlayerNumber.Player1)
             {
-                BaseX = (StishBoard.Instance.BoardSize) / 2;
-                BaseY = StishBoard.Instance.BoardSize - 2;                                      
+                BaseX = (StishBoard.Instance.BoardSizeX) / 2;
+                BaseY = StishBoard.Instance.BoardSizeY - 2;                                      
             }
             else
             {
-                BaseX = (StishBoard.Instance.BoardSize) / 2;
+                BaseX = (StishBoard.Instance.BoardSizeX) / 2;
                 BaseY = 1;                          
             }
             Coordinate ThisCo = new Coordinate(BaseX, BaseY);
@@ -161,9 +161,9 @@ namespace StishBoard
         public void TurnBalance()
         {
             Coordinate ThisCo = new Coordinate();
-            for (uint y = 0; y < StishBoard.Instance.BoardSize; y++)
+            for (uint y = 0; y < StishBoard.Instance.BoardSizeY; y++)
             {
-                for (uint x = 0; x < StishBoard.Instance.BoardSize; x++)
+                for (uint x = 0; x < StishBoard.Instance.BoardSizeX; x++)
                 {
                     ThisCo.X = x;
                     ThisCo.Y = y;
@@ -180,9 +180,9 @@ namespace StishBoard
         {
             //this fuction is run at the start of a turn and sets all units that belong to this player to the max MP.
             Coordinate ThisCo = new Coordinate();
-            for (uint y = 0; y < StishBoard.Instance.BoardSize; y++)
+            for (uint y = 0; y < StishBoard.Instance.BoardSizeY; y++)
             {
-                for (uint x = 0; x < StishBoard.Instance.BoardSize; x++)
+                for (uint x = 0; x < StishBoard.Instance.BoardSizeX; x++)
                 {
                     ThisCo.X = x;
                     ThisCo.Y = y;

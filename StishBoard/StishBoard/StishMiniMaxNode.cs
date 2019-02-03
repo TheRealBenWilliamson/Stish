@@ -37,6 +37,21 @@ namespace StishBoard
             m_BoardState = PassedBoardState;
             //FindValue(Parent, PassedBoardState);
             Allegiance = PlayersTurn;
+            Inherit_Allegiance();
+        }
+
+        private int m_NegaMaxValue;
+
+        public int NegaMaxValue
+        {
+            get
+            {
+                return m_NegaMaxValue;
+            }
+            set
+            {
+                m_NegaMaxValue = value;
+            }
         }
 
         public void Inherit_Allegiance()
@@ -52,7 +67,8 @@ namespace StishBoard
                     Allegiance = m_BoardState.Player2;
                 }
             }
-        }
+        }        
+
 
         private uint P1BarracksHealth;
         private uint P1UnitHealth;
@@ -66,7 +82,7 @@ namespace StishBoard
         private uint P2BarracksNumber;
         private uint P2Balance;       
 
-        public void FindValue(TreeNode Parent, BoardState PassedBoardState)
+        public int FindValue(TreeNode Parent, BoardState PassedBoardState)
         {
             //parent value, current barracks of both players, base health of both players, health of units of both players
             P1BarracksNumber = PassedBoardState.Counting("Barracks", PassedBoardState.Player1, true);
@@ -82,6 +98,7 @@ namespace StishBoard
             P2Balance = PassedBoardState.Player2.Balance;
 
             Value = (1 * ((int)P1BarracksNumber - (int)P2BarracksNumber)) + (1 * ((int)P1BarracksHealth - (int)P2BarracksHealth)) + (1 * ((int)P1UnitHealth - (int)P2UnitHealth)) + (1 * ((int)P1BaseHealth - (int)P2BaseHealth)) + (1 * ((int)P1Balance - (int)P2Balance));
+            return Value;
         }
 
         

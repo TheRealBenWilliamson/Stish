@@ -23,46 +23,42 @@ namespace StishBoard
             }
         }
 
-        public void Visit()
-        {
-
-        }
-
-        public void TraverseTree(StishMiniMaxNode CurrentNode, int DepthCount)
+        public int TraverseTree(StishMiniMaxNode CurrentNode, int DepthCount, int colour)
         {
             //Depth count is given as 0 when called at root
 
-            if (CurrentNode == null || DepthCount >= 5)
+            if (CurrentNode == null || DepthCount == 0)
             {
                 //the number 3 is a variable to be changed as sight increases
-                return;
+                return (colour * CurrentNode.FindValue(CurrentNode, CurrentNode.NodeBoardState));
             }
 
-            Visit();
+            int Value = int.MinValue;
 
             for (int index = 0; index < CurrentNode.CountChildren(); index++)
             {
-                RecBuildMMTree((StishMiniMaxNode)CurrentNode.GetChild(index), DepthCount + 1);
+                Value = Math.Max(Value, -TraverseTree((StishMiniMaxNode)CurrentNode.GetChild(index), DepthCount - 1, -colour));
+                CurrentNode.NegaMaxValue = Value;
             }
+            return Value;
         }
 
         public void RecBuildMMTree(StishMiniMaxNode CurrentNode, int DepthCount)
         {
             //Depth count is given as 0 when called at root
+            //the number quoted below  will not occur in the depth sequence
 
-            if(CurrentNode == null || DepthCount >= 4)
+            if(CurrentNode == null || DepthCount == 0)
             {
                 //the number 3 is a variable to be changed as sight increases
                 return;
             }
 
-            Visit();
-
             ForeSight.Instance.GenerateChildren(CurrentNode);
 
             for (int index = 0; index < CurrentNode.CountChildren(); index++)
             {              
-                RecBuildMMTree((StishMiniMaxNode)CurrentNode.GetChild(index), DepthCount + 1);
+                RecBuildMMTree((StishMiniMaxNode)CurrentNode.GetChild(index), DepthCount - 1);
             }
         }
 

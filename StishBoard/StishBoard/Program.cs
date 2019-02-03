@@ -56,21 +56,21 @@ namespace StishBoard
                 {
                     //Game Continues
                     if(turn == Turn.Player1)
-                    {
-                        P1.TurnBalance();
-                        P1.MaxMP();
+                    {                    
                         Cursor.Instance.FindX = P1.CursorX;
                         Cursor.Instance.FindY = P1.CursorY;
 
 
-                        //TEST! REMOVE WHEN DONE  ---------------          
-                        StishMiniMaxNode GameNode = new StishMiniMaxNode(null, P1);
+                        //TEST! REMOVE WHEN DONE  ---------------   
+                        //must come before the MP and Balance functions as they are accounted for in the tree
+                        StishMiniMaxNode GameNode = new StishMiniMaxNode(null, P2);
                         GameNode.NodeBoardState = new BoardState(StishBoard.Instance);
-                        GameNode.Inherit_Allegiance();
-                        MiniMaxMind.Instance.RecBuildMMTree(GameNode, 0);
+                        MiniMaxMind.Instance.RecBuildMMTree(GameNode, 1);
+                        MiniMaxMind.Instance.TraverseTree(GameNode, 4, 1);
                         //MiniMaxMind.Instance.BuildMMTree(GameNode, 3);
 
-
+                        P1.TurnBalance();
+                        P1.MaxMP();
                         P1.MakeMove();
                         turn++;
                     }
@@ -80,15 +80,6 @@ namespace StishBoard
                         P2.MaxMP();
                         Cursor.Instance.FindX = P2.CursorX;
                         Cursor.Instance.FindY = P2.CursorY;
-
-                        /*
-                        //TEST! REMOVE WHEN DONE  ---------------          
-                        StishMiniMaxNode GameNode = new StishMiniMaxNode(null, P2);
-                        GameNode.NodeBoardState = new BoardState(StishBoard.Instance);
-                        GameNode.Inherit_Allegiance();
-                        ForeSight.Instance.GenerateChildren(GameNode);
-                        */
-
                         
                         P2.MakeMove();
                         turn--;

@@ -9,7 +9,8 @@ namespace StishBoard
     class BoardState
     {
         protected Square[,] m_BoardState;
-        protected uint boardSize;
+        //boardsize gives the very bottom right point.
+        protected Coordinate boardSize = new Coordinate();
         protected Player player1;
         protected Player player2;
 
@@ -22,14 +23,15 @@ namespace StishBoard
         public BoardState(StishBoard CurrentBoard)
         {
             //ONLY WORKS WITH HUMANS
-            this.boardSize = CurrentBoard.BoardSize;
+            this.boardSize.X = CurrentBoard.BoardSizeX;
+            this.boardSize.Y = CurrentBoard.BoardSizeY;
             this.player1 = new Human(CurrentBoard.Player1);
             this.player2 = new Human(CurrentBoard.Player2);
-            m_BoardState = new Square[CurrentBoard.BoardSize, CurrentBoard.BoardSize];
+            m_BoardState = new Square[CurrentBoard.BoardSizeX, CurrentBoard.BoardSizeY];
             Coordinate Here = new Coordinate();
-            for (uint y = 0; y < CurrentBoard.BoardSize; y++)
+            for (uint y = 0; y < CurrentBoard.BoardSizeY; y++)
             {
-                for (uint x = 0; x < CurrentBoard.BoardSize; x++)
+                for (uint x = 0; x < CurrentBoard.BoardSizeX; x++)
                 {
                     Here.Y = y;
                     Here.X = x;
@@ -44,14 +46,15 @@ namespace StishBoard
         public BoardState(BoardState CurrentBoard)
         {
             //ONLY WORKS WITH HUMANS
-            this.boardSize = CurrentBoard.BoardSize;
+            this.boardSize.X = CurrentBoard.BoardSizeX;
+            this.boardSize.Y = CurrentBoard.BoardSizeY;
             this.player1 = new Human(CurrentBoard.Player1);
             this.player2 = new Human(CurrentBoard.Player2);
-            m_BoardState = new Square[CurrentBoard.BoardSize, CurrentBoard.BoardSize];
+            m_BoardState = new Square[CurrentBoard.BoardSizeX, CurrentBoard.BoardSizeY];
             Coordinate Here = new Coordinate();
-            for (uint y = 0; y < CurrentBoard.BoardSize; y++)
+            for (uint y = 0; y < CurrentBoard.BoardSizeY; y++)
             {
-                for (uint x = 0; x < CurrentBoard.BoardSize; x++)
+                for (uint x = 0; x < CurrentBoard.BoardSizeX; x++)
                 {
                     Here.Y = y;
                     Here.X = x;
@@ -86,15 +89,27 @@ namespace StishBoard
             }
         }
 
-        public uint BoardSize
+        public uint BoardSizeX
         {
             get
             {
-                return boardSize;
+                return boardSize.X;
             }
             set
             {
-                boardSize = value;
+                boardSize.X = value;
+            }
+        }
+
+        public uint BoardSizeY
+        {
+            get
+            {
+                return boardSize.Y;
+            }
+            set
+            {
+                boardSize.Y = value;
             }
         }
 
@@ -120,9 +135,9 @@ namespace StishBoard
             //check number switches the function to wither count the total health of deployment or just the amount of the deployment
             uint counted = 0;
             Coordinate Here = new Coordinate();
-            for (uint y = 0; y < this.BoardSize; y++)
+            for (uint y = 0; y < this.BoardSizeY; y++)
             {
-                for (uint x = 0; x < this.BoardSize; x++)
+                for (uint x = 0; x < this.BoardSizeX; x++)
                 {
                     Here.Y = y;
                     Here.X = x;

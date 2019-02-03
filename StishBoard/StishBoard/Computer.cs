@@ -22,5 +22,11 @@ namespace StishBoard
         {
 
         }
+
+
+        public void DetermineMove()
+        {
+
+        }
     }
 }

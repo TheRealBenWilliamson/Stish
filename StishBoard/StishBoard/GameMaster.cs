@@ -60,9 +60,9 @@ namespace StishBoard
                 uint multiply = 0;
                 Coordinate See = new Coordinate();
 
-                for (uint y = 0; y < board.BoardSize; y++)
+                for (uint y = 0; y < board.BoardSizeY; y++)
                 {
-                    for (uint x = 0; x < board.BoardSize; x++)
+                    for (uint x = 0; x < board.BoardSizeX; x++)
                     {
                         See.X = x;
                         See.Y = y;

@@ -134,10 +134,10 @@ namespace StishBoard
                     //not already searched. note, this method allows there to be more than one node per square as long as the path is not 'essentially the same' which is a nice unintended consequence of this method.
                     //PathNode TestedNode = CreatePathNode(ToCheck, ToCheck[0], PersonalMoveCost, PersonalMoveHealth, board, SolidPos);
 
+                    PathNode TestedNode = CreatePathNode(ToCheck, ToCheck[0], PersonalMoveCost, PersonalMoveHealth, board, SolidPos);
                     //is this the destination?
                     if ((Twitch.X == UnitPos.X) && (Twitch.Y == UnitPos.Y))
-                    {
-                        PathNode TestedNode = CreatePathNode(ToCheck, ToCheck[0], PersonalMoveCost, PersonalMoveHealth, board, SolidPos);
+                    {              
                         //recursion to create a list of PathNode Parents
                         Path = FollowParents(TestedNode);
                         //returns a list of coordinates 'UnitPos --> To' for each individual step
@@ -243,7 +243,7 @@ namespace StishBoard
             Coordinate Upper = new Coordinate();
             Coordinate Lower = new Coordinate();
             Coordinate Look = new Coordinate();
-
+          
             //upper refers to the upper left corner (lower coordinate values)
             //assigns full values to the bounds and then changes them if they are inappropriate
             Upper.X = UnitPos.X - StishBoard.Instance.GameMP;
@@ -256,19 +256,19 @@ namespace StishBoard
             {
                 Upper.X = 0;
             }
-            if (UnitPos.X > Now.BoardSize - StishBoard.Instance.GameMP)
+            if (UnitPos.X > Now.BoardSizeX - StishBoard.Instance.GameMP)
             {
-                Lower.X = Now.BoardSize;
+                Lower.X = Now.BoardSizeX;
             }
             if (UnitPos.Y < StishBoard.Instance.GameMP)
             {
                 Upper.Y = 0;
             }
-            if (UnitPos.Y > Now.BoardSize - StishBoard.Instance.GameMP)
+            if (UnitPos.Y > Now.BoardSizeY - StishBoard.Instance.GameMP)
             {
-                Lower.Y = Now.BoardSize;
+                Lower.Y = Now.BoardSizeY;
             }
-
+         
             for (uint y = Upper.Y; y <= Lower.Y; y++)
             {
                 for (uint x = Upper.X; x <= Lower.X; x++)
@@ -303,9 +303,9 @@ namespace StishBoard
             uint multiply = 1;
 
             Coordinate look = new Coordinate();
-            for (uint y = 0; y < Now.BoardSize; y++)
+            for (uint y = 0; y < Now.BoardSizeY; y++)
             {
-                for (uint x = 0; x < Now.BoardSize; x++)
+                for (uint x = 0; x < Now.BoardSizeX; x++)
                 {
                     look.X = x;
                     look.Y = y;
@@ -376,19 +376,43 @@ namespace StishBoard
             if((Now.getSquare(Invest).Owner == Side) && (Now.getSquare(Invest).Dep.DepType == "Unit"))
             {
                 //sweeps through all possible unit moves
-                if(Now.getSquare(Invest).Dep.JustCreated == false)
-                {
-                    SweepSearch(Parent, Now, Invest, Side);
-                }
+                SweepSearch(Parent, Now, Invest, Side);
             }
 
         }
 
 
-        public void GenerateChildren(StishMiniMaxNode Parent)
+        public void GenerateChildren(StishMiniMaxNode NodeParent)
         {
             //parent argument will always contain "this" when called.
+            Player OppositeAllegience;
+            if (NodeParent.Allegiance.GetPlayerNum == "Player1")
+            {
+                OppositeAllegience = NodeParent.NodeBoardState.Player2;
+            }
+            else
+            {
+                OppositeAllegience = NodeParent.NodeBoardState.Player1;
+            }
+
+
+            StishMiniMaxNode Parent = new StishMiniMaxNode(NodeParent, OppositeAllegience);
+            BoardState ParentBoardState = new BoardState(NodeParent.NodeBoardState);
+            Parent.NodeBoardState = ParentBoardState;
+            Parent.Inherit_Allegiance();
+
             m_TurnPredictionCount = 0;
+
+            if (Parent.Allegiance.GetPlayerNum == "Player1")
+            {
+                Parent.NodeBoardState.Player1.TurnBalance();
+                Parent.NodeBoardState.Player1.MaxMP();
+            }
+            else
+            {
+                Parent.NodeBoardState.Player2.TurnBalance();
+                Parent.NodeBoardState.Player2.MaxMP();
+            }
 
             Player Allegiance = Parent.Allegiance;
 
@@ -399,18 +423,21 @@ namespace StishBoard
             {
                 //opposite allegiance to it's parent
                 NextTurn = new Human(Position.Player2);
+
             }
             else
             {
                 NextTurn = new Human(Position.Player1);
             }
+
+
             StishMiniMaxNode NothingHappenedNode = new StishMiniMaxNode(Parent, NextTurn, Position);
 
             uint cost = BarracksCost(Parent.NodeBoardState, Allegiance);
             Coordinate Look = new Coordinate();
-            for (uint y = 0; y < Parent.NodeBoardState.BoardSize; y++)
+            for (uint y = 0; y < Parent.NodeBoardState.BoardSizeY; y++)
             {
-                for (uint x = 0; x < Parent.NodeBoardState.BoardSize; x++)
+                for (uint x = 0; x < Parent.NodeBoardState.BoardSizeX; x++)
                 {
                     Look.Y = y;
                     Look.X = x;
