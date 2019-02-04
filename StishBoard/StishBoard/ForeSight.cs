@@ -60,7 +60,9 @@ namespace StishBoard
                 NextTurn = UnitMovedChild.Player1;
             }
             */
-            StishMiniMaxNode UnitMoveNode = new StishMiniMaxNode(Parent, NextTurn, UnitMovedChild);
+
+            //Parent.Parent as "parent" is actually just an updated model of the "real" parent where no actions were taken
+            StishMiniMaxNode UnitMoveNode = new StishMiniMaxNode(Parent.Parent, NextTurn, UnitMovedChild);
             PredctionCount();
 
             //changes to the boardstate are made here using the FindPath function and itterating through the list with the gamemaster functions
@@ -342,7 +344,9 @@ namespace StishBoard
                     PlayersTurn = UnitBoardState.Player1;
                 }
                 */
-                StishMiniMaxNode UnitCaseNode = new StishMiniMaxNode(Parent, PlayersTurn, UnitBoardState);
+
+                //Parent.Parent as "parent" is actually just an updated model of the "real" parent where no actions were taken
+                StishMiniMaxNode UnitCaseNode = new StishMiniMaxNode(Parent.Parent, PlayersTurn, UnitBoardState);
                 PredctionCount();
 
             }
@@ -364,7 +368,9 @@ namespace StishBoard
                     PlayersTurn = BarracksBoardState.Player1;
                 }
                 */
-                StishMiniMaxNode BarracksCaseNode = new StishMiniMaxNode(Parent, PlayersTurn, BarracksBoardState);
+
+                //Parent.Parent as "parent" is actually just an updated model of the "real" parent where no actions were taken
+                StishMiniMaxNode BarracksCaseNode = new StishMiniMaxNode(Parent.Parent, PlayersTurn, BarracksBoardState);
                 PredctionCount();
 
             }
@@ -390,6 +396,8 @@ namespace StishBoard
 
         public void GenerateChildren(StishMiniMaxNode NodeParent)
         {
+            NodeParent.Allegiance.TurnBalance(NodeParent.NodeBoardState);
+
             //parent argument will always contain "this" when called.
             Player OppositeAllegience;
             if (NodeParent.Allegiance.GetPlayerNum == "Player1")
@@ -401,10 +409,9 @@ namespace StishBoard
                 OppositeAllegience = NodeParent.NodeBoardState.Player1;
             }
 
-
-            StishMiniMaxNode Parent = new StishMiniMaxNode(NodeParent, OppositeAllegience);
+            //is a child of NodeParent as this is a turn spent doing nothing. the balance and MP are updated below and then this node is used as an example for others
             BoardState ParentBoardState = new BoardState(NodeParent.NodeBoardState);
-            Parent.NodeBoardState = ParentBoardState;
+            StishMiniMaxNode Parent = new StishMiniMaxNode(NodeParent, OppositeAllegience, ParentBoardState);
 
             m_TurnPredictionCount = 0;
 

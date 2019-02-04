@@ -43,19 +43,19 @@ namespace StishBoard
 
             if (Original.dep.DepType == "Base")
             {
-                dep = new Base((Base)Original.dep, (Human)owner);
+                dep = new Base((Base)Original.dep, (Human)this.owner);
             }
             else if (Original.dep.DepType == "Barracks")
             {
-                dep = new Barracks((Barracks)Original.dep, (Human)owner);
+                dep = new Barracks((Barracks)Original.dep, (Human)this.owner);
             }
             else if (Original.dep.DepType == "Unit")
             {
-                dep = new Unit((Unit)Original.dep, (Human)owner);
+                dep = new Unit((Unit)Original.dep, (Human)this.owner);
             }
             else if (Original.dep.DepType == "Empty")
             {
-                dep = new Empty((Empty)Original.dep, (Human)owner);
+                dep = new Empty((Empty)Original.dep, (Human)this.owner);
             }
           
         }

@@ -30,7 +30,7 @@ namespace StishBoard
             if (CurrentNode == null || DepthCount == 0)
             {
                 //the number 3 is a variable to be changed as sight increases
-                return (colour * CurrentNode.FindValue(CurrentNode, CurrentNode.NodeBoardState));
+                return (colour * CurrentNode.FindValue(CurrentNode, CurrentNode.NodeBoardState, CurrentNode.Allegiance));
             }
 
             int Value = int.MinValue;
@@ -50,7 +50,6 @@ namespace StishBoard
 
             if(CurrentNode == null || DepthCount == 0)
             {
-                //the number 3 is a variable to be changed as sight increases
                 return;
             }
 
@@ -60,6 +59,33 @@ namespace StishBoard
             {              
                 RecBuildMMTree((StishMiniMaxNode)CurrentNode.GetChild(index), DepthCount - 1);
             }
+        }
+
+        public int BuildABTree(StishMiniMaxNode CurrentNode, int DepthCount, int Alpha, int Beta, int colour)
+        {
+            if (CurrentNode == null || DepthCount == 0)
+            {
+                //returns if this is the root node or is a leaf node
+                return (colour * CurrentNode.FindValue(CurrentNode, CurrentNode.NodeBoardState, CurrentNode.Allegiance));
+            }
+
+            int Value = int.MinValue;
+            ForeSight.Instance.GenerateChildren(CurrentNode);
+            for (int index = 0; index < CurrentNode.CountChildren(); index++)
+            {
+                Value = Math.Max(Value, -1 * BuildABTree((StishMiniMaxNode)CurrentNode.GetChild(index), DepthCount - 1, -Beta, -Alpha, -colour));
+                CurrentNode.NegaMaxValue = Value;
+                Alpha = Math.Max(Alpha, Value);
+
+                if(Alpha >= Beta)
+                {
+                    //this return statement "prunes" the tree and prevents further growth on the tree in those bad areas
+                    return (colour * CurrentNode.FindValue(CurrentNode, CurrentNode.NodeBoardState, CurrentNode.Allegiance));
+                }
+            }
+
+            //if the node does not need to be pruned
+            return (colour * CurrentNode.FindValue(CurrentNode, CurrentNode.NodeBoardState, CurrentNode.Allegiance));
         }
 
         public void BuildMMTree(StishMiniMaxNode RootNode, int DepthLimit)
