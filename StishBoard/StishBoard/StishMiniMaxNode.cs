@@ -15,6 +15,7 @@ namespace StishBoard
             set
             {
                 m_BoardState = value;
+                Inherit_Allegiance();
             }
             get
             {
@@ -40,20 +41,6 @@ namespace StishBoard
             Inherit_Allegiance();
         }
 
-        private int m_NegaMaxValue;
-
-        public int NegaMaxValue
-        {
-            get
-            {
-                return m_NegaMaxValue;
-            }
-            set
-            {
-                m_NegaMaxValue = value;
-            }
-        }
-
         public void Inherit_Allegiance()
         {
             if (m_BoardState != null)
@@ -67,8 +54,22 @@ namespace StishBoard
                     Allegiance = m_BoardState.Player2;
                 }
             }
-        }        
+        }
 
+        private int m_NegaMaxValue;
+
+        public int NegaMaxValue
+        {
+            get
+            {
+                return m_NegaMaxValue;
+            }
+            set
+            {
+                m_NegaMaxValue = value;
+            }
+        }
+       
 
         private uint P1BarracksHealth;
         private uint P1UnitHealth;

@@ -30,11 +30,21 @@ namespace StishBoard
 
         }
 
-        public Barracks(Barracks CopyFrom)
+        public Barracks(Barracks CopyFrom, Human Owner)
         {
             depType = CopyFrom.depType;
             Icon = CopyFrom.Icon;
-            ownedBy = CopyFrom.OwnedBy;
+            ownedBy = Owner;
+            MovementPoints = CopyFrom.MovementPoints;
+            health = CopyFrom.Health;
+            m_JustCreated = CopyFrom.JustCreated;
+        }
+
+        public Barracks(Barracks CopyFrom, Computer Owner)
+        {
+            depType = CopyFrom.depType;
+            Icon = CopyFrom.Icon;
+            ownedBy = Owner;
             MovementPoints = CopyFrom.MovementPoints;
             health = CopyFrom.Health;
             m_JustCreated = CopyFrom.JustCreated;

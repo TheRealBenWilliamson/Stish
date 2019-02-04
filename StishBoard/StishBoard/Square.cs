@@ -25,9 +25,9 @@ namespace StishBoard
         //this is a copy constructor
         public Square(Square Original, Human Player1, Human Player2)
         {
-            if(Original.Owner != null)
+            if (Original.Owner != null)
             {
-                if(Original.Owner.GetPlayerNum == "Player1")
+                if (Original.Owner.GetPlayerNum == "Player1")
                 {
                     owner = Player1;
                 }
@@ -41,23 +41,23 @@ namespace StishBoard
                 owner = null;
             }
 
-            
-            if(Original.dep.DepType == "Base")
+            if (Original.dep.DepType == "Base")
             {
-                dep = new Base((Base)Original.dep);
+                dep = new Base((Base)Original.dep, (Human)owner);
             }
             else if (Original.dep.DepType == "Barracks")
             {
-                dep = new Barracks((Barracks)Original.dep);
+                dep = new Barracks((Barracks)Original.dep, (Human)owner);
             }
             else if (Original.dep.DepType == "Unit")
             {
-                dep = new Unit((Unit)Original.dep);
+                dep = new Unit((Unit)Original.dep, (Human)owner);
             }
             else if (Original.dep.DepType == "Empty")
             {
-                dep = new Empty((Empty)Original.dep);
+                dep = new Empty((Empty)Original.dep, (Human)owner);
             }
+          
         }
         
         //this is the accessor for the deployment type of the square. it allows another client to find what a particular square contains or to set what a particular square contains.

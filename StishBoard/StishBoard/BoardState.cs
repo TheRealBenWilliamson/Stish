@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace StishBoard
 {
-    class BoardState
+    public class BoardState
     {
         protected Square[,] m_BoardState;
         //boardsize gives the very bottom right point.

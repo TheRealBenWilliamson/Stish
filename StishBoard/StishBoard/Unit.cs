@@ -35,11 +35,21 @@ namespace StishBoard
         }
 
 
-        public Unit(Unit CopyFrom)
+        public Unit(Unit CopyFrom, Human Owner)
         {
             depType = CopyFrom.depType;
             Icon = CopyFrom.Icon;
-            ownedBy = CopyFrom.OwnedBy;
+            ownedBy = Owner;
+            MovementPoints = CopyFrom.MovementPoints;
+            health = CopyFrom.Health;
+            m_JustCreated = CopyFrom.JustCreated;
+        }
+
+        public Unit(Unit CopyFrom, Computer Owner)
+        {
+            depType = CopyFrom.depType;
+            Icon = CopyFrom.Icon;
+            ownedBy = Owner;
             MovementPoints = CopyFrom.MovementPoints;
             health = CopyFrom.Health;
             m_JustCreated = CopyFrom.JustCreated;

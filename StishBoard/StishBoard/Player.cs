@@ -158,35 +158,35 @@ namespace StishBoard
             
         }
 
-        public void TurnBalance()
+        public void TurnBalance(BoardState Board)
         {
             Coordinate ThisCo = new Coordinate();
-            for (uint y = 0; y < StishBoard.Instance.BoardSizeY; y++)
+            for (uint y = 0; y < Board.BoardSizeY; y++)
             {
-                for (uint x = 0; x < StishBoard.Instance.BoardSizeX; x++)
+                for (uint x = 0; x < Board.BoardSizeX; x++)
                 {
                     ThisCo.X = x;
                     ThisCo.Y = y;
-                    if((StishBoard.Instance.getSquare(ThisCo).Dep.DepType == "Barracks" || StishBoard.Instance.getSquare(ThisCo).Dep.DepType == "Base") && StishBoard.Instance.getSquare(ThisCo).Dep.OwnedBy == this)
+                    if((Board.getSquare(ThisCo).Dep.DepType == "Barracks" || Board.getSquare(ThisCo).Dep.DepType == "Base") && Board.getSquare(ThisCo).Owner == this)
                     {
-                        balance ++ ;
+                        this.Balance ++ ;
                     }           
                 }
             }
         }        
 
 
-        public void MaxMP()
+        public void MaxMP(BoardState Board)
         {
             //this fuction is run at the start of a turn and sets all units that belong to this player to the max MP.
             Coordinate ThisCo = new Coordinate();
-            for (uint y = 0; y < StishBoard.Instance.BoardSizeY; y++)
+            for (uint y = 0; y < Board.BoardSizeY; y++)
             {
-                for (uint x = 0; x < StishBoard.Instance.BoardSizeX; x++)
+                for (uint x = 0; x < Board.BoardSizeX; x++)
                 {
                     ThisCo.X = x;
                     ThisCo.Y = y;
-                    Square ThisSquare = StishBoard.Instance.getSquare(ThisCo);
+                    Square ThisSquare = Board.getSquare(ThisCo);
                     if ((ThisSquare.Owner == this) && (ThisSquare.Dep.DepType == "Unit"))
                     {
                         //This number is subject to change throughout testing and balancing

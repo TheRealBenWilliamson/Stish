@@ -48,7 +48,8 @@ namespace StishBoard
                 GameMaster.Instance.Action(Path[index], Path[index +1], Side, UnitMovedChild);
             }
          
-            Player NextTurn;
+            Player NextTurn = Parent.Allegiance;
+            /*
             if (Side.GetPlayerNum == "Player1")
             {
                 //opposite allegiance to it's parent
@@ -58,6 +59,7 @@ namespace StishBoard
             {
                 NextTurn = UnitMovedChild.Player1;
             }
+            */
             StishMiniMaxNode UnitMoveNode = new StishMiniMaxNode(Parent, NextTurn, UnitMovedChild);
             PredctionCount();
 
@@ -328,7 +330,8 @@ namespace StishBoard
 
                 BoardState UnitBoardState = new BoardState(Now);
                 GameMaster.Instance.BuyUnit(look, Side, UnitBoardState);
-                Player PlayersTurn;
+                Player PlayersTurn = Parent.Allegiance;
+                /*
                 if (Side.GetPlayerNum == "Player1")
                 {
                     //opposite allegiance to it's parent
@@ -338,6 +341,7 @@ namespace StishBoard
                 {
                     PlayersTurn = UnitBoardState.Player1;
                 }
+                */
                 StishMiniMaxNode UnitCaseNode = new StishMiniMaxNode(Parent, PlayersTurn, UnitBoardState);
                 PredctionCount();
 
@@ -348,7 +352,8 @@ namespace StishBoard
 
                 BoardState BarracksBoardState = new BoardState(Now);
                 GameMaster.Instance.BuyBarracks(look, Side, BarracksBoardState);
-                Player PlayersTurn;
+                Player PlayersTurn = Parent.Allegiance;
+                /*
                 if (Side.GetPlayerNum == "Player1")
                 {
                     //opposite allegiance to it's parent
@@ -358,6 +363,7 @@ namespace StishBoard
                 {
                     PlayersTurn = BarracksBoardState.Player1;
                 }
+                */
                 StishMiniMaxNode BarracksCaseNode = new StishMiniMaxNode(Parent, PlayersTurn, BarracksBoardState);
                 PredctionCount();
 
@@ -399,22 +405,11 @@ namespace StishBoard
             StishMiniMaxNode Parent = new StishMiniMaxNode(NodeParent, OppositeAllegience);
             BoardState ParentBoardState = new BoardState(NodeParent.NodeBoardState);
             Parent.NodeBoardState = ParentBoardState;
-            Parent.Inherit_Allegiance();
 
             m_TurnPredictionCount = 0;
 
-            if (Parent.Allegiance.GetPlayerNum == "Player1")
-            {
-                Parent.NodeBoardState.Player1.TurnBalance();
-                Parent.NodeBoardState.Player1.MaxMP();
-            }
-            else
-            {
-                Parent.NodeBoardState.Player2.TurnBalance();
-                Parent.NodeBoardState.Player2.MaxMP();
-            }
-
-            Player Allegiance = Parent.Allegiance;
+            Parent.Allegiance.TurnBalance(NodeParent.NodeBoardState);
+            Parent.Allegiance.MaxMP(NodeParent.NodeBoardState);
 
             //this is the default "nothing happened" boardstate and node
             BoardState Position = new BoardState(Parent.NodeBoardState);
@@ -430,10 +425,10 @@ namespace StishBoard
                 NextTurn = new Human(Position.Player1);
             }
 
+            //the "nothingHappenedNode" is rendered obselete by the updates "parent" node. it is taken in order to switch the allegience but does the same job
+            //StishMiniMaxNode NothingHappenedNode = new StishMiniMaxNode(Parent, NextTurn, Position);
 
-            StishMiniMaxNode NothingHappenedNode = new StishMiniMaxNode(Parent, NextTurn, Position);
-
-            uint cost = BarracksCost(Parent.NodeBoardState, Allegiance);
+            uint cost = BarracksCost(Parent.NodeBoardState, Parent.Allegiance);
             Coordinate Look = new Coordinate();
             for (uint y = 0; y < Parent.NodeBoardState.BoardSizeY; y++)
             {
@@ -442,7 +437,7 @@ namespace StishBoard
                     Look.Y = y;
                     Look.X = x;
 
-                    TestSquare(Parent, Parent.NodeBoardState, Allegiance, Look, cost);
+                    TestSquare(Parent, Parent.NodeBoardState, Parent.Allegiance, Look, cost);
                 }
             }
         }

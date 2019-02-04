@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace StishBoard
 {
-    class StishBoard : BoardState
+    public class StishBoard : BoardState
     {
         //creates a reference to the single instance of this singleton object of type StishBoard called "instance".
         private static StishBoard instance;
@@ -33,7 +33,7 @@ namespace StishBoard
         }
 
         //default constructor: creates the square objects in "array", assigning each to a position in the BoardSize by BoardSize grid.
-        private StishBoard() : base()
+        public StishBoard() : base()
         {
             //board size may change
             boardSize.X = 5;

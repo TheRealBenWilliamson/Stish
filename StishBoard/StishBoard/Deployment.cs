@@ -48,7 +48,8 @@ namespace StishBoard
         {
             depType = String.Copy(Original.depType);
             Icon = String.Copy(Original.Icon);
-            ownedBy = Original.ownedBy;
+            //ONLY WORKS WITH HUMANS
+            ownedBy = new Human(Original.ownedBy);
             MovementPoints = Original.MovementPoints;
             health = Original.health;
             m_JustCreated = Original.m_JustCreated;

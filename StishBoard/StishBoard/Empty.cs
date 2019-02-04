@@ -16,11 +16,21 @@ namespace StishBoard
             ownedBy = null;
         }
 
-        public Empty(Empty CopyFrom)
+        public Empty(Empty CopyFrom, Human Owner)
         {
             depType = CopyFrom.depType;
             Icon = CopyFrom.Icon;
-            ownedBy = CopyFrom.OwnedBy;
+            ownedBy = Owner;
+            MovementPoints = CopyFrom.MovementPoints;
+            health = CopyFrom.Health;
+            m_JustCreated = CopyFrom.JustCreated;
+        }
+
+        public Empty(Empty CopyFrom, Computer Owner)
+        {
+            depType = CopyFrom.depType;
+            Icon = CopyFrom.Icon;
+            ownedBy = Owner;
             MovementPoints = CopyFrom.MovementPoints;
             health = CopyFrom.Health;
             m_JustCreated = CopyFrom.JustCreated;

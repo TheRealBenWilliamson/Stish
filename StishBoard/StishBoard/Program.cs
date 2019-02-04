@@ -69,15 +69,15 @@ namespace StishBoard
                         MiniMaxMind.Instance.TraverseTree(GameNode, 4, 1);
                         //MiniMaxMind.Instance.BuildMMTree(GameNode, 3);
 
-                        P1.TurnBalance();
-                        P1.MaxMP();
+                        P1.TurnBalance(StishBoard.Instance);
+                        P1.MaxMP(StishBoard.Instance);
                         P1.MakeMove();
                         turn++;
                     }
                     else if (turn == Turn.Player2)
                     {
-                        P2.TurnBalance();
-                        P2.MaxMP();
+                        P2.TurnBalance(StishBoard.Instance);
+                        P2.MaxMP(StishBoard.Instance);
                         Cursor.Instance.FindX = P2.CursorX;
                         Cursor.Instance.FindY = P2.CursorY;
                         
