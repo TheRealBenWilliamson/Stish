@@ -66,12 +66,12 @@ namespace StishBoard
                         StishMiniMaxNode GameNode = new StishMiniMaxNode(null, P2);
                         GameNode.NodeBoardState = new BoardState(StishBoard.Instance);
 
-                        int evaluation = MiniMaxMind.Instance.BuildABTree(GameNode, 5, int.MinValue, int.MaxValue, 1);
+                        //int evaluation = MiniMaxMind.Instance.BuildABTree(GameNode, 1, int.MinValue, int.MaxValue, 1);
 
-                        //MiniMaxMind.Instance.RecBuildMMTree(GameNode, 4);
+                        MiniMaxMind.Instance.RecBuildMMTree(GameNode, 1);
                         //int evaluation = MiniMaxMind.Instance.TraverseTree(GameNode, 4, 1);
 
-                        ForeSight.Instance.PredctionCount();
+                        //ForeSight.Instance.PredctionCount();
                         //MiniMaxMind.Instance.BuildMMTree(GameNode, 3);
 
                         P1.TurnBalance(StishBoard.Instance);

@@ -70,10 +70,17 @@ namespace StishBoard
             }
 
             int Value = int.MinValue;
+            int ChildValue;
+ 
             ForeSight.Instance.GenerateChildren(CurrentNode);
             for (int index = 0; index < CurrentNode.CountChildren(); index++)
             {
-                Value = Math.Max(Value, -1 * BuildABTree((StishMiniMaxNode)CurrentNode.GetChild(index), DepthCount - 1, -Beta, -Alpha, -colour));
+                ChildValue = -1 * BuildABTree((StishMiniMaxNode)CurrentNode.GetChild(index), DepthCount - 1, -Beta, -Alpha, -colour);
+                if (Value < ChildValue)
+                {
+                    Value = ChildValue;
+                    CurrentNode.BestChild = (StishMiniMaxNode)CurrentNode.GetChild(index);
+                }
                 CurrentNode.NegaMaxValue = Value;
                 Alpha = Math.Max(Alpha, Value);
 

@@ -396,17 +396,15 @@ namespace StishBoard
 
         public void GenerateChildren(StishMiniMaxNode NodeParent)
         {
-            NodeParent.Allegiance.TurnBalance(NodeParent.NodeBoardState);
-
             //parent argument will always contain "this" when called.
             Player OppositeAllegience;
             if (NodeParent.Allegiance.GetPlayerNum == "Player1")
             {
-                OppositeAllegience = NodeParent.NodeBoardState.Player2;
+                OppositeAllegience = new Human(NodeParent.NodeBoardState.Player2);
             }
             else
             {
-                OppositeAllegience = NodeParent.NodeBoardState.Player1;
+                OppositeAllegience = new Human(NodeParent.NodeBoardState.Player1);
             }
 
             //is a child of NodeParent as this is a turn spent doing nothing. the balance and MP are updated below and then this node is used as an example for others
@@ -415,25 +413,8 @@ namespace StishBoard
 
             m_TurnPredictionCount = 0;
 
-            Parent.Allegiance.TurnBalance(NodeParent.NodeBoardState);
-            Parent.Allegiance.MaxMP(NodeParent.NodeBoardState);
-
-            //this is the default "nothing happened" boardstate and node
-            BoardState Position = new BoardState(Parent.NodeBoardState);
-            Player NextTurn;
-            if (Parent.Allegiance.GetPlayerNum == "Player1")
-            {
-                //opposite allegiance to it's parent
-                NextTurn = new Human(Position.Player2);
-
-            }
-            else
-            {
-                NextTurn = new Human(Position.Player1);
-            }
-
-            //the "nothingHappenedNode" is rendered obselete by the updates "parent" node. it is taken in order to switch the allegience but does the same job
-            //StishMiniMaxNode NothingHappenedNode = new StishMiniMaxNode(Parent, NextTurn, Position);
+            Parent.Allegiance.TurnBalance(Parent.NodeBoardState);
+            Parent.Allegiance.MaxMP(Parent.NodeBoardState);     
 
             uint cost = BarracksCost(Parent.NodeBoardState, Parent.Allegiance);
             Coordinate Look = new Coordinate();

@@ -8,7 +8,20 @@ namespace StishBoard
 {
     class StishMiniMaxNode : MiniMaxNode
     {
-        private BoardState m_BoardState;     
+        private BoardState m_BoardState;
+        private StishMiniMaxNode m_BestChild;
+
+        public StishMiniMaxNode BestChild
+        {
+            set
+            {
+                m_BestChild = value;
+            }
+            get
+            {
+                return m_BestChild;
+            }
+        }
 
         public BoardState NodeBoardState
         {
