@@ -55,5 +55,15 @@ namespace StishBoard
             m_JustCreated = CopyFrom.JustCreated;
         }
 
+        public Unit(Unit CopyFrom)
+        {
+            depType = CopyFrom.depType;
+            Icon = CopyFrom.Icon;
+            ownedBy = null;
+            MovementPoints = CopyFrom.MovementPoints;
+            health = CopyFrom.Health;
+            m_JustCreated = CopyFrom.JustCreated;
+        }
+
     }
 }

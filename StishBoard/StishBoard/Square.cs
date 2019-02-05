@@ -59,7 +59,82 @@ namespace StishBoard
             }
           
         }
-        
+
+        public Square(Square Original, Human Player1, Computer Player2)
+        {
+            if (Original.Owner != null)
+            {
+                if (Original.Owner.GetPlayerNum == "Player1")
+                {
+                    owner = Player1;
+                }
+                else
+                {
+                    owner = Player2;
+                }
+
+
+                if (Original.Owner.GetPlayerType == "Human")
+                {
+                    if (Original.dep.DepType == "Base")
+                    {
+                        dep = new Base((Base)Original.dep, (Human)this.owner);
+                    }
+                    else if (Original.dep.DepType == "Barracks")
+                    {
+                        dep = new Barracks((Barracks)Original.dep, (Human)this.owner);
+                    }
+                    else if (Original.dep.DepType == "Unit")
+                    {
+                        dep = new Unit((Unit)Original.dep, (Human)this.owner);
+                    }
+                    else if (Original.dep.DepType == "Empty")
+                    {
+                        dep = new Empty((Empty)Original.dep, (Human)this.owner);
+                    }
+                }
+                else
+                {
+                    if (Original.dep.DepType == "Base")
+                    {
+                        dep = new Base((Base)Original.dep, (Computer)this.owner);
+                    }
+                    else if (Original.dep.DepType == "Barracks")
+                    {
+                        dep = new Barracks((Barracks)Original.dep, (Computer)this.owner);
+                    }
+                    else if (Original.dep.DepType == "Unit")
+                    {
+                        dep = new Unit((Unit)Original.dep, (Computer)this.owner);
+                    }
+                    else if (Original.dep.DepType == "Empty")
+                    {
+                        dep = new Empty((Empty)Original.dep, (Computer)this.owner);
+                    }
+                }
+            }
+            else
+            {
+                owner = null;
+                if (Original.dep.DepType == "Base")
+                {
+                    dep = new Base((Base)Original.dep);
+                }
+                else if (Original.dep.DepType == "Barracks")
+                {
+                    dep = new Barracks((Barracks)Original.dep);
+                }
+                else if (Original.dep.DepType == "Unit")
+                {
+                    dep = new Unit((Unit)Original.dep);
+                }
+                else if (Original.dep.DepType == "Empty")
+                {
+                    dep = new Empty((Empty)Original.dep);
+                }
+            }
+        }
+
         //this is the accessor for the deployment type of the square. it allows another client to find what a particular square contains or to set what a particular square contains.
         public Deployment Dep
         {

@@ -8,7 +8,7 @@ namespace StishBoard
 {
     public class Human : Player
     {
-        public Human(PlayerNumber PN) :  base(PN)
+        public Human(PlayerNumber PN, PlayerType PT, BoardState Board) :  base(PN,PT,Board)
         {
 
         }

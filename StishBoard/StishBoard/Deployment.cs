@@ -47,12 +47,20 @@ namespace StishBoard
         public Deployment(Deployment Original)
         {
             depType = String.Copy(Original.depType);
-            Icon = String.Copy(Original.Icon);
-            //ONLY WORKS WITH HUMANS
-            ownedBy = new Human(Original.ownedBy);
+            Icon = String.Copy(Original.Icon);          
             MovementPoints = Original.MovementPoints;
             health = Original.health;
             m_JustCreated = Original.m_JustCreated;
+
+            if(Original.ownedBy.GetPlayerType == "Human")
+            {
+                ownedBy = new Human(Original.ownedBy);
+            }
+            else
+            {
+                ownedBy = new Computer((Computer)Original.ownedBy);
+            }
+            
         }
 
         //an accessor so that a client can find what type of deployment this particular object is.

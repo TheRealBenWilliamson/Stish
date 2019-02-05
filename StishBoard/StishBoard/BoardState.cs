@@ -14,7 +14,7 @@ namespace StishBoard
         protected Player player1;
         protected Player player2;
 
-        protected BoardState()
+        public BoardState()
         {
 
         }
@@ -22,47 +22,81 @@ namespace StishBoard
         //StishBoard
         public BoardState(StishBoard CurrentBoard)
         {
-            //ONLY WORKS WITH HUMANS
             this.boardSize.X = CurrentBoard.BoardSizeX;
             this.boardSize.Y = CurrentBoard.BoardSizeY;
             this.player1 = new Human(CurrentBoard.Player1);
-            this.player2 = new Human(CurrentBoard.Player2);
             m_BoardState = new Square[CurrentBoard.BoardSizeX, CurrentBoard.BoardSizeY];
             Coordinate Here = new Coordinate();
-            for (uint y = 0; y < CurrentBoard.BoardSizeY; y++)
+
+            if (CurrentBoard.Player2.GetPlayerType == "Human")
             {
-                for (uint x = 0; x < CurrentBoard.BoardSizeX; x++)
+                this.player2 = new Human(CurrentBoard.Player2);
+                for (uint y = 0; y < CurrentBoard.BoardSizeY; y++)
                 {
-                    Here.Y = y;
-                    Here.X = x;
-                    m_BoardState[x, y] = new Square(CurrentBoard.getSquare(Here), (Human)this.player1, (Human)this.player2);
+                    for (uint x = 0; x < CurrentBoard.BoardSizeX; x++)
+                    {
+                        Here.Y = y;
+                        Here.X = x;
+                        m_BoardState[x, y] = new Square(CurrentBoard.getSquare(Here), (Human)this.player1, (Human)this.player2);
+                    }
+
                 }
-                    
             }
+            else
+            {
+                this.player2 = new Computer((Computer)CurrentBoard.Player2);
+                for (uint y = 0; y < CurrentBoard.BoardSizeY; y++)
+                {
+                    for (uint x = 0; x < CurrentBoard.BoardSizeX; x++)
+                    {
+                        Here.Y = y;
+                        Here.X = x;
+                        m_BoardState[x, y] = new Square(CurrentBoard.getSquare(Here), (Human)this.player1, (Computer)this.player2);
+                    }
+
+                }
+            }        
+            
+            
             
         }
 
         //BoardState
         public BoardState(BoardState CurrentBoard)
         {
-            //ONLY WORKS WITH HUMANS
             this.boardSize.X = CurrentBoard.BoardSizeX;
             this.boardSize.Y = CurrentBoard.BoardSizeY;
             this.player1 = new Human(CurrentBoard.Player1);
-            this.player2 = new Human(CurrentBoard.Player2);
             m_BoardState = new Square[CurrentBoard.BoardSizeX, CurrentBoard.BoardSizeY];
             Coordinate Here = new Coordinate();
-            for (uint y = 0; y < CurrentBoard.BoardSizeY; y++)
+            if (CurrentBoard.Player2.GetPlayerType == "Human")
             {
-                for (uint x = 0; x < CurrentBoard.BoardSizeX; x++)
+                this.player2 = new Human(CurrentBoard.Player2);
+                for (uint y = 0; y < CurrentBoard.BoardSizeY; y++)
                 {
-                    Here.Y = y;
-                    Here.X = x;
-                    m_BoardState[x, y] = new Square(CurrentBoard.getSquare(Here), (Human)this.player1, (Human)this.player2);
+                    for (uint x = 0; x < CurrentBoard.BoardSizeX; x++)
+                    {
+                        Here.Y = y;
+                        Here.X = x;
+                        m_BoardState[x, y] = new Square(CurrentBoard.getSquare(Here), (Human)this.player1, (Human)this.player2);
+                    }
+
                 }
-
             }
+            else
+            {
+                this.player2 = new Computer((Computer)CurrentBoard.Player2);
+                for (uint y = 0; y < CurrentBoard.BoardSizeY; y++)
+                {
+                    for (uint x = 0; x < CurrentBoard.BoardSizeX; x++)
+                    {
+                        Here.Y = y;
+                        Here.X = x;
+                        m_BoardState[x, y] = new Square(CurrentBoard.getSquare(Here), (Human)this.player1, (Computer)this.player2);
+                    }
 
+                }
+            }                
         }
 
         public Player Player1
@@ -116,7 +150,6 @@ namespace StishBoard
         //creates a public function called "getSquare", it will return the reference to the square object that sits in the position in "array" that is asked for in the arguments.
         public Square getSquare(Coordinate Find)
         {
-            //TO DO: add error handling of arguments that are out of range of the array.
             try
             {
                 return m_BoardState[Find.X, Find.Y];
@@ -126,6 +159,18 @@ namespace StishBoard
                 return null;
             }
 
+        }
+
+        public Square[,] getBoard
+        {
+            get
+            {
+                return m_BoardState;
+            }
+            set
+            {
+                m_BoardState = value;
+            }
         }
 
         //barracks no/health, base health, units no/health.  both players

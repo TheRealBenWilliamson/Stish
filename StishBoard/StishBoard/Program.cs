@@ -18,10 +18,10 @@ namespace StishBoard
             Console.SetWindowSize(130, 25);
 
             Player P1;
-            P1 = Player.PlayerFactory(Player.PlayerNumber.Player1, Player.PlayerType.Human);
+            P1 = Player.PlayerFactory(Player.PlayerNumber.Player1, Player.PlayerType.Human, StishBoard.Instance);
             
             Player P2;
-            P2 = Player.PlayerFactory(Player.PlayerNumber.Player2, Player.PlayerType.Human);
+            P2 = Player.PlayerFactory(Player.PlayerNumber.Player2, Player.PlayerType.Computer, StishBoard.Instance);
 
             StishBoard.Instance.Player1 = P1;
             StishBoard.Instance.Player2 = P2;
@@ -58,21 +58,7 @@ namespace StishBoard
                     if(turn == Turn.Player1)
                     {                    
                         Cursor.Instance.FindX = P1.CursorX;
-                        Cursor.Instance.FindY = P1.CursorY;
-
-
-                        //TEST! REMOVE WHEN DONE  ---------------   
-                        //must come before the MP and Balance functions as they are accounted for in the tree
-                        StishMiniMaxNode GameNode = new StishMiniMaxNode(null, P2);
-                        GameNode.NodeBoardState = new BoardState(StishBoard.Instance);
-
-                        //int evaluation = MiniMaxMind.Instance.BuildABTree(GameNode, 1, int.MinValue, int.MaxValue, 1);
-
-                        MiniMaxMind.Instance.RecBuildMMTree(GameNode, 1);
-                        //int evaluation = MiniMaxMind.Instance.TraverseTree(GameNode, 4, 1);
-
-                        //ForeSight.Instance.PredctionCount();
-                        //MiniMaxMind.Instance.BuildMMTree(GameNode, 3);
+                        Cursor.Instance.FindY = P1.CursorY;                       
 
                         P1.TurnBalance(StishBoard.Instance);
                         P1.MaxMP(StishBoard.Instance);

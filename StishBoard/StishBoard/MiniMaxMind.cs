@@ -34,11 +34,17 @@ namespace StishBoard
             }
 
             int Value = int.MinValue;
+            int ChildValue;
 
             for (int index = 0; index < CurrentNode.CountChildren(); index++)
-            {
-                Value = Math.Max(Value, -TraverseTree((StishMiniMaxNode)CurrentNode.GetChild(index), DepthCount - 1, -colour));
-                CurrentNode.NegaMaxValue = Value;
+            {             
+                ChildValue = -TraverseTree((StishMiniMaxNode)CurrentNode.GetChild(index), DepthCount - 1, -colour);
+                if (Value < ChildValue)
+                {
+                    Value = ChildValue;
+                    CurrentNode.BestChild = (StishMiniMaxNode)CurrentNode.GetChild(index);
+                    CurrentNode.NegaMaxValue = Value;
+                }            
             }
             return Value;
         }
@@ -80,8 +86,8 @@ namespace StishBoard
                 {
                     Value = ChildValue;
                     CurrentNode.BestChild = (StishMiniMaxNode)CurrentNode.GetChild(index);
-                }
-                CurrentNode.NegaMaxValue = Value;
+                    CurrentNode.NegaMaxValue = Value;
+                }              
                 Alpha = Math.Max(Alpha, Value);
 
                 if(Alpha >= Beta)

@@ -21,6 +21,7 @@ namespace StishBoard
         public enum PlayerType { Human, Computer};
 
         protected PlayerNumber playerNumber;
+        protected PlayerType playerType;
         protected uint balance;
 
         public uint CursorX = 1;
@@ -54,32 +55,33 @@ namespace StishBoard
 
         protected Base homeBase;
 
-        protected Player(PlayerNumber PN)
+        protected Player(PlayerNumber PN, PlayerType PT, BoardState Board)
         {
             playerNumber = PN;
+            playerType = PT;
             //balance can be changed for testing and balancing
             balance = 5;
 
             //homeBase = new Base();
             if (playerNumber == PlayerNumber.Player1)
             {
-                BaseX = (StishBoard.Instance.BoardSizeX) / 2;
-                BaseY = StishBoard.Instance.BoardSizeY - 2;                                      
+                BaseX = (Board.BoardSizeX) / 2;
+                BaseY = Board.BoardSizeY - 2;                                      
             }
             else
             {
-                BaseX = (StishBoard.Instance.BoardSizeX) / 2;
+                BaseX = (Board.BoardSizeX) / 2;
                 BaseY = 1;                          
             }
             Coordinate ThisCo = new Coordinate(BaseX, BaseY);
-            new Base(this, StishBoard.Instance.getSquare(ThisCo), 20);
+            new Base(this, Board.getSquare(ThisCo), 20);
             for (uint y = BaseY - 1; y < BaseY + 2; y++)
             {
                 for (uint x = BaseX - 1; x < BaseX + 2; x++)
                 {
                     ThisCo.X = x;
                     ThisCo.Y = y;
-                    StishBoard.Instance.getSquare(ThisCo).Owner = this;
+                    Board.getSquare(ThisCo).Owner = this;
                 }
             }
         }      
@@ -87,6 +89,7 @@ namespace StishBoard
         public Player(Player CopyFrom)
         {
             playerNumber = CopyFrom.playerNumber;
+            playerType = CopyFrom.playerType;
             balance = CopyFrom.balance;
             CursorX = CopyFrom.CursorX;
             CursorY = CopyFrom.CursorY;
@@ -99,6 +102,14 @@ namespace StishBoard
             get
             {
                 return playerNumber.ToString();
+            }
+        }
+
+        public string GetPlayerType
+        {
+            get
+            {
+                return playerType.ToString();
             }
         }
 
@@ -124,18 +135,18 @@ namespace StishBoard
         }
 
         //a function that can be called upon to create a player of a given type. the player is aslo assigned a number to represent them so we can distinguish between to players of the same type.
-        public static Player PlayerFactory(PlayerNumber PN, PlayerType PT)
+        public static Player PlayerFactory(PlayerNumber PN, PlayerType PT, BoardState Board)
         {
             Player creation = null;
 
             //creates either a human or computer object and tells it the which player number it has.
             if (PT == PlayerType.Human)
             {
-                creation = new Human(PN);
+                creation = new Human(PN, PT, Board);
             }
             if (PT == PlayerType.Computer)
             {
-                creation = new Computer(PN);
+                creation = new Computer(PN, PT, Board);
             }
 
             return creation;

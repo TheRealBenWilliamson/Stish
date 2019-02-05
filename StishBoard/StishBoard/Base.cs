@@ -43,5 +43,15 @@ namespace StishBoard
             health = CopyFrom.Health;
             m_JustCreated = CopyFrom.JustCreated;
         }
+
+        public Base(Base CopyFrom)
+        {
+            depType = CopyFrom.depType;
+            Icon = CopyFrom.Icon;
+            ownedBy = null;
+            MovementPoints = CopyFrom.MovementPoints;
+            health = CopyFrom.Health;
+            m_JustCreated = CopyFrom.JustCreated;
+        }
     }
 }
