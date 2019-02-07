@@ -40,12 +40,21 @@ namespace StishBoard
         {
             //this will check what is on the destination square and then use the game master function.
             //the game master currently only works with the StishBoard. if i make StishBoard a dervived class from the board state, i can generalize the game master functions and use them here
+            Player NewSide;
             BoardState UnitMovedChild = new BoardState(Now);
+            if (Side.GetPlayerNum == "Player1")
+            {
+                NewSide = UnitMovedChild.Player1;
+            }
+            else
+            {
+                NewSide = UnitMovedChild.Player2;
+            }
 
             for (int index = 0; index < Path.Count - 1; index++)
             {
                 //from index to the one ahead of it therefore the function finishes one place short of the end
-                GameMaster.Instance.Action(Path[index], Path[index +1], Side, UnitMovedChild);
+                GameMaster.Instance.Action(Path[index], Path[index +1], NewSide, UnitMovedChild);
             }
 
             //Parent.Parent as "parent" is actually just an updated model of the "real" parent where no actions were taken

@@ -50,21 +50,27 @@ namespace StishBoard
                 {
                     //Game Continues
                     if(turn == Turn.Player1)
-                    {                    
+                    {                                          
                         Cursor.Instance.FindX = StishBoard.Instance.Player1.CursorX;
                         Cursor.Instance.FindY = StishBoard.Instance.Player1.CursorY;
 
                         StishBoard.Instance.Player1.TurnBalance(StishBoard.Instance);
                         StishBoard.Instance.Player1.MaxMP(StishBoard.Instance);
+
+                        Analytics.Cardinal(StishBoard.Instance.Player1, Cursor.Instance.Where);
+
                         StishBoard.Instance.Player1.MakeMove();
                         turn++;
                     }
                     else if (turn == Turn.Player2)
                     {
-                        StishBoard.Instance.Player2.TurnBalance(StishBoard.Instance);
-                        StishBoard.Instance.Player2.MaxMP(StishBoard.Instance);
                         Cursor.Instance.FindX = StishBoard.Instance.Player2.CursorX;
                         Cursor.Instance.FindY = StishBoard.Instance.Player2.CursorY;
+
+                        StishBoard.Instance.Player2.TurnBalance(StishBoard.Instance);
+                        StishBoard.Instance.Player2.MaxMP(StishBoard.Instance);
+                        
+                        Analytics.Cardinal(StishBoard.Instance.Player2, Cursor.Instance.Where);
 
                         StishBoard.Instance.Player2.MakeMove();
                         turn--;

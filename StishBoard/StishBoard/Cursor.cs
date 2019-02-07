@@ -93,6 +93,14 @@ namespace StishBoard
             }
         }
 
+        public Coordinate Where
+        {
+            get
+            {
+                return Pos;
+            }
+        }
+
         public bool SpaceEnds
         {
             get
