@@ -61,6 +61,43 @@ namespace StishBoard
             }
         }
 
+        public void ReplaceState(BoardState NewBoard)
+        {
+            this.boardSize.X = NewBoard.BoardSizeX;
+            this.boardSize.Y = NewBoard.BoardSizeY;
+            this.player1 = new Human(NewBoard.Player1);
+            m_BoardState = new Square[NewBoard.BoardSizeX, NewBoard.BoardSizeY];
+            Coordinate Here = new Coordinate();
+            if (NewBoard.Player2.GetPlayerType == "Human")
+            {
+                this.player2 = new Human(NewBoard.Player2);
+                for (uint y = 0; y < NewBoard.BoardSizeY; y++)
+                {
+                    for (uint x = 0; x < NewBoard.BoardSizeX; x++)
+                    {
+                        Here.Y = y;
+                        Here.X = x;
+                        m_BoardState[x, y] = new Square(NewBoard.getSquare(Here), (Human)this.player1, (Human)this.player2);
+                    }
+
+                }
+            }
+            else
+            {
+                this.player2 = new Computer((Computer)NewBoard.Player2);
+                for (uint y = 0; y < NewBoard.BoardSizeY; y++)
+                {
+                    for (uint x = 0; x < NewBoard.BoardSizeX; x++)
+                    {
+                        Here.Y = y;
+                        Here.X = x;
+                        m_BoardState[x, y] = new Square(NewBoard.getSquare(Here), (Human)this.player1, (Computer)this.player2);
+                    }
+
+                }
+            }
+        }
+
         //creates a public render method called "Render" to render each of the squares to the console. it calls a Render method on each of the square objects held within 'array'.
         //not sure if this change is right (stolen from the arguments of Render() ) ...   int x, int y    
         public void Render()

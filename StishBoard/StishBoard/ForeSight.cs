@@ -36,7 +36,7 @@ namespace StishBoard
         //the foresight class helps us build new nodes by predicting all possible moves from a node
         //these functions will be called by the node objects in order to tell the nodes, how to configure their children
 
-        public void UnitBasedMovement(StishMiniMaxNode Parent, BoardState Now, List<Coordinate> Path, Player Side)
+        public void UnitBasedMovement(StishMiniMaxNode Sibling, BoardState Now, List<Coordinate> Path, Player Side)
         {
             //this will check what is on the destination square and then use the game master function.
             //the game master currently only works with the StishBoard. if i make StishBoard a dervived class from the board state, i can generalize the game master functions and use them here
@@ -47,22 +47,9 @@ namespace StishBoard
                 //from index to the one ahead of it therefore the function finishes one place short of the end
                 GameMaster.Instance.Action(Path[index], Path[index +1], Side, UnitMovedChild);
             }
-         
-            Player NextTurn = Parent.Allegiance;
-            /*
-            if (Side.GetPlayerNum == "Player1")
-            {
-                //opposite allegiance to it's parent
-                NextTurn = UnitMovedChild.Player2;
-            }
-            else
-            {
-                NextTurn = UnitMovedChild.Player1;
-            }
-            */
 
             //Parent.Parent as "parent" is actually just an updated model of the "real" parent where no actions were taken
-            StishMiniMaxNode UnitMoveNode = new StishMiniMaxNode(Parent.Parent, NextTurn, UnitMovedChild);
+            StishMiniMaxNode UnitMoveNode = new StishMiniMaxNode(Sibling.Parent, Sibling.Allegiance, UnitMovedChild);
             PredctionCount();
 
             //changes to the boardstate are made here using the FindPath function and itterating through the list with the gamemaster functions
@@ -242,7 +229,7 @@ namespace StishBoard
         }      
 
         //this may not need to be void however i dont yet know if or what the output will be (currently just counts)
-        public void SweepSearch(StishMiniMaxNode Parent, BoardState Now, Coordinate UnitPos, Player Side)
+        public void SweepSearch(StishMiniMaxNode Sibling, BoardState Now, Coordinate UnitPos, Player Side)
         {
             Coordinate Upper = new Coordinate();
             Coordinate Lower = new Coordinate();
@@ -290,7 +277,7 @@ namespace StishBoard
                             List<Coordinate> Path = FindPath(UnitPos, Look, Now);
                             if (Path != null)
                             {
-                                UnitBasedMovement(Parent, Now, Path, Side);
+                                UnitBasedMovement(Sibling, Now, Path, Side);
                             }
                             
                         }
@@ -323,7 +310,7 @@ namespace StishBoard
             return (3 * multiply);
         }
 
-        public void BuyPossibility(StishMiniMaxNode Parent, BoardState Now, Player Side, Coordinate look, uint cost)
+        public void BuyPossibility(StishMiniMaxNode Sibling, BoardState Now, Player Side, Coordinate look, uint cost)
         {          
 
             if (Side.Balance > 0)
@@ -331,8 +318,14 @@ namespace StishBoard
                 //can afford a unit
 
                 BoardState UnitBoardState = new BoardState(Now);
-                GameMaster.Instance.BuyUnit(look, Side, UnitBoardState);
-                Player PlayersTurn = Parent.Allegiance;
+                if (Side.GetPlayerNum == "Player1")
+                {
+                    GameMaster.Instance.BuyUnit(look, UnitBoardState.Player1, UnitBoardState);
+                }
+                else
+                {
+                    GameMaster.Instance.BuyUnit(look, UnitBoardState.Player2, UnitBoardState);
+                }              
                 /*
                 if (Side.GetPlayerNum == "Player1")
                 {
@@ -346,7 +339,7 @@ namespace StishBoard
                 */
 
                 //Parent.Parent as "parent" is actually just an updated model of the "real" parent where no actions were taken
-                StishMiniMaxNode UnitCaseNode = new StishMiniMaxNode(Parent.Parent, PlayersTurn, UnitBoardState);
+                StishMiniMaxNode UnitCaseNode = new StishMiniMaxNode(Sibling.Parent, Sibling.Allegiance, UnitBoardState);
                 PredctionCount();
 
             }
@@ -355,8 +348,14 @@ namespace StishBoard
                 //can afford a barracks
 
                 BoardState BarracksBoardState = new BoardState(Now);
-                GameMaster.Instance.BuyBarracks(look, Side, BarracksBoardState);
-                Player PlayersTurn = Parent.Allegiance;
+                if (Side.GetPlayerNum == "Player1")
+                {
+                    GameMaster.Instance.BuyBarracks(look, BarracksBoardState.Player1, BarracksBoardState);
+                }
+                else
+                {
+                    GameMaster.Instance.BuyBarracks(look, BarracksBoardState.Player2, BarracksBoardState);
+                }
                 /*
                 if (Side.GetPlayerNum == "Player1")
                 {
@@ -370,7 +369,7 @@ namespace StishBoard
                 */
 
                 //Parent.Parent as "parent" is actually just an updated model of the "real" parent where no actions were taken
-                StishMiniMaxNode BarracksCaseNode = new StishMiniMaxNode(Parent.Parent, PlayersTurn, BarracksBoardState);
+                StishMiniMaxNode BarracksCaseNode = new StishMiniMaxNode(Sibling.Parent, Sibling.Allegiance, BarracksBoardState);
                 PredctionCount();
 
             }
@@ -378,17 +377,17 @@ namespace StishBoard
 
         }
 
-        private void TestSquare(StishMiniMaxNode Parent, BoardState Now, Player Side, Coordinate Invest, uint cost)
+        private void TestSquare(StishMiniMaxNode Sibling, BoardState Now, Player Side, Coordinate Invest, uint cost)
         {
             if ((Now.getSquare(Invest).Owner == Side) && (Now.getSquare(Invest).Dep.DepType == "Empty"))
             {
                 //can buy possibly buy
-                BuyPossibility(Parent, Now, Side, Invest, cost);
+                BuyPossibility(Sibling, Now, Side, Invest, cost);
             }
             if((Now.getSquare(Invest).Owner == Side) && (Now.getSquare(Invest).Dep.DepType == "Unit"))
             {
                 //sweeps through all possible unit moves
-                SweepSearch(Parent, Now, Invest, Side);
+                SweepSearch(Sibling, Now, Invest, Side);
             }
 
         }
@@ -398,9 +397,11 @@ namespace StishBoard
         {
             //parent argument will always contain "this" when called.
             Player OppositeAllegience;
+
+            //ASSUMES THAT PLAYER 2 IS COMPUTER!
             if (NodeParent.Allegiance.GetPlayerNum == "Player1")
             {
-                OppositeAllegience = new Human(NodeParent.NodeBoardState.Player2);
+                OppositeAllegience = new Computer((Computer)NodeParent.NodeBoardState.Player2);
             }
             else
             {
@@ -408,24 +409,24 @@ namespace StishBoard
             }
 
             //is a child of NodeParent as this is a turn spent doing nothing. the balance and MP are updated below and then this node is used as an example for others
-            BoardState ParentBoardState = new BoardState(NodeParent.NodeBoardState);
-            StishMiniMaxNode Parent = new StishMiniMaxNode(NodeParent, OppositeAllegience, ParentBoardState);
+            BoardState SiblingBoardState = new BoardState(NodeParent.NodeBoardState);
+            StishMiniMaxNode Sibling = new StishMiniMaxNode(NodeParent, OppositeAllegience, SiblingBoardState);
 
             m_TurnPredictionCount = 0;
 
-            Parent.Allegiance.TurnBalance(Parent.NodeBoardState);
-            Parent.Allegiance.MaxMP(Parent.NodeBoardState);     
+            Sibling.Allegiance.TurnBalance(Sibling.NodeBoardState);
+            Sibling.Allegiance.MaxMP(Sibling.NodeBoardState);     
 
-            uint cost = BarracksCost(Parent.NodeBoardState, Parent.Allegiance);
+            uint cost = BarracksCost(Sibling.NodeBoardState, Sibling.Allegiance);
             Coordinate Look = new Coordinate();
-            for (uint y = 0; y < Parent.NodeBoardState.BoardSizeY; y++)
+            for (uint y = 0; y < Sibling.NodeBoardState.BoardSizeY; y++)
             {
-                for (uint x = 0; x < Parent.NodeBoardState.BoardSizeX; x++)
+                for (uint x = 0; x < Sibling.NodeBoardState.BoardSizeX; x++)
                 {
                     Look.Y = y;
                     Look.X = x;
 
-                    TestSquare(Parent, Parent.NodeBoardState, Parent.Allegiance, Look, cost);
+                    TestSquare(Sibling, Sibling.NodeBoardState, Sibling.Allegiance, Look, cost);
                 }
             }
         }

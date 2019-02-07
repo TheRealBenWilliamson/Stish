@@ -118,25 +118,29 @@ namespace StishBoard
             {
                 Me = PassedBoardState.Player1;
                 Oppenent = PassedBoardState.Player2;
+
+                MeBalance = PassedBoardState.Player1.Balance;
+                OpBalance = PassedBoardState.Player2.Balance;
             }
             else
             {
                 Me = PassedBoardState.Player2;
                 Oppenent = PassedBoardState.Player1;
+
+                MeBalance = PassedBoardState.Player2.Balance;
+                OpBalance = PassedBoardState.Player1.Balance;
             }
 
             //parent value, current barracks of both players, base health of both players, health of units of both players
             MeBarracksNumber = PassedBoardState.Counting("Barracks", Me, true);
             MeBarracksHealth = PassedBoardState.Counting("Barracks", Me, false);
             MeUnitHealth = PassedBoardState.Counting("Unit", Me, false);
-            MeBaseHealth = PassedBoardState.Counting("Base", Me, false);
-            MeBalance = PassedBoardState.Player1.Balance;
+            MeBaseHealth = PassedBoardState.Counting("Base", Me, false);          
 
             OpBarracksNumber = PassedBoardState.Counting("Barracks", Oppenent, true);
             OpBaseHealth = PassedBoardState.Counting("Base", Oppenent, false);
             OpBarracksHealth = PassedBoardState.Counting("Barracks", Oppenent, false);
-            OpUnitHealth = PassedBoardState.Counting("Unit", Oppenent, false);
-            OpBalance = PassedBoardState.Player2.Balance;
+            OpUnitHealth = PassedBoardState.Counting("Unit", Oppenent, false);   
 
             Value = (1 * ((int)MeBarracksNumber - (int)OpBarracksNumber)) + (1 * ((int)MeBarracksHealth - (int)OpBarracksHealth)) + (1 * ((int)MeUnitHealth - (int)OpUnitHealth)) + (1 * ((int)MeBaseHealth - (int)OpBaseHealth)) + (1 * ((int)MeBalance - (int)OpBalance));
             return Value;

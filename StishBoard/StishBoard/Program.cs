@@ -17,14 +17,8 @@ namespace StishBoard
             //GAME STARTS HERE
             Console.SetWindowSize(130, 25);
 
-            Player P1;
-            P1 = Player.PlayerFactory(Player.PlayerNumber.Player1, Player.PlayerType.Human, StishBoard.Instance);
-            
-            Player P2;
-            P2 = Player.PlayerFactory(Player.PlayerNumber.Player2, Player.PlayerType.Computer, StishBoard.Instance);
-
-            StishBoard.Instance.Player1 = P1;
-            StishBoard.Instance.Player2 = P2;
+            StishBoard.Instance.Player1 = Player.PlayerFactory(Player.PlayerNumber.Player1, Player.PlayerType.Human, StishBoard.Instance); ;
+            StishBoard.Instance.Player2 = Player.PlayerFactory(Player.PlayerNumber.Player2, Player.PlayerType.Computer, StishBoard.Instance); ;
 
             Console.Clear();
             StishBoard.Instance.Render();
@@ -38,8 +32,8 @@ namespace StishBoard
             {
                 //checks if a base has been destroyed. if one has then the other player has won.
                 //if not then alternate player turns
-                Coordinate P1Base = new Coordinate(P1.BaseX, P1.BaseY);
-                Coordinate P2Base = new Coordinate(P2.BaseX, P2.BaseY);
+                Coordinate P1Base = new Coordinate(StishBoard.Instance.Player1.BaseX, StishBoard.Instance.Player1.BaseY);
+                Coordinate P2Base = new Coordinate(StishBoard.Instance.Player2.BaseX, StishBoard.Instance.Player2.BaseY);
                 if (StishBoard.Instance.getSquare(P2Base).Dep.Health < 1)
                 {
                     //Player1 has won
@@ -57,22 +51,22 @@ namespace StishBoard
                     //Game Continues
                     if(turn == Turn.Player1)
                     {                    
-                        Cursor.Instance.FindX = P1.CursorX;
-                        Cursor.Instance.FindY = P1.CursorY;                       
+                        Cursor.Instance.FindX = StishBoard.Instance.Player1.CursorX;
+                        Cursor.Instance.FindY = StishBoard.Instance.Player1.CursorY;
 
-                        P1.TurnBalance(StishBoard.Instance);
-                        P1.MaxMP(StishBoard.Instance);
-                        P1.MakeMove();
+                        StishBoard.Instance.Player1.TurnBalance(StishBoard.Instance);
+                        StishBoard.Instance.Player1.MaxMP(StishBoard.Instance);
+                        StishBoard.Instance.Player1.MakeMove();
                         turn++;
                     }
                     else if (turn == Turn.Player2)
                     {
-                        P2.TurnBalance(StishBoard.Instance);
-                        P2.MaxMP(StishBoard.Instance);
-                        Cursor.Instance.FindX = P2.CursorX;
-                        Cursor.Instance.FindY = P2.CursorY;
-                        
-                        P2.MakeMove();
+                        StishBoard.Instance.Player2.TurnBalance(StishBoard.Instance);
+                        StishBoard.Instance.Player2.MaxMP(StishBoard.Instance);
+                        Cursor.Instance.FindX = StishBoard.Instance.Player2.CursorX;
+                        Cursor.Instance.FindY = StishBoard.Instance.Player2.CursorY;
+
+                        StishBoard.Instance.Player2.MakeMove();
                         turn--;
                     }                   
                 }
