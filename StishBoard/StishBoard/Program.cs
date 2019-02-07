@@ -15,7 +15,7 @@ namespace StishBoard
         {
 
             //GAME STARTS HERE
-            Console.SetWindowSize(130, 25);
+            Console.SetWindowSize(110, 25);
 
             StishBoard.Instance.Player1 = Player.PlayerFactory(Player.PlayerNumber.Player1, Player.PlayerType.Human, StishBoard.Instance); ;
             StishBoard.Instance.Player2 = Player.PlayerFactory(Player.PlayerNumber.Player2, Player.PlayerType.Computer, StishBoard.Instance); ;

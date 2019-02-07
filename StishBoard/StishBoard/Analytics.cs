@@ -30,7 +30,7 @@ namespace StishBoard
             Coordinate left = new Coordinate(Pos.X, Pos.Y);
             left.MoveLeft();
             System.Console.ForegroundColor = Cont.GetRenderColour();
-            Console.SetCursorPosition(4 * 17, 0);
+            Console.SetCursorPosition(0, 12);
             Console.WriteLine("{0}'s Turn", Cont.GetPlayerNum);
             Console.ResetColor();
 
@@ -66,7 +66,7 @@ namespace StishBoard
                         CheckOwner = Check.Owner.GetPlayerNum;
                     }
 
-                    Console.SetCursorPosition(4 * 10, (card + 3));
+                    Console.SetCursorPosition(4 * 6, (card + 3));
                     Console.WriteLine("{0} has: {1} Health, contains: {2} , belongs to: {3} , Movement Points: {4}", CardinalString[card], Check.Dep.Health.ToString(), CheckType, CheckOwner, Check.Dep.MP.ToString());
                 }
             }
