@@ -23,7 +23,7 @@ namespace StishBoard
             }
         }
 
-        public int TraverseTree(StishMiniMaxNode CurrentNode, int DepthCount, int colour)
+        public double TraverseTree(StishMiniMaxNode CurrentNode, int DepthCount, int colour)
         {
             //Depth count is given as 0 when called at root
 
@@ -33,8 +33,8 @@ namespace StishBoard
                 return (colour * CurrentNode.FindValue(CurrentNode, CurrentNode.NodeBoardState, CurrentNode.Allegiance));
             }
 
-            int Value = int.MinValue;
-            int ChildValue;
+            double Value = double.MinValue;
+            double ChildValue;
 
             for (int index = 0; index < CurrentNode.CountChildren(); index++)
             {             
@@ -67,7 +67,7 @@ namespace StishBoard
             }
         }
 
-        public int BuildABTree(StishMiniMaxNode CurrentNode, int DepthCount, int Alpha, int Beta, int colour)
+        public double BuildABTree(StishMiniMaxNode CurrentNode, int DepthCount, double Alpha, double Beta, int colour)
         {
             if (CurrentNode == null || DepthCount == 0)
             {
@@ -75,8 +75,8 @@ namespace StishBoard
                 return (colour * CurrentNode.FindValue(CurrentNode, CurrentNode.NodeBoardState, CurrentNode.Allegiance));
             }
 
-            int Value = int.MinValue;
-            int ChildValue;
+            double Value = double.MinValue;
+            double ChildValue;
  
             ForeSight.Instance.GenerateChildren(CurrentNode);
             for (int index = 0; index < CurrentNode.CountChildren(); index++)
@@ -90,7 +90,7 @@ namespace StishBoard
                 }              
                 Alpha = Math.Max(Alpha, Value);
 
-                if(Alpha >= Beta)
+                if(Alpha > Beta)
                 {
                     //this return statement "prunes" the tree and prevents further growth on the tree in those bad areas
                     return (colour * CurrentNode.FindValue(CurrentNode, CurrentNode.NodeBoardState, CurrentNode.Allegiance));

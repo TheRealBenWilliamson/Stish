@@ -71,9 +71,9 @@ namespace StishBoard
             }
         }
 
-        private int m_NegaMaxValue;
+        private double m_NegaMaxValue;
 
-        public int NegaMaxValue
+        public double NegaMaxValue
         {
             get
             {
@@ -83,20 +83,7 @@ namespace StishBoard
             {
                 m_NegaMaxValue = value;
             }
-        }
-       
-
-        private uint P1BarracksHealth;
-        private uint P1UnitHealth;
-        private uint P1BaseHealth;
-        private uint P1BarracksNumber;
-        private uint P1Balance;
-
-        private uint P2BarracksHealth;
-        private uint P2UnitHealth;
-        private uint P2BaseHealth;
-        private uint P2BarracksNumber;
-        private uint P2Balance;
+        }     
 
         private uint MeBarracksHealth;
         private uint MeUnitHealth;
@@ -104,13 +91,15 @@ namespace StishBoard
         private uint MeBarracksNumber;
         private uint MeBalance;
 
+        private double UnitProximity;
+
         private uint OpBarracksHealth;
         private uint OpUnitHealth;
         private uint OpBaseHealth;
         private uint OpBarracksNumber;
         private uint OpBalance;
 
-        public int FindValue(TreeNode Parent, BoardState PassedBoardState, Player ThisPlayer)
+        public double FindValue(TreeNode Parent, BoardState PassedBoardState, Player ThisPlayer)
         {
             Player Me;
             Player Oppenent;
@@ -135,40 +124,30 @@ namespace StishBoard
             MeBarracksNumber = PassedBoardState.Counting("Barracks", Me, true);
             MeBarracksHealth = PassedBoardState.Counting("Barracks", Me, false);
             MeUnitHealth = PassedBoardState.Counting("Unit", Me, false);
-            MeBaseHealth = PassedBoardState.Counting("Base", Me, false);          
+            MeBaseHealth = PassedBoardState.Counting("Base", Me, false);
+
+            UnitProximity = PassedBoardState.DistanceValuation(Me, Oppenent);
 
             OpBarracksNumber = PassedBoardState.Counting("Barracks", Oppenent, true);
             OpBaseHealth = PassedBoardState.Counting("Base", Oppenent, false);
             OpBarracksHealth = PassedBoardState.Counting("Barracks", Oppenent, false);
             OpUnitHealth = PassedBoardState.Counting("Unit", Oppenent, false);   
 
-            Value = (1 * ((int)MeBarracksNumber - (int)OpBarracksNumber)) + (1 * ((int)MeBarracksHealth - (int)OpBarracksHealth)) + (1 * ((int)MeUnitHealth - (int)OpUnitHealth)) + (1 * ((int)MeBaseHealth - (int)OpBaseHealth)) + (1 * ((int)MeBalance - (int)OpBalance));
+            Value = (20 * UnitProximity) + (10 * ((int)MeBarracksNumber - (int)OpBarracksNumber)) + (6 * ((int)MeBarracksHealth - (int)OpBarracksHealth)) + (3 * ((int)MeUnitHealth - (int)OpUnitHealth)) + (6 * ((int)MeBaseHealth - (int)OpBaseHealth)) + (1 * ((int)MeBalance - (int)OpBalance));
+
+            if (MeBaseHealth < 1)
+            {
+                Value = int.MinValue;
+            }
+            if (OpBaseHealth < 1)
+            {
+                Value = int.MaxValue;
+            }
+
             return Value;
         }
 
-        public int GenericFindValue(TreeNode Parent, BoardState PassedBoardState)
-        {
-            //parent value, current barracks of both players, base health of both players, health of units of both players
-            P1BarracksNumber = PassedBoardState.Counting("Barracks", PassedBoardState.Player1, true);
-            P1BarracksHealth = PassedBoardState.Counting("Barracks", PassedBoardState.Player1, false);
-            P1UnitHealth = PassedBoardState.Counting("Unit", PassedBoardState.Player1, false);
-            P1BaseHealth = PassedBoardState.Counting("Base", PassedBoardState.Player1, false);
-            P1Balance = PassedBoardState.Player1.Balance;
-
-            P2BarracksNumber = PassedBoardState.Counting("Barracks", PassedBoardState.Player2, true);
-            P2BaseHealth = PassedBoardState.Counting("Base", PassedBoardState.Player2, false);
-            P2BarracksHealth = PassedBoardState.Counting("Barracks", PassedBoardState.Player2, false);
-            P2UnitHealth = PassedBoardState.Counting("Unit", PassedBoardState.Player2, false);
-            P2Balance = PassedBoardState.Player2.Balance;
-
-            Value = (1 * ((int)P1BarracksNumber - (int)P2BarracksNumber)) + (1 * ((int)P1BarracksHealth - (int)P2BarracksHealth)) + (1 * ((int)P1UnitHealth - (int)P2UnitHealth)) + (1 * ((int)P1BaseHealth - (int)P2BaseHealth)) + (1 * ((int)P1Balance - (int)P2Balance));
-            return Value;
-        }
-
-
-
-
-
+       
 
     }
 }

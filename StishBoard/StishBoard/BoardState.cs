@@ -205,6 +205,52 @@ namespace StishBoard
             return counted;
         }
 
+        public uint ClosestDistance(Coordinate UnitPos, Player OpPlayer)
+        {
+            uint BestDistance = uint.MaxValue;
+            Coordinate SearchPos = new Coordinate();
+            for (uint y = 0; y < this.BoardSizeY; y++)
+            {
+                for (uint x = 0; x < this.BoardSizeX; x++)
+                {
+                    SearchPos.Y = y;
+                    SearchPos.X = x;
+                    if ((this.getSquare(SearchPos).Dep.OwnedBy == OpPlayer) && ( (this.getSquare(SearchPos).Dep.DepType == "Barracks") || this.getSquare(SearchPos).Dep.DepType == "Base") )
+                    {
+                        if(UnitPos.Get2DDistance(SearchPos) < BestDistance)
+                        {
+                            BestDistance = (uint)UnitPos.Get2DDistance(SearchPos);
+                        }
+
+                    }
+                }
+
+            }
+
+            return BestDistance;
+        }
+
+        public double DistanceValuation(Player MePlayer, Player OpPlayer)
+        {
+            Double TotalDistanceValue = 0;
+            Coordinate Here = new Coordinate();
+            for (uint y = 0; y < this.BoardSizeY; y++)
+            {
+                for (uint x = 0; x < this.BoardSizeX; x++)
+                {
+                    Here.Y = y;
+                    Here.X = x;
+                    if ((this.getSquare(Here).Dep.OwnedBy == MePlayer) && (this.getSquare(Here).Dep.DepType == "Unit"))
+                    {
+                        TotalDistanceValue = TotalDistanceValue + 1 / (ClosestDistance(Here,OpPlayer));
+                    }
+                }
+
+            }
+
+            return TotalDistanceValue;
+        }
+
 
     }
 }

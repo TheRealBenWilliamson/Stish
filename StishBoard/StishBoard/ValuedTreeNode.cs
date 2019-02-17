@@ -10,7 +10,7 @@ namespace StishBoard
     {
         protected int m_Alpha;
         protected int m_Beta;
-        protected int m_Value;
+        protected double m_Value;
 
         public ValuedTreeNode(TreeNode Parent) : base(Parent)
         {
@@ -30,7 +30,7 @@ namespace StishBoard
             //WOULD (there is an error) will call the CheckChildren() function on the root node to begin a chain of other nodes also calling this function
         }
 
-        public int Value
+        public double Value
         {
             get
             {

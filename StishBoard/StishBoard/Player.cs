@@ -60,7 +60,7 @@ namespace StishBoard
             playerNumber = PN;
             playerType = PT;
             //balance can be changed for testing and balancing
-            balance = 5;
+            balance = 4;
 
             //homeBase = new Base();
             if (playerNumber == PlayerNumber.Player1)
