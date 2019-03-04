@@ -11,8 +11,11 @@ namespace StishBoard
     {
         //creates a reference to the single instance of this singleton object of type StishBoard called "instance".
         private static StishBoard instance;
+        public enum PlayersTurn { Player1, Player2 };
 
-        private uint m_GameMP = 2;  
+        private uint m_GameMP = 2;
+        private PlayersTurn m_PlayersTurn;
+
 
         public uint GameMP
         {
@@ -26,6 +29,19 @@ namespace StishBoard
             }
         }
 
+        public PlayersTurn GamePlayersTurn
+        {
+            get
+            {
+                return m_PlayersTurn;
+            }
+            set
+            {
+                m_PlayersTurn = value;
+            }
+        }
+        
+
         //essentially clones the StishBoard in a BoardState object
         public BoardState GetBoardState()
         {
@@ -38,6 +54,7 @@ namespace StishBoard
             //board size may change
             boardSize.X = 5;
             boardSize.Y = 9;
+            m_PlayersTurn = PlayersTurn.Player1;
             m_BoardState = new Square[BoardSizeX, BoardSizeY];
             for (int x = 0; x < BoardSizeX; x ++)
             {

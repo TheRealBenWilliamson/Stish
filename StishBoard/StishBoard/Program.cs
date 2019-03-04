@@ -9,7 +9,7 @@ namespace StishBoard
     class Program
     {
         public enum Won { Player1, Player2 };
-        public enum Turn { Player1, Player2 };
+        public enum PlayersTurn { Player1, Player2 };
 
         static void Main(string[] args)
         {
@@ -26,7 +26,7 @@ namespace StishBoard
             //game loop takes place here
             bool GameEnd = false;
             Won won = 0;
-            Turn turn = Turn.Player1;                
+            StishBoard.Instance.GamePlayersTurn = StishBoard.PlayersTurn.Player1;                
 
             while (GameEnd == false)
             {
@@ -49,7 +49,8 @@ namespace StishBoard
                 else
                 {
                     //Game Continues
-                    if(turn == Turn.Player1)
+                    //player1
+                    if(StishBoard.Instance.GamePlayersTurn == StishBoard.PlayersTurn.Player1)
                     {                                          
                         Cursor.Instance.FindX = StishBoard.Instance.Player1.CursorX;
                         Cursor.Instance.FindY = StishBoard.Instance.Player1.CursorY;
@@ -60,9 +61,10 @@ namespace StishBoard
                         Analytics.Cardinal(StishBoard.Instance.Player1, Cursor.Instance.Where);
 
                         StishBoard.Instance.Player1.MakeMove();
-                        turn++;
+                        StishBoard.Instance.GamePlayersTurn++;
                     }
-                    else if (turn == Turn.Player2)
+                    //player2
+                    else if (StishBoard.Instance.GamePlayersTurn == StishBoard.PlayersTurn.Player2)
                     {
                         Cursor.Instance.FindX = StishBoard.Instance.Player2.CursorX;
                         Cursor.Instance.FindY = StishBoard.Instance.Player2.CursorY;
@@ -73,7 +75,7 @@ namespace StishBoard
                         Analytics.Cardinal(StishBoard.Instance.Player2, Cursor.Instance.Where);
 
                         StishBoard.Instance.Player2.MakeMove();
-                        turn--;
+                        StishBoard.Instance.GamePlayersTurn--;
                     }                   
                 }
                 
