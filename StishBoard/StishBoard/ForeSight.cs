@@ -404,6 +404,8 @@ namespace StishBoard
 
         public void GenerateChildren(StishMiniMaxNode NodeParent)
         {
+            NodeParent.AlreadyGen = true;
+
             //parent argument will always contain "this" when called.
             Player OppositeAllegience;
 

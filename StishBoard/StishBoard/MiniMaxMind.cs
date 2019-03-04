@@ -59,8 +59,11 @@ namespace StishBoard
                 return;
             }
 
-            ForeSight.Instance.GenerateChildren(CurrentNode);
-
+            if(CurrentNode.AlreadyGen == false)
+            {
+                ForeSight.Instance.GenerateChildren(CurrentNode);
+            }
+            
             for (int index = 0; index < CurrentNode.CountChildren(); index++)
             {              
                 RecBuildMMTree((StishMiniMaxNode)CurrentNode.GetChild(index), DepthCount - 1);

@@ -12,6 +12,7 @@ namespace StishBoard
         //creates a reference to the single instance of this singleton object of type StishBoard called "instance".
         private static StishBoard instance;
         public enum PlayersTurn { Player1, Player2 };
+        private StishMiniMaxNode m_CurrentGameNode;
 
         private uint m_GameMP = 2;
         private PlayersTurn m_PlayersTurn;
@@ -39,6 +40,19 @@ namespace StishBoard
             {
                 m_PlayersTurn = value;
             }
+        }
+
+        public StishMiniMaxNode CurrentGameNode
+        {
+            set
+            {
+                m_CurrentGameNode = value;
+            }
+            get
+            {
+                return m_CurrentGameNode;
+            }
+
         }
         
 

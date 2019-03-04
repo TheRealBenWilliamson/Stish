@@ -10,6 +10,7 @@ namespace StishBoard
     {
         private BoardState m_BoardState;
         private StishMiniMaxNode m_BestChild;
+        private bool m_AlreadyGen;
 
         public StishMiniMaxNode BestChild
         {
@@ -36,16 +37,30 @@ namespace StishBoard
             }
         }
 
+        public bool AlreadyGen
+        {
+            set
+            {
+                m_AlreadyGen = value;
+            }
+            get
+            {
+                return m_AlreadyGen;
+            }
+        }
+
         public StishMiniMaxNode(Player PlayersTurn)
         {
             Allegiance = PlayersTurn;
             Inherit_Allegiance();
+            m_AlreadyGen = false;
         }
 
         public StishMiniMaxNode(TreeNode Parent, Player PlayersTurn) : base(Parent)
         {
             Allegiance = PlayersTurn;
             Inherit_Allegiance();
+            m_AlreadyGen = false;
         }
 
         public StishMiniMaxNode(TreeNode Parent, Player PlayersTurn, BoardState PassedBoardState) : base(Parent)
@@ -54,6 +69,7 @@ namespace StishBoard
             //FindValue(Parent, PassedBoardState);
             Allegiance = PlayersTurn;
             Inherit_Allegiance();
+            m_AlreadyGen = false;
         }
 
         public void Inherit_Allegiance()
